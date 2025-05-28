@@ -23,6 +23,11 @@ add_executable(${PROJECT_NAME} main.cpp
     qml.qrc)
 target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick zmq)
 
+# Set output directory to match main project
+set_target_properties(${PROJECT_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
+)
+
 # Export targets when used as sub-project
 if(NOT CLUSTER_DISPLAY_STANDALONE)
     export(TARGETS ${PROJECT_NAME} FILE ClusterDisplayConfig.cmake)
