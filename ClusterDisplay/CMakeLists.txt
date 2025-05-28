@@ -1,9 +1,7 @@
 cmake_minimum_required(VERSION 2.8.12)
 
-# Only declare project if not included as sub-project
-if(NOT DEFINED PROJECT_NAME)
-    project(ClusterDisplay LANGUAGES CXX)
-endif()
+# Always use ClusterDisplay as project name
+project(ClusterDisplay LANGUAGES CXX)
 
 # Option to build as standalone
 option(CLUSTER_DISPLAY_STANDALONE "Build ClusterDisplay as standalone project" OFF)
@@ -16,19 +14,19 @@ find_package(Qt5 COMPONENTS Core Quick REQUIRED)
 
 include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc)
 
-add_executable(${PROJECT_NAME} main.cpp
+add_executable(ClusterDisplay main.cpp
     src/ZmqSubscriber.cpp inc/ZmqSubscriber.hpp
     src/BatteryIconObj.cpp inc/BatteryIconObj.hpp
     src/SpeedometerObj.cpp inc/SpeedometerObj.hpp
     qml.qrc)
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick zmq)
+target_link_libraries(ClusterDisplay Qt5::Core Qt5::Quick zmq)
 
 # Set output directory to match main project
-set_target_properties(${PROJECT_NAME} PROPERTIES
+set_target_properties(ClusterDisplay PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )
 
 # Export targets when used as sub-project
 if(NOT CLUSTER_DISPLAY_STANDALONE)
-    export(TARGETS ${PROJECT_NAME} FILE ClusterDisplayConfig.cmake)
+    export(TARGETS ClusterDisplay FILE ClusterDisplayConfig.cmake)
 endif()
