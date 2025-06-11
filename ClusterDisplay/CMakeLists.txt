@@ -1,29 +1,44 @@
-cmake_minimum_required(VERSION 2.8.12)
+cmake_minimum_required(VERSION 3.16)
+project(ClusterDisplay VERSION 1.0.0 LANGUAGES CXX)
 
-# Only declare project if not included as sub-project
-if(NOT DEFINED PROJECT_NAME)
-    project(ClusterDisplay LANGUAGES CXX)
-endif()
+set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# Option to build as standalone
-option(CLUSTER_DISPLAY_STANDALONE "Build ClusterDisplay as standalone project" OFF)
+# Find Qt6 components
+find_package(Qt6 REQUIRED COMPONENTS Core Quick QuickControls2 Widgets)
 
-set(CMAKE_INCLUDE_CURRENT_DIR ON)
+# Auto-generated MOC, UIC, and RCC
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
+set(CMAKE_AUTOUIC ON)
 
-find_package(Qt5 COMPONENTS Core Quick REQUIRED)
+# Find ZeroMQ
+find_package(PkgConfig REQUIRED)
+pkg_check_modules(ZMQ REQUIRED libzmq)
 
-include_directories(${CMAKE_CURRENT_SOURCE_DIR}/inc)
+# Add executable
+add_executable(ClusterDisplay
+    main.cpp
+    qml.qrc
+)
 
-add_executable(${PROJECT_NAME} main.cpp
-    src/ZmqSubscriber.cpp inc/ZmqSubscriber.hpp
-    src/BatteryIconObj.cpp inc/BatteryIconObj.hpp
-    src/SpeedometerObj.cpp inc/SpeedometerObj.hpp
-    qml.qrc)
-target_link_libraries(${PROJECT_NAME} Qt5::Core Qt5::Quick zmq)
+# Link Qt6 libraries
+target_link_libraries(ClusterDisplay
+    Qt6::Core
+    Qt6::Quick
+    Qt6::QuickControls2
+    Qt6::Widgets
+    ${ZMQ_LIBRARIES}
+)
 
-# Export targets when used as sub-project
-if(NOT CLUSTER_DISPLAY_STANDALONE)
-    export(TARGETS ${PROJECT_NAME} FILE ClusterDisplayConfig.cmake)
-endif()
+# Include directories
+target_include_directories(ClusterDisplay PRIVATE ${ZMQ_INCLUDE_DIRS})
+
+# Compiler flags
+target_compile_options(ClusterDisplay PRIVATE ${ZMQ_CFLAGS_OTHER})
+
+# Set application properties
+set_target_properties(ClusterDisplay PROPERTIES
+    WIN32_EXECUTABLE TRUE
+    MACOSX_BUNDLE TRUE
+)

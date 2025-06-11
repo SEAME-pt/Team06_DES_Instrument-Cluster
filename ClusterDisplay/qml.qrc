@@ -1,12 +1,24 @@
 <RCC>
     <qresource prefix="/">
         <file>main.qml</file>
+        <file>CentralBoard.qml</file>
+
+        <!-- New modern automotive components -->
+        <file alias="CircularSpeedometer.qml">ui/CircularSpeedometer.qml</file>
+        <file alias="CircularBatteryGauge.qml">ui/CircularBatteryGauge.qml</file>
+        <file alias="TopStatusBar.qml">ui/TopStatusBar.qml</file>
+        <file alias="BottomInfoBar.qml">ui/BottomInfoBar.qml</file>
+        <file alias="CenterPanel.qml">ui/CenterPanel.qml</file>
+        <file alias="ModernTimeDisplay.qml">ui/ModernTimeDisplay.qml</file>
+
+        <!-- Legacy components (keeping for compatibility) -->
         <file alias="InfoBar.qml">ui/InfoBar.qml</file>
         <file alias="Speedometer.qml">ui/speedometer/Speedometer.qml</file>
         <file alias="SimpleBar.qml">ui/SimpleBar.qml</file>
         <file alias="BatteryIndicator.qml">ui/BatteryIndicator.qml</file>
         <file alias="TimeLabel.qml">ui/TimeLabel.qml</file>
+
+        <!-- Resources -->
         <file alias="camera_icon.jpg">resources/camera_icon.jpg</file>
-        <file>CentralBoard.qml</file>
     </qresource>
 </RCC>

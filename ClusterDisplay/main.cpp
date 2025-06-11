@@ -1,27 +1,22 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQmlContext>
-
-#include "BatteryIconObj.hpp"
-#include "SpeedometerObj.hpp"
-#include <zmq.hpp>
-
+#include <QQuickStyle>
 
 int main(int argc, char *argv[])
 {
     QGuiApplication app(argc, argv);
 
-    // The subscriber objects. They read from the zmq socket and update the displayed values.
-    BatteryIconObj  bio(nullptr);
-    SpeedometerObj  so(nullptr);
+    // Set application properties
+    app.setApplicationName("Automotive Cluster Display");
+    app.setApplicationVersion("2.0");
+    app.setOrganizationName("Team06");
 
-    // Exposes the above objects to qml so it can access the updated values
+    // Set modern Qt Quick style
+    QQuickStyle::setStyle("Material");
+
     QQmlApplicationEngine engine;
-    QQmlContext*    context(engine.rootContext());
-    context->setContextProperty("batteryIconObj", &bio);
-    context->setContextProperty("speedometerObj", &so);
-
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
+
     if (engine.rootObjects().isEmpty())
         return -1;
 
