@@ -6,25 +6,6 @@
         <file alias="OdometerDisplay.qml">ui/OdometerDisplay.qml</file>
         <file alias="DrivingModeIndicator.qml">ui/DrivingModeIndicator.qml</file>
         <file alias="ModernBatteryBar.qml">ui/ModernBatteryBar.qml</file>
-
-        <!-- Legacy components (kept for reference) -->
-        <file alias="BatteryBar.qml">ui/BatteryBar.qml</file>
-        <file alias="VerticalBatteryBar.qml">ui/VerticalBatteryBar.qml</file>
-
-        <!-- Legacy components (keeping for compatibility) -->
-        <file alias="CircularSpeedometer.qml">ui/CircularSpeedometer.qml</file>
-        <file alias="CircularBatteryGauge.qml">ui/CircularBatteryGauge.qml</file>
-        <file alias="TopStatusBar.qml">ui/TopStatusBar.qml</file>
-        <file alias="BottomInfoBar.qml">ui/BottomInfoBar.qml</file>
-        <file alias="CenterPanel.qml">ui/CenterPanel.qml</file>
-        <file alias="ModernTimeDisplay.qml">ui/ModernTimeDisplay.qml</file>
-        <file alias="InfoBar.qml">ui/InfoBar.qml</file>
-        <file alias="Speedometer.qml">ui/speedometer/Speedometer.qml</file>
-        <file alias="SimpleBar.qml">ui/SimpleBar.qml</file>
-        <file alias="BatteryIndicator.qml">ui/BatteryIndicator.qml</file>
-        <file alias="TimeLabel.qml">ui/TimeLabel.qml</file>
-
-        <!-- Resources -->
-        <file alias="camera_icon.jpg">resources/camera_icon.jpg</file>
     </qresource>
+    
 </RCC>
