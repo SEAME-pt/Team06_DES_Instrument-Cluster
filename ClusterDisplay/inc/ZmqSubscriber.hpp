@@ -4,7 +4,7 @@
 # include <QObject>
 # include <QSocketNotifier>
 # include <zmq.hpp>
-# include <memory> // For unique poiner
+# include <memory> // For unique pointer
 
 class ZmqSubscriber : public QObject
 {
@@ -12,11 +12,13 @@ class ZmqSubscriber : public QObject
 public:
     ZmqSubscriber(const QString& address, QObject* parent = nullptr);
     ~ZmqSubscriber();
-public slots:
-    void    onMessageReceived();
 
-protected:
-    virtual void    _handleMsg(QString& message) = 0;
+public slots:
+    void onMessageReceived();
+
+signals:
+    void messageReceived(const QString& message);
+
 private:
     // The context of the socket. Manages thread amount nder the hood.
     zmq::context_t  _context;

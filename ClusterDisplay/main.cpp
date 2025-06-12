@@ -1,6 +1,8 @@
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
+#include <QQmlContext>
+#include "ClusterModel.hpp"
 
 int main(int argc, char *argv[])
 {
@@ -14,7 +16,15 @@ int main(int argc, char *argv[])
     // Set modern Qt Quick style
     QQuickStyle::setStyle("Material");
 
+    // Create cluster model instance
+    ClusterModel clusterModel;
+
+    // Set up QML engine
     QQmlApplicationEngine engine;
+
+    // Register cluster model with QML
+    engine.rootContext()->setContextProperty("clusterModel", &clusterModel);
+
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty())

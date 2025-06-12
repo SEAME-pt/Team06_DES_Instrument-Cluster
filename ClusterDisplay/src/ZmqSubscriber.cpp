@@ -36,19 +36,20 @@ ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
 
 ZmqSubscriber::~ZmqSubscriber(){}
 
-void    ZmqSubscriber::onMessageReceived()
+void ZmqSubscriber::onMessageReceived()
 {
     // Gets messages while there are messages to get.
     while (true)
     {
-        zmq::message_t  message;
-        zmq::recv_result_t  result = _socket.recv(message, zmq::recv_flags::dontwait);
+        zmq::message_t message;
+        zmq::recv_result_t result = _socket.recv(message, zmq::recv_flags::dontwait);
         if (!result)
             break;
         std::string messageStr = message.to_string();
         QString msgContent = QString::fromStdString(message.to_string());
         std::cout << "Received message: " << messageStr << std::endl;
-        // Calls pure virtual method so each child class can deal with the message.
-        _handleMsg(msgContent);
+
+        // Emit signal with the message
+        emit messageReceived(msgContent);
     }
 }
