@@ -77,7 +77,7 @@ void ClusterModel::setDrivingMode(const QString &value)
 void ClusterModel::updateDateTime()
 {
     QDateTime now = QDateTime::currentDateTime();
-    QString newTime = now.toString("hh:mm:ss");
+    QString newTime = now.toString("hh:mm");
     QString newDate = now.toString("dd MMM yyyy");
 
     if (m_currentTime != newTime) {

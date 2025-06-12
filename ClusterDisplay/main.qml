@@ -13,13 +13,13 @@ ApplicationWindow {
     flags: Qt.FramelessWindowHint
     color: "transparent"
 
-    // Main background with subtle gradient
+    // Main background with subtle gradient (black/grey without blues)
     Rectangle {
         anchors.fill: parent
         gradient: Gradient {
             orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: "#060c14" }
-            GradientStop { position: 1.0; color: "#0a121f" }
+            GradientStop { position: 0.0; color: "#050505" }
+            GradientStop { position: 1.0; color: "#121212" }
         }
     }
 
@@ -83,7 +83,7 @@ ApplicationWindow {
         }
     }
 
-    // Simple border with rounded corners
+    // Border with rounded corners - using battery color
     Rectangle {
         id: borderFrame
         anchors.fill: parent
@@ -91,7 +91,7 @@ ApplicationWindow {
         color: "transparent"
         radius: 40
         border.width: 2
-        border.color: "#00d4ff"
-        opacity: 0.25
+        border.color: batteryGauge.currentBatteryColor  // Now using battery color
+        opacity: 0.5  // Reduced opacity for softer appearance
     }
 }

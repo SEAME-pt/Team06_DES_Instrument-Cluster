@@ -8,13 +8,20 @@ Item {
     // Battery level property directly from model
     property int batteryLevel: clusterModel.battery
     property bool isCharging: clusterModel.charging
+    property bool isLowBattery: batteryLevel < 15 // Low battery threshold
 
-    // Dynamic color based on battery level
+    // Dynamic color based on battery level - softer colors
     property color batteryColor: {
-        if (batteryLevel > 70) return "#00d4ff" // Cyan for high battery
-        if (batteryLevel > 30) return "#9f7ae0" // Purple for medium
-        return "#ff527a" // Pink-red for low battery
+        if (batteryLevel > 80) return "#7FD47F"      // Soft green for 81-100%
+        if (batteryLevel > 65) return "#A8E0A8"      // Lighter soft green for 66-80%
+        if (batteryLevel > 50) return "#E0E0A0"      // Soft yellow for 51-65%
+        if (batteryLevel > 35) return "#E0C090"      // Soft orange for 36-50%
+        if (batteryLevel > 20) return "#E0A090"      // Soft light red for 21-35%
+        return "#E07070"                             // Soft red for 0-20%
     }
+
+    // Expose battery color to parent components
+    property color currentBatteryColor: batteryColor
 
     // Charging indicator text - above the bar
     Text {
@@ -24,17 +31,26 @@ Item {
             bottom: batteryContainer.top
             bottomMargin: 15
         }
-        text: isCharging ? "CHARGING" : "BATTERY"
-        color: isCharging ? batteryColor : "#5a6580"
+        text: isCharging ? "CHARGING" : (isLowBattery ? "LOW BATTERY" : "BATTERY")
+        color: isCharging ? "#ffffff" : (isLowBattery ? batteryColor : "#5a6580")
         font.pixelSize: 16
         font.letterSpacing: 2
-        opacity: isCharging ? 1.0 : 0.7
+        opacity: (isCharging || isLowBattery) ? 1.0 : 0.7
 
+        // Animation for charging and low battery
         SequentialAnimation on opacity {
-            running: isCharging
+            running: isCharging || isLowBattery
             loops: Animation.Infinite
-            NumberAnimation { to: 0.7; duration: 800; easing.type: Easing.InOutSine }
-            NumberAnimation { to: 1.0; duration: 800; easing.type: Easing.InOutSine }
+            NumberAnimation {
+                to: isLowBattery ? 0.3 : 0.7
+                duration: isLowBattery ? 500 : 800
+                easing.type: Easing.InOutSine
+            }
+            NumberAnimation {
+                to: 1.0
+                duration: isLowBattery ? 500 : 800
+                easing.type: Easing.InOutSine
+            }
         }
     }
 
@@ -50,7 +66,7 @@ Item {
             id: batteryBackground
             anchors.fill: parent
             radius: 10
-            color: "#1a2030"
+            color: "#1a1a1a"  // Updated to grey without blue tint
 
             // Subtle inner shadow
             Rectangle {
@@ -58,7 +74,7 @@ Item {
                 radius: parent.radius
                 color: "transparent"
                 border.width: 1
-                border.color: "#101520"
+                border.color: "#101010"  // Updated to darker grey
             }
         }
 
@@ -115,6 +131,26 @@ Item {
             }
         }
 
+        // Low battery warning indicator
+        Rectangle {
+            id: lowBatteryWarning
+            visible: isLowBattery
+            anchors.fill: parent
+            radius: parent.radius
+            color: "transparent"
+            border.width: 3
+            border.color: "#E07070"  // Soft red
+            opacity: 0.8
+
+            // Pulsing animation for low battery warning
+            SequentialAnimation on opacity {
+                running: isLowBattery
+                loops: Animation.Infinite
+                NumberAnimation { to: 0.4; duration: 500; easing.type: Easing.InOutSine }
+                NumberAnimation { to: 0.8; duration: 500; easing.type: Easing.InOutSine }
+            }
+        }
+
         // Charging animation overlay
         Item {
             anchors.fill: batteryFill
@@ -149,7 +185,7 @@ Item {
                 y: batteryBackground.height * (1 - ((index + 1) * 0.2))
                 width: batteryBackground.width
                 height: 1
-                color: "#101520"
+                color: "#101010"  // Updated to darker grey
                 opacity: 0.5
             }
         }
@@ -157,14 +193,23 @@ Item {
 
     // Battery level percentage text
     Text {
+        id: batteryPercentage
         anchors {
             horizontalCenter: batteryContainer.horizontalCenter
             top: batteryContainer.bottom
             topMargin: 15
         }
         text: batteryLevel + "%"
-        color: batteryColor
+        color: "#ffffff"  // White color
         font.pixelSize: 24
         font.bold: true
+
+        // Pulsing animation for low battery percentage
+        SequentialAnimation on opacity {
+            running: isLowBattery
+            loops: Animation.Infinite
+            NumberAnimation { to: 0.5; duration: 500; easing.type: Easing.InOutSine }
+            NumberAnimation { to: 1.0; duration: 500; easing.type: Easing.InOutSine }
+        }
     }
 }
