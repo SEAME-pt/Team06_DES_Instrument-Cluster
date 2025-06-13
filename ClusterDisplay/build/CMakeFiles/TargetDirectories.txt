@@ -1,6 +1,0 @@
-/home/dimoj/cluster/ClusterDisplay/build/CMakeFiles/ClusterDisplay.dir
-/home/dimoj/cluster/ClusterDisplay/build/CMakeFiles/ClusterDisplay_qmlimportscan.dir
-/home/dimoj/cluster/ClusterDisplay/build/CMakeFiles/edit_cache.dir
-/home/dimoj/cluster/ClusterDisplay/build/CMakeFiles/rebuild_cache.dir
-/home/dimoj/cluster/ClusterDisplay/build/CMakeFiles/ClusterDisplay_autogen_timestamp_deps.dir
-/home/dimoj/cluster/ClusterDisplay/build/CMakeFiles/ClusterDisplay_autogen.dir
