@@ -16,6 +16,9 @@ class ClusterModel : public QObject
     Q_PROPERTY(QString drivingMode READ drivingMode WRITE setDrivingMode NOTIFY drivingModeChanged)
     Q_PROPERTY(QString currentTime READ currentTime NOTIFY currentTimeChanged)
     Q_PROPERTY(QString currentDate READ currentDate NOTIFY currentDateChanged)
+    Q_PROPERTY(bool objectAlert READ objectAlert WRITE setObjectAlert NOTIFY objectAlertChanged)
+    Q_PROPERTY(bool laneAlert READ laneAlert WRITE setLaneAlert NOTIFY laneAlertChanged)
+    Q_PROPERTY(QString laneDeviationSide READ laneDeviationSide WRITE setLaneDeviationSide NOTIFY laneDeviationSideChanged)
 
 public:
     explicit ClusterModel(QObject *parent = nullptr);
@@ -29,6 +32,9 @@ public:
     QString drivingMode() const { return m_drivingMode; }
     QString currentTime() const { return m_currentTime; }
     QString currentDate() const { return m_currentDate; }
+    bool objectAlert() const { return m_objectAlert; }
+    bool laneAlert() const { return m_laneAlert; }
+    QString laneDeviationSide() const { return m_laneDeviationSide; }
 
     // Setters
     void setSpeed(int value);
@@ -36,6 +42,9 @@ public:
     void setCharging(bool value);
     void setOdometer(int value);
     void setDrivingMode(const QString &value);
+    void setObjectAlert(bool value);
+    void setLaneAlert(bool value);
+    void setLaneDeviationSide(const QString &value);
 
 signals:
     void speedChanged(int value);
@@ -45,6 +54,9 @@ signals:
     void drivingModeChanged(const QString &value);
     void currentTimeChanged(const QString &value);
     void currentDateChanged(const QString &value);
+    void objectAlertChanged(bool value);
+    void laneAlertChanged(bool value);
+    void laneDeviationSideChanged(const QString &value);
 
 private slots:
     void updateDateTime();
@@ -58,6 +70,9 @@ private:
     QString m_drivingMode;
     QString m_currentTime;
     QString m_currentDate;
+    bool m_objectAlert;
+    bool m_laneAlert;
+    QString m_laneDeviationSide;
 
     QTimer* m_timeUpdateTimer;
     QTimer* m_dataSimulationTimer;

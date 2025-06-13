@@ -88,8 +88,8 @@ ApplicationWindow {
                 bottomMargin: 20
                 leftMargin: 20
             }
-            batteryPercent: 75 // Will now cycle through values
-            isCharging: true   // Will toggle with cycling
+            batteryPercent: 0 // Start at 0%
+            isCharging: false // Not charging
         }
 
         // Bottom right - Odometer
@@ -128,6 +128,9 @@ ApplicationWindow {
             width: 500  // Much wider for better presentation
             height: 300 // Taller for better presentation
             speed: clusterModel.speed // Connect to actual speed from cluster model
+            objectAlertActive: clusterModel.objectAlert // Connect to object alert from model
+            laneAlertActive: clusterModel.laneAlert // Connect to lane alert from model
+            laneDeviationSide: clusterModel.laneDeviationSide // Connect to lane deviation side from model
         }
 
         // Right side - Street sign recognition
@@ -150,6 +153,10 @@ ApplicationWindow {
                 leftMargin: 150
                 verticalCenter: parent.verticalCenter
             }
+            // Connect to model's alert properties
+            laneAlertActive: clusterModel.laneAlert
+            objectAlertActive: clusterModel.objectAlert
+            laneDeviationSide: clusterModel.laneDeviationSide // Added to sync lane deviation side
         }
     }
 
@@ -163,28 +170,26 @@ ApplicationWindow {
         border.width: 4  // Base border width
 
         // Set border color based on battery level using the updated color scheme
-        border.color: batteryPercent.batteryColor
+        border.color: batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor
 
         opacity: 0.8
 
-        // Constant breathing animation for all states - slower and softer
-        // The 'to' value changes based on whether the battery is charging
+        // Simplified breathing animation
         SequentialAnimation on opacity {
             loops: Animation.Infinite
             NumberAnimation {
-                to: batteryPercent.isCharging ? 1.0 : 0.9
-                duration: batteryPercent.isCharging ? 3000 : 4000
+                to: 1.0
+                duration: 2000
                 easing.type: Easing.InOutSine
             }
             NumberAnimation {
                 to: 0.7
-                duration: batteryPercent.isCharging ? 3000 : 4000
+                duration: 2000
                 easing.type: Easing.InOutSine
             }
         }
 
-        // Charging breathing effect - alternates between border color and light blue
-        // Always use the battery color based on percentage
+        // Simplified color animation based on charging state
         SequentialAnimation on border.color {
             running: batteryPercent.isCharging
             loops: Animation.Infinite
@@ -193,7 +198,7 @@ ApplicationWindow {
                 duration: 1500
             }
             ColorAnimation {
-                to: batteryPercent.batteryColor  // Battery percentage color
+                to: Qt.lighter(batteryPercent.chargingColor, 1.3)  // Slightly lighter blue
                 duration: 1500
             }
         }

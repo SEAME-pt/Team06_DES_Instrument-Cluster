@@ -8,6 +8,7 @@ Item {
     // Properties
     property bool laneAlertActive: false // Lane deviation alert
     property bool objectAlertActive: false // Object detection alert
+    property string laneDeviationSide: "left" // Which side the lane deviation is on ("left" or "right")
 
     // Lane departure alert - fixed position at top
     Item {
@@ -40,7 +41,7 @@ Item {
                 }
                 width: 4
                 height: 30
-                color: "#FF4444"  // Bright red
+                color: laneDeviationSide === "left" ? "#FF0000" : "#FF4444"  // Brighter red for active side
                 radius: 2
 
                 // Top segment (further away, thinner)
@@ -51,7 +52,7 @@ Item {
                     }
                     width: 2
                     height: 8
-                    color: "#FF4444"
+                    color: laneDeviationSide === "left" ? "#FF0000" : "#FF4444"
                     radius: 1
                 }
             }
@@ -84,7 +85,7 @@ Item {
                 }
                 width: 4
                 height: 30
-                color: "#FF4444"  // Bright red
+                color: laneDeviationSide === "right" ? "#FF0000" : "#FF4444"  // Brighter red for active side
                 radius: 2
 
                 // Top segment (further away, thinner)
@@ -95,7 +96,7 @@ Item {
                     }
                     width: 2
                     height: 8
-                    color: "#FF4444"
+                    color: laneDeviationSide === "right" ? "#FF0000" : "#FF4444"
                     radius: 1
                 }
             }
@@ -111,6 +112,15 @@ Item {
                 height: 8
                 color: "#FF4444"  // Bright red
                 radius: 2
+
+                // Add lateral movement to indicate which side is deviating
+                transform: Translate {
+                    x: laneAlertActive ? (laneDeviationSide === "left" ? -5 : 5) : 0
+
+                    Behavior on x {
+                        NumberAnimation { duration: 300 }
+                    }
+                }
             }
 
             // Flashing animation for icon
@@ -133,7 +143,7 @@ Item {
             color: "white"  // White text as requested
             font.pixelSize: 32  // Bigger text (was 24)
             font.bold: false  // Remove bold
-            text: "LANE"
+            text: "LKAS"  // Lane Keeping Assist System
         }
     }
 
@@ -250,64 +260,7 @@ Item {
             color: "white"  // White text as requested
             font.pixelSize: 32  // Bigger text (was 24)
             font.bold: false  // Remove bold
-            text: "OBJECT"
+            text: "OBSTRUCTION"
         }
-    }
-
-    // Demo animation to simulate alerts
-    SequentialAnimation {
-        running: true
-        loops: Animation.Infinite
-
-        // Start with normal state
-        PropertyAction {
-            target: alertsDisplay
-            property: "laneAlertActive"
-            value: false
-        }
-
-        PropertyAction {
-            target: alertsDisplay
-            property: "objectAlertActive"
-            value: false
-        }
-
-        PauseAnimation { duration: 5000 }
-
-        // Lane alert
-        PropertyAction {
-            target: alertsDisplay
-            property: "laneAlertActive"
-            value: true
-        }
-
-        PauseAnimation { duration: 4000 }
-
-        // Reset lane alert
-        PropertyAction {
-            target: alertsDisplay
-            property: "laneAlertActive"
-            value: false
-        }
-
-        PauseAnimation { duration: 3000 }
-
-        // Object alert
-        PropertyAction {
-            target: alertsDisplay
-            property: "objectAlertActive"
-            value: true
-        }
-
-        PauseAnimation { duration: 4000 }
-
-        // Both alerts simultaneously
-        PropertyAction {
-            target: alertsDisplay
-            property: "laneAlertActive"
-            value: true
-        }
-
-        PauseAnimation { duration: 3000 }
     }
 }

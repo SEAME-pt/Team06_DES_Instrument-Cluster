@@ -11,19 +11,19 @@ Item {
     property bool isLowBattery: false    // Low battery status (automatically set when < 20%)
 
     // Computed properties
-    property bool _isLowActual: batteryPercent < 20.0 // Internal calculation of low status
+    property bool _isLowActual: batteryPercent < 10.0 // Internal calculation of low status (changed from 20 to 10)
     property bool _displayLowWarning: _isLowActual || isLowBattery // Either actual or forced low
 
-    // Calculate battery color based on level with updated color scheme
+    // Calculate battery color based on level with updated lighter color scheme
     property color batteryColor: {
-        if (batteryPercent > 50) return "#4CAF50"; // Green for 50-100%
-        if (batteryPercent > 25) return "#FFEB3B"; // Yellow for 25-50%
-        if (batteryPercent > 10) return "#FF9800"; // Orange for 10-25%
-        return "#F44336"; // Red for 0-10%
+        if (batteryPercent > 50) return "#90EE90"; // Light Green for 50-100%
+        if (batteryPercent > 25) return "#FFFFE0"; // Light Yellow for 25-50%
+        if (batteryPercent > 10) return "#FFDAB9"; // Light Orange for 10-25%
+        return "#FFC0CB"; // Light Red for 0-10%
     }
 
     // Light blue color for charging animation
-    property color chargingColor: "#87CEEB" // Light Blue
+    property color chargingColor: "#ADD8E6" // Light Blue
 
     // Timer to cycle battery percentage
     Timer {
@@ -32,12 +32,12 @@ Item {
         running: true
         repeat: true
         onTriggered: {
-            // Cycle through different battery percentages - low to high
-            batteryPercent = (batteryPercent + 10) % 110
-            if (batteryPercent > 100) batteryPercent = 10 // Reset to low
+            // Cycle through different battery percentages - 0 to 100
+            batteryPercent = (batteryPercent + 5) % 105
+            if (batteryPercent > 100) batteryPercent = 0 // Reset to 0
 
             // Randomly toggle charging state for demo
-            if (Math.random() > 0.7) {
+            if (Math.random() > 0.01) {
                 isCharging = !isCharging
             }
         }

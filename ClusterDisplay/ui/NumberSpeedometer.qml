@@ -33,7 +33,7 @@ Item {
                 color: "#ffffff"
                 font.pixelSize: 140
                 font.family: window.primaryFont
-                font.weight: window.fontBold
+                font.weight: window.fontNormal
                 font.letterSpacing: window.letterSpacingTight
             }
 
