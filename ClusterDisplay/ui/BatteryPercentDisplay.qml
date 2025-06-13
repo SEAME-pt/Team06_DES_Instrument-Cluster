@@ -16,7 +16,8 @@ Item {
 
     // Calculate battery color based on level with updated lighter color scheme
     property color batteryColor: {
-        if (batteryPercent > 50) return "#90EE90"; // Light Green for 50-100%
+        if (batteryPercent > 80) return "#90EE90"; // Light Green for 80-100%
+        if (batteryPercent > 50) return "#C1FFC1"; // Lighter Green for 50-80%
         if (batteryPercent > 25) return "#FFFFE0"; // Light Yellow for 25-50%
         if (batteryPercent > 10) return "#FFDAB9"; // Light Orange for 10-25%
         return "#FFC0CB"; // Light Red for 0-10%
@@ -37,7 +38,7 @@ Item {
             if (batteryPercent > 100) batteryPercent = 0 // Reset to 0
 
             // Randomly toggle charging state for demo
-            if (Math.random() > 0.01) {
+            if (Math.random() > 0.9) {
                 isCharging = !isCharging
             }
         }

@@ -1,0 +1,9 @@
+-rootPath
+/home/dimoj/cluster/ClusterDisplay
+-cmake-output
+-output-file
+/home/dimoj/cluster/ClusterDisplay/build/.qt_plugins/Qt6_QmlPlugins_Imports_ClusterDisplay.cmake
+-importPath
+/home/dimoj/cluster/ClusterDisplay/build
+-importPath
+/usr/lib/x86_64-linux-gnu/qt6/qml

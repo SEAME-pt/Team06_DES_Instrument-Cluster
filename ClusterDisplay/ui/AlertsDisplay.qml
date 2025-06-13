@@ -260,7 +260,7 @@ Item {
             color: "white"  // White text as requested
             font.pixelSize: 32  // Bigger text (was 24)
             font.bold: false  // Remove bold
-            text: "OBSTRUCTION"
+            text: "OBS"
         }
     }
 }
