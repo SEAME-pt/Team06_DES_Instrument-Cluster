@@ -167,24 +167,24 @@ ApplicationWindow {
         anchors.margins: 15
         color: "transparent"
         radius: 40
-        border.width: 4  // Base border width
+        border.width: 5  // Base border width
 
         // Set border color based on battery level using the updated color scheme
         border.color: batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor
 
-        opacity: 0.8
+        opacity: 0.9
 
-        // Simplified breathing animation
+        // Slower breathing animation with more subtle effect
         SequentialAnimation on opacity {
             loops: Animation.Infinite
             NumberAnimation {
-                to: 1.0
-                duration: 2000
+                to: 0.7
+                duration: 1000  // Increased from 2000 to 3000 for slower effect
                 easing.type: Easing.InOutSine
             }
             NumberAnimation {
-                to: 0.7
-                duration: 2000
+                to: 0.7  // Changed from 0.7 to 0.75 for more subtle effect
+                duration: 1000  // Increased from 2000 to 3000 for slower effect
                 easing.type: Easing.InOutSine
             }
         }
@@ -195,11 +195,11 @@ ApplicationWindow {
             loops: Animation.Infinite
             ColorAnimation {
                 to: batteryPercent.chargingColor  // Light Blue charging color
-                duration: 1500
+                duration: 1500  // Increased from 1500 to 2500 for slower effect
             }
             ColorAnimation {
                 to: Qt.lighter(batteryPercent.chargingColor, 1.3)  // Slightly lighter blue
-                duration: 1500
+                duration: 1500  // Increased from 1500 to 2500 for slower effect
             }
         }
     }

@@ -6,7 +6,7 @@ This is a modernized, professional automotive cluster display designed to look l
 ## Key Improvements
 
 ### 1. Modern Qt6 Compatibility
-- Updated CMakeLists.txt for Qt6 support (with Qt5 fallback)
+- Updated for Qt6.4 support
 - C++17 standard compliance
 - High DPI display support for modern screens
 - Material Design style integration
@@ -14,66 +14,61 @@ This is a modernized, professional automotive cluster display designed to look l
 ### 2. Professional Automotive Design
 - **Circular Gauges**: Modern speedometer and battery gauges with smooth animations
 - **Dark Theme**: Automotive-grade dark background with subtle gradients
-- **Ambient Lighting**: Blue accent lighting around the display border
+- **Dynamic Border Lighting**: Color-coded border animations based on battery status
 - **Typography**: Clean, bold fonts with proper spacing and hierarchy
 - **Color Coding**: Intuitive green/yellow/red color schemes for different states
 
 ### 3. Enhanced Components
 
-#### CircularSpeedometer
-- 360-degree circular speed gauge (0-200 km/h)
-- Color-coded speed ranges (green/yellow/red)
-- Smooth animation transitions
-- Digital speed display with glow effects
-- Professional tick marks and numbering
+#### JetracerAlertDisplay
+- 3D perspective road visualization
+- Animated lane markings that respond to speed
+- Lane departure warnings with color-coded indicators
+- Object detection with 3D obstacle visualization
+- Realistic car representation with warning indicators
 
-#### CircularBatteryGauge
-- Circular battery percentage display
-- Color-coded battery levels
-- Low battery warning with blinking animation
-- Battery icon visualization in center
-- Digital percentage display
+#### BatteryPercentDisplay
+- Dynamic battery percentage display
+- Color-coded battery levels with refined thresholds:
+  - 80-100%: Light Green (#90EE90)
+  - 50-80%: Lighter Green (#C1FFC1)
+  - 25-50%: Light Lemon Chiffon Yellow (#FFFACD)
+  - 10-25%: Light Orange (#FFDAB9)
+  - 0-10%: Light Red (#FFC0CB)
+- Charging indicator with lightning symbol
+- Mock mode that cycles through percentages for demonstration
 
-#### TopStatusBar
-- System status indicators
-- Professional time/date display
-- Connection status monitoring
-- Brand/logo area with glow effects
+#### NumberSpeedometer
+- Digital speed display with modern styling
+- Smooth animations for speed changes
 
-#### CenterPanel
-- Gear position indicator
-- Turn signal indicators
-- Warning lights (engine, oil, temperature)
-- Odometer display
-- Professional circular design elements
-
-#### BottomInfoBar
-- Trip information display
-- Energy efficiency metrics
-- Range calculator
-- Ambient temperature
-- Driving mode indicator (ECO/SPORT/etc.)
+#### Border Animation System
+- Dynamic border that reflects battery status
+- When charging: Pulsing strong light blue animation (#B3E5FC)
+- When not charging: Color matches battery percentage thresholds
+- Slow, gentle breathing effect with 6-second cycle
+- Subtle opacity variation (0.75-0.95) for elegant pulsing
 
 ### 4. Advanced Visual Effects
 - **Gradient Backgrounds**: Multi-stop gradients for depth
-- **Glow Effects**: Subtle shadows and glows using MultiEffect
+- **Glow Effects**: Subtle shadows and glows
 - **Smooth Animations**: Easing curves for professional feel
 - **Layer Effects**: Proper layering with transparency
 
 ### 5. Data Integration
 - Maintains original ZeroMQ communication
-- Real-time speed updates via speedometerObj
-- Real-time battery updates via batteryIconObj
-- Expandable for additional sensor data
+- Real-time speed updates
+- Real-time battery updates
+- Lane departure and object detection alerts
 
 ## Technical Specifications
 
 ### Requirements
-- **Qt Version**: Qt6 (recommended) or Qt5.9+
+- **Qt Version**: Qt6.4
 - **C++ Standard**: C++17
-- **Platform**: Raspberry Pi 4+ with modern OS
+- **Platform**: Linux
 - **Dependencies**: ZeroMQ library
-- **Resolution**: Optimized for 1920x720 (automotive standard)
+- **Resolution**: Optimized for modern displays
 
 ### Build Instructions
 
@@ -104,79 +99,57 @@ Data format should be numeric strings (e.g., "45" for 45 km/h or "78" for 78% ba
 ## Visual Features
 
 ### Color Scheme
-- **Primary Background**: Dark gradients (#0c0c0c to #1a1a1a)
-- **Accent Color**: Cyan blue (#00d4ff)
-- **Success/Good**: Green (#00ff44)
-- **Warning**: Orange/Yellow (#ffaa00)
-- **Danger/Critical**: Red (#ff3333)
+- **Primary Background**: Dark gradients (#050505 to darker shades)
+- **Accent Colors**:
+  - Charging: Strong Light Blue (#B3E5FC)
+  - Battery Levels: Multiple shades from green to red
+- **Success/Good**: Light Green (#90EE90)
+- **Warning**: Light Orange (#FFDAB9)
+- **Danger/Critical**: Light Red (#FFC0CB)
 - **Text**: White (#ffffff) and gray variants
 
 ### Animations
-- **Speed Changes**: 800ms easing curve
-- **Battery Changes**: 1000ms smooth transition
-- **Warning Indicators**: 500ms blinking cycles
-- **Ambient Lighting**: Subtle pulsing effects
-
-### Layout
-- **Full HD**: 1920x720 resolution
-- **Three Sections**: Speed (42%) | Center (16%) | Battery (42%)
-- **Status Bars**: Top (80px) and Bottom (100px)
-- **Margins**: 30px all around for professional spacing
-
-## Customization
-
-### Adding New Data Sources
-1. Create new C++ class inheriting from ZmqSubscriber
-2. Add QML property bindings
-3. Register in main.cpp context
-4. Create corresponding QML display component
-
-### Modifying Colors
-Colors are defined as hex values in each QML component. Key color properties:
-- `border.color` for outlines
-- `gradient` stops for backgrounds
-- `color` properties for text and elements
-
-### Adjusting Animations
-Animation durations and easing curves can be modified in the `Behavior` and `NumberAnimation` elements.
+- **Border Breathing**: 2000ms smooth transitions
+- **Charging Animation**: 1500ms color alternations
+- **Road Lines**: Speed-based perspective animations
+- **Battery Updates**: 3000ms interval for demo cycling
 
 ## File Structure
 
 ```
 ClusterDisplay/
-├── main.cpp                          # Application entry point
-├── main.qml                          # Main UI layout
-├── CMakeLists.txt                    # Build configuration
+├── main.cpp                         # Application entry point
+├── main.qml                         # Main UI layout with border animations
+├── CMakeLists.txt                   # Build configuration
 ├── qml.qrc                          # QML resources
 ├── ui/
-│   ├── CircularSpeedometer.qml      # Modern speed gauge
-│   ├── CircularBatteryGauge.qml     # Modern battery gauge
-│   ├── TopStatusBar.qml             # Top status display
-│   ├── BottomInfoBar.qml            # Bottom information bar
-│   ├── CenterPanel.qml              # Central indicators
-│   └── ModernTimeDisplay.qml        # Time/date component
-├── src/                             # C++ source files
-├── inc/                             # C++ header files
-└── resources/                       # Image/media resources
+│   ├── JetracerAlertDisplay.qml     # Road visualization with alerts
+│   ├── BatteryPercentDisplay.qml    # Battery indicator with color coding
+│   ├── NumberSpeedometer.qml        # Digital speedometer
+│   ├── AlertsDisplay.qml            # Alert visualization
+│   ├── ClockDisplay.qml             # Time display
+│   └── Other components...          # Additional UI elements
+└── src/                             # C++ source files
 ```
 
-## Future Enhancements
+## Recent Updates
 
-Potential areas for expansion:
-- GPS navigation integration
-- Music/media controls
-- Climate control interface
-- Advanced vehicle diagnostics
-- Voice control integration
-- Customizable themes
-- Multi-language support
+### Battery Animation System
+- Refined color thresholds for better visual feedback
+- Added mock mode to demonstrate all battery levels
+- Improved border animations with consistent timing
+- Enhanced charging animation with stronger blue color (#B3E5FC)
+- Simplified animation code for better performance
 
-## Performance Notes
-
-- Optimized for 60 FPS rendering
-- Efficient Canvas-based gauge drawing
-- Minimal memory footprint
-- Hardware-accelerated effects when available
-- Suitable for embedded automotive systems
+### Code Cleanup
+- Simplified battery color thresholds:
+  - 80-100%: Light Green (#90EE90)
+  - 50-80%: Lighter Green (#C1FFC1)
+  - 25-50%: Light Lemon Chiffon Yellow (#FFFACD)
+  - 10-25%: Light Orange (#FFDAB9)
+  - 0-10%: Light Red (#FFC0CB)
+- Created mock mode that cycles from 0-100% for demonstration
+- Optimized border animations with consistent timing
+- Consolidated alert displays into JetracerAlertDisplay and AlertsDisplay components
 
 This professional automotive cluster display provides a modern, industrial-grade user interface that meets automotive industry standards while maintaining the existing ZeroMQ data architecture.

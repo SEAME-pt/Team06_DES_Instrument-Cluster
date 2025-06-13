@@ -18,13 +18,13 @@ Item {
     property color batteryColor: {
         if (batteryPercent > 80) return "#90EE90"; // Light Green for 80-100%
         if (batteryPercent > 50) return "#C1FFC1"; // Lighter Green for 50-80%
-        if (batteryPercent > 25) return "#FFFFE0"; // Light Yellow for 25-50%
+        if (batteryPercent > 25) return "#FFFACD"; // Light Lemon Chiffon Yellow for 25-50%
         if (batteryPercent > 10) return "#FFDAB9"; // Light Orange for 10-25%
         return "#FFC0CB"; // Light Red for 0-10%
     }
 
     // Light blue color for charging animation
-    property color chargingColor: "#ADD8E6" // Light Blue
+    property color chargingColor: "#B3E5FC" // Stronger Light Blue
 
     // Timer to cycle battery percentage
     Timer {
