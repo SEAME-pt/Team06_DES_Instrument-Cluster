@@ -32,7 +32,9 @@ Item {
                 text: speed.toString()
                 color: "#ffffff"
                 font.pixelSize: 140
-                font.bold: true
+                font.family: window.primaryFont
+                font.weight: window.fontBold
+                font.letterSpacing: window.letterSpacingTight
             }
 
             // Units label
@@ -41,7 +43,8 @@ Item {
                 text: "km/h"
                 color: "#5a6580"
                 font.pixelSize: 20
-                font.letterSpacing: 2
+                font.letterSpacing: window.letterSpacingWide
+                font.family: window.secondaryFont
             }
         }
     }

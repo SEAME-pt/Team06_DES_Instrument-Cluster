@@ -2,6 +2,9 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQmlContext>
+#include <QFontDatabase>
+#include <QDir>
+#include <QDebug>
 #include "ClusterModel.hpp"
 
 int main(int argc, char *argv[])
@@ -25,6 +28,7 @@ int main(int argc, char *argv[])
     // Register cluster model with QML
     engine.rootContext()->setContextProperty("clusterModel", &clusterModel);
 
+    // Load the main QML file
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     if (engine.rootObjects().isEmpty())

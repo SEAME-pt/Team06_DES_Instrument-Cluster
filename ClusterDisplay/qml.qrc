@@ -1,11 +1,18 @@
-<RCC>
+<!DOCTYPE RCC>
+<RCC version="1.0">
     <qresource prefix="/">
         <file>main.qml</file>
-        <file alias="NumberSpeedometer.qml">ui/NumberSpeedometer.qml</file>
-        <file alias="ClockDisplay.qml">ui/ClockDisplay.qml</file>
-        <file alias="OdometerDisplay.qml">ui/OdometerDisplay.qml</file>
-        <file alias="DrivingModeIndicator.qml">ui/DrivingModeIndicator.qml</file>
-        <file alias="ModernBatteryBar.qml">ui/ModernBatteryBar.qml</file>
+        <file>ui/ClockDisplay.qml</file>
+        <file>ui/OdometerDisplay.qml</file>
+        <file>ui/NumberSpeedometer.qml</file>
+        <file>ui/DrivingModeIndicator.qml</file>
+        <file>ui/BatteryPercentDisplay.qml</file>
+        <file>ui/ModernBatteryBar.qml</file>
+        <file>ui/AlertsDisplay.qml</file>
+        <file>ui/LaneAlertDisplay.qml</file>
+        <file>ui/ObjectAlertDisplay.qml</file>
+        <file>ui/JetracerAlertDisplay.qml</file>
+        <file>ui/StreetSignDisplay.qml</file>
     </qresource>
-    
+
 </RCC>

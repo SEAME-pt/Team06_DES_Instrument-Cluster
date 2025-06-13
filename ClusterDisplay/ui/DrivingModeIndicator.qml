@@ -3,7 +3,7 @@ import QtQuick 6.4
 Item {
     id: drivingModeIndicator
     width: 180
-    height: 80
+    height: 60
 
     property string mode: clusterModel.drivingMode
 
@@ -28,27 +28,27 @@ Item {
     property string displayMode: modeTextMap[mode] || "MANUAL"
 
     Column {
-        anchors {
-            centerIn: parent
-        }
-        spacing: 10
+        anchors.right: parent.right
+        spacing: 5
 
         Text {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.right: parent.right
             text: "MODE"
-            font.pixelSize: 16
+            font.pixelSize: 18
             color: "#5a6580"
-            font.letterSpacing: 2
+            font.letterSpacing: window.letterSpacingWide
+            font.family: window.secondaryFont
         }
 
         Text {
-            anchors.horizontalCenter: parent.horizontalCenter
+            anchors.right: parent.right
             text: displayMode
-            font.pixelSize: 28
-            font.bold: true
-            font.letterSpacing: 2
+            font.pixelSize: 26
+            font.weight: window.fontBold
+            font.letterSpacing: window.letterSpacingWide
             color: "#ffffff"
             opacity: 1.0
+            font.family: window.primaryFont
         }
     }
 }

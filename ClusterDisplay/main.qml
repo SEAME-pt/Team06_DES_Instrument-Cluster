@@ -1,6 +1,7 @@
 import QtQuick 6.4
 import QtQuick.Window 6.4
 import QtQuick.Controls 6.4
+import "ui"
 
 ApplicationWindow {
     id: window
@@ -13,13 +14,40 @@ ApplicationWindow {
     flags: Qt.FramelessWindowHint
     color: "transparent"
 
-    // Main background with subtle gradient (black/grey without blues)
+    // Define modern EV-style fonts using system fonts that are more futuristic/modern
+    readonly property string primaryFont: "'Ubuntu Mono', 'DejaVu Sans Mono', monospace"
+    readonly property string secondaryFont: "'Ubuntu Condensed', 'DejaVu Sans', sans-serif"
+    readonly property string monoFont: "'Ubuntu Mono', 'DejaVu Sans Mono', monospace"
+
+    // Font weights
+    readonly property int fontLight: Font.Light
+    readonly property int fontNormal: Font.Normal
+    readonly property int fontMedium: Font.Medium
+    readonly property int fontDemiBold: Font.DemiBold
+    readonly property int fontBold: Font.Bold
+
+    // Letter spacing
+    readonly property real letterSpacingTight: 0.5
+    readonly property real letterSpacingNormal: 1.0
+    readonly property real letterSpacingWide: 2.0
+    readonly property real letterSpacingExtraWide: 3.0
+
+    // Main background with more dimension
     Rectangle {
         anchors.fill: parent
-        gradient: Gradient {
-            orientation: Gradient.Vertical
-            GradientStop { position: 0.0; color: "#050505" }
-            GradientStop { position: 1.0; color: "#121212" }
+        color: "#050505" // Base dark color
+
+        // A radial gradient overlay to give a "glow" from the center, drawn with Canvas
+        Canvas {
+            anchors.fill: parent
+            onPaint: {
+                var ctx = getContext("2d");
+                var gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
+                gradient.addColorStop(0, "rgba(35, 35, 40, 0.4)");
+                gradient.addColorStop(1, "transparent");
+                ctx.fillStyle = gradient;
+                ctx.fillRect(0, 0, width, height);
+            }
         }
     }
 
@@ -27,15 +55,41 @@ ApplicationWindow {
     Item {
         id: mainContent
         anchors.fill: parent
-        anchors.margins: 60
+        anchors.margins: 40  // Reduced margins to position closer to corners
 
-        // Top right - Time display
+        // Top left - Time display
         ClockDisplay {
             id: clockDisplay
             anchors {
                 top: parent.top
-                right: parent.right
+                left: parent.left
+                topMargin: 20
+                leftMargin: 20
             }
+        }
+
+        // Top right - Driving mode
+        DrivingModeIndicator {
+            id: modeIndicator
+            anchors {
+                top: parent.top
+                right: parent.right
+                topMargin: 20
+                rightMargin: 20
+            }
+        }
+
+        // Bottom left - Battery percentage
+        BatteryPercentDisplay {
+            id: batteryPercent
+            anchors {
+                bottom: parent.bottom
+                left: parent.left
+                bottomMargin: 20
+                leftMargin: 20
+            }
+            batteryPercent: 75 // Will now cycle through values
+            isCharging: true   // Will toggle with cycling
         }
 
         // Bottom right - Odometer
@@ -44,54 +98,104 @@ ApplicationWindow {
             anchors {
                 bottom: parent.bottom
                 right: parent.right
-                bottomMargin: 10
+                bottomMargin: 20
+                rightMargin: 20
             }
         }
 
-        // Left side - Battery bar (vertical)
-        ModernBatteryBar {
-            id: batteryGauge
-            anchors {
-                left: parent.left
-                verticalCenter: parent.verticalCenter
-            }
-            width: 150
-            height: parent.height * 0.85
-        }
-
-        // Digital speedometer - moved even higher
+        // Digital speedometer - centered upper area
         NumberSpeedometer {
             id: speedometer
             anchors {
-                centerIn: parent
-                verticalCenterOffset: -parent.height * 0.18
+                horizontalCenter: parent.horizontalCenter
+                top: parent.top
+                topMargin: 40
             }
-            width: Math.min(parent.width * 0.5, parent.height)
+            width: Math.min(parent.width * 0.5, parent.height * 0.5)
             height: width
         }
 
-        // Driving mode - moved a bit lower
-        DrivingModeIndicator {
-            id: modeIndicator
+        // Jetracer road graphic - below speedometer (where mode used to be)
+        JetracerAlertDisplay {
+            id: jetracerGraphic
             anchors {
-                bottom: parent.bottom
-                bottomMargin: parent.height * 0.15
                 horizontalCenter: parent.horizontalCenter
+                top: speedometer.bottom
+                topMargin: 20
+                leftMargin: 30
+                rightMargin: 30
             }
-            width: 180
-            height: 80
+            width: 500  // Much wider for better presentation
+            height: 300 // Taller for better presentation
+            speed: clusterModel.speed // Connect to actual speed from cluster model
+        }
+
+        // Right side - Street sign recognition
+        StreetSignDisplay {
+            id: streetSignDisplay
+            anchors {
+                right: parent.right
+                rightMargin: 300
+                verticalCenter: parent.verticalCenter
+            }
+            width: 220
+            height: 220
+        }
+
+        // Alerts display - centered on the left side
+        AlertsDisplay {
+            id: alertsDisplay
+            anchors {
+                left: parent.left
+                leftMargin: 150
+                verticalCenter: parent.verticalCenter
+            }
         }
     }
 
-    // Border with rounded corners - using battery color
+    // Border with rounded corners - breathing effect with battery color
     Rectangle {
         id: borderFrame
         anchors.fill: parent
         anchors.margins: 15
         color: "transparent"
         radius: 40
-        border.width: 2
-        border.color: batteryGauge.currentBatteryColor  // Now using battery color
-        opacity: 0.5  // Reduced opacity for softer appearance
+        border.width: 4  // Base border width
+
+        // Set border color based on battery level using the updated color scheme
+        border.color: batteryPercent.batteryColor
+
+        opacity: 0.8
+
+        // Constant breathing animation for all states - slower and softer
+        // The 'to' value changes based on whether the battery is charging
+        SequentialAnimation on opacity {
+            loops: Animation.Infinite
+            NumberAnimation {
+                to: batteryPercent.isCharging ? 1.0 : 0.9
+                duration: batteryPercent.isCharging ? 3000 : 4000
+                easing.type: Easing.InOutSine
+            }
+            NumberAnimation {
+                to: 0.7
+                duration: batteryPercent.isCharging ? 3000 : 4000
+                easing.type: Easing.InOutSine
+            }
+        }
+
+        // Charging breathing effect - alternates between border color and light blue
+        // Always use the battery color based on percentage
+        SequentialAnimation on border.color {
+            running: batteryPercent.isCharging
+            loops: Animation.Infinite
+            ColorAnimation {
+                to: batteryPercent.chargingColor  // Light Blue charging color
+                duration: 1500
+            }
+            ColorAnimation {
+                to: batteryPercent.batteryColor  // Battery percentage color
+                duration: 1500
+            }
+        }
     }
 }
