@@ -43,10 +43,42 @@ ApplicationWindow {
             onPaint: {
                 var ctx = getContext("2d");
                 var gradient = ctx.createRadialGradient(width / 2, height / 2, 0, width / 2, height / 2, width / 2);
-                gradient.addColorStop(0, "rgba(35, 35, 40, 0.4)");
-                gradient.addColorStop(1, "transparent");
+                gradient.addColorStop(0, "rgba(45, 45, 60, 0.8)");  // Increased opacity and slightly bluer
+                gradient.addColorStop(0.4, "rgba(30, 30, 45, 0.6)"); // Added middle stop for smoother gradient
+                gradient.addColorStop(1, "rgba(10, 10, 15, 0.2)");  // Added slight color instead of transparent
                 ctx.fillStyle = gradient;
                 ctx.fillRect(0, 0, width, height);
+            }
+        }
+
+        // Additional ambient effect with subtle pattern
+        Canvas {
+            anchors.fill: parent
+            opacity: 0.15
+            onPaint: {
+                var ctx = getContext("2d");
+                var w = width;
+                var h = height;
+
+                // Create subtle grid pattern
+                ctx.strokeStyle = "rgba(100, 120, 180, 0.3)";
+                ctx.lineWidth = 0.5;
+
+                // Draw horizontal lines
+                for (var y = 0; y < h; y += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(0, y);
+                    ctx.lineTo(w, y);
+                    ctx.stroke();
+                }
+
+                // Draw vertical lines
+                for (var x = 0; x < w; x += 40) {
+                    ctx.beginPath();
+                    ctx.moveTo(x, 0);
+                    ctx.lineTo(x, h);
+                    ctx.stroke();
+                }
             }
         }
     }
@@ -160,46 +192,130 @@ ApplicationWindow {
         }
     }
 
-    // Border with rounded corners - breathing effect with battery color
+        // Border with rounded corners - enhanced breathing effect with fading border
     Rectangle {
         id: borderFrame
         anchors.fill: parent
-        anchors.margins: 15
+        anchors.margins: 12  // Reduced margins to make room for wider border effect
         color: "transparent"
         radius: 40
-        border.width: 5  // Base border width
 
-        // Set border color based on battery level using the updated color scheme
-        border.color: batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor
+        // No border on this element anymore - we'll use the multi-layer approach below
 
-        opacity: 0.9
+        // Outer glow effect - widest, most transparent layer
+        Rectangle {
+            id: outerGlowBorder
+            anchors.fill: parent
+            anchors.margins: -8  // Negative margin makes it extend outward
+            color: "transparent"
+            radius: 48  // Increased radius to match the expanded size
+            border.width: 6
+            border.color: Qt.alpha(batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor, 0.4)
 
-        // Slower breathing animation with more subtle effect
-        SequentialAnimation on opacity {
-            loops: Animation.Infinite
-            NumberAnimation {
-                to: 0.7
-                duration: 1000  // Increased from 2000 to 3000 for slower effect
-                easing.type: Easing.InOutSine
-            }
-            NumberAnimation {
-                to: 0.7  // Changed from 0.7 to 0.75 for more subtle effect
-                duration: 1000  // Increased from 2000 to 3000 for slower effect
-                easing.type: Easing.InOutSine
+            // Breathing animation
+            SequentialAnimation on opacity {
+                loops: Animation.Infinite
+                NumberAnimation {
+                    to: 0.3
+                    duration: 1700
+                    easing.type: Easing.InOutSine
+                }
+                NumberAnimation {
+                    to: 0.7
+                    duration: 1700
+                    easing.type: Easing.InOutSine
+                }
             }
         }
 
-        // Simplified color animation based on charging state
-        SequentialAnimation on border.color {
-            running: batteryPercent.isCharging
-            loops: Animation.Infinite
-            ColorAnimation {
-                to: batteryPercent.chargingColor  // Light Blue charging color
-                duration: 1500  // Increased from 1500 to 2500 for slower effect
+        // Middle glow layer
+        Rectangle {
+            id: middleGlowBorder
+            anchors.fill: parent
+            anchors.margins: -4  // Slightly smaller negative margin than outer
+            color: "transparent"
+            radius: 44  // Adjusted radius
+            border.width: 6
+            border.color: Qt.alpha(batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor, 0.6)
+
+            // Breathing animation slightly offset from outer layer
+            SequentialAnimation on opacity {
+                loops: Animation.Infinite
+                NumberAnimation {
+                    to: 0.4
+                    duration: 1600
+                    easing.type: Easing.InOutSine
+                }
+                NumberAnimation {
+                    to: 0.8
+                    duration: 1600
+                    easing.type: Easing.InOutSine
+                }
             }
-            ColorAnimation {
-                to: Qt.lighter(batteryPercent.chargingColor, 1.3)  // Slightly lighter blue
-                duration: 1500  // Increased from 1500 to 2500 for slower effect
+        }
+
+        // Main border - brightest, most visible
+        Rectangle {
+            id: mainBorder
+            anchors.fill: parent
+            color: "transparent"
+            radius: 40
+            border.width: 8
+            border.color: batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor
+
+            // Main border animation
+            SequentialAnimation on opacity {
+                loops: Animation.Infinite
+                NumberAnimation {
+                    to: 0.6
+                    duration: 1500
+                    easing.type: Easing.InOutSine
+                }
+                NumberAnimation {
+                    to: 1.0
+                    duration: 1500
+                    easing.type: Easing.InOutSine
+                }
+            }
+
+            // Enhanced color animation based on charging state
+            SequentialAnimation on border.color {
+                running: batteryPercent.isCharging
+                loops: Animation.Infinite
+                ColorAnimation {
+                    to: batteryPercent.chargingColor
+                    duration: 1500
+                }
+                ColorAnimation {
+                    to: Qt.lighter(batteryPercent.chargingColor, 1.5)
+                    duration: 1500
+                }
+            }
+        }
+
+        // Inner glow effect
+        Rectangle {
+            anchors.fill: parent
+            anchors.margins: 5
+            color: "transparent"
+            radius: 35
+            border.width: 2
+            border.color: Qt.lighter(mainBorder.border.color, 1.2)
+            opacity: 0.7
+
+            // Synchronized animation with main border
+            SequentialAnimation on opacity {
+                loops: Animation.Infinite
+                NumberAnimation {
+                    to: 0.4
+                    duration: 1500
+                    easing.type: Easing.InOutSine
+                }
+                NumberAnimation {
+                    to: 0.7
+                    duration: 1500
+                    easing.type: Easing.InOutSine
+                }
             }
         }
     }
