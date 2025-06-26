@@ -22,6 +22,13 @@ endif()
 
 find_package(Qt6 REQUIRED COMPONENTS Core Gui Qml Quick QuickControls2)
 
+# Find ZeroMQ
+find_library(ZMQ_LIBRARY NAMES zmq libzmq REQUIRED)
+if(NOT ZMQ_LIBRARY)
+  message(FATAL_ERROR "ZeroMQ library not found")
+endif()
+message(STATUS "Found ZeroMQ: ${ZMQ_LIBRARY}")
+
 # Define source files
 set(SOURCES
     src/ClusterModel.cpp
@@ -48,6 +55,7 @@ target_link_libraries(ClusterDisplayLib PUBLIC
     Qt6::Qml
     Qt6::Quick
     Qt6::QuickControls2
+    ${ZMQ_LIBRARY}
 )
 
 # Main executable

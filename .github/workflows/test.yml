@@ -32,50 +32,30 @@ jobs:
           qml6-module-qtquick-templates \
           libgtest-dev \
           libgmock-dev \
-          lcov \
-          gcovr
+          libzmq3-dev \
+          wget \
+          lcov
+        # Download ZeroMQ C++ header (not provided by libzmq3-dev)
+        sudo wget -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp
 
-    - name: Install ZeroMQ
+    - name: Build and Test
       run: |
-        sudo apt-get install -y libzmq3-dev
-
-    - name: Configure CMake with coverage flags
-      run: |
-        mkdir -p ClusterDisplay/build
-        cd ClusterDisplay/build
-        cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage -g -O0"
-
-    - name: Build
-      run: |
-        cd ClusterDisplay/build
-        make -j$(nproc)
-
-    - name: Run tests
-      run: |
-        cd ClusterDisplay/build
-        ctest --verbose
+        cd ClusterDisplay
+        mkdir -p build
+        cd build
+        cmake .. -DCODE_COVERAGE=ON
+        make
+        ctest --output-on-failure
 
     - name: Generate coverage report
       run: |
         cd ClusterDisplay/build
-        lcov --capture --directory . --output-file coverage.info
+        lcov --directory . --capture --output-file coverage.info
         lcov --remove coverage.info '/usr/*' --output-file coverage.info
         lcov --list coverage.info
-
-    - name: Generate HTML coverage report
-      run: |
-        cd ClusterDisplay/build
-        genhtml coverage.info --output-directory coverage_report
-
-    - name: Upload coverage report
-      uses: actions/upload-artifact@v4
-      with:
-        name: coverage-report
-        path: ClusterDisplay/build/coverage_report
 
     - name: Upload coverage to Codecov
       uses: codecov/codecov-action@v3
       with:
-        file: ClusterDisplay/build/coverage.info
-        fail_ci_if_error: false
-        verbose: true
+        files: ./ClusterDisplay/build/coverage.info
+        fail_ci_if_error: true

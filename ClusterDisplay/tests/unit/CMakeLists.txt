@@ -19,6 +19,7 @@ foreach(TEST_SOURCE ${TEST_SOURCES})
         Qt6::QuickControls2
         ${GTEST_BOTH_LIBRARIES}
         pthread
+        ${ZMQ_LIBRARY}
     )
     add_test(NAME ${TEST_NAME} COMMAND ${TEST_NAME})
 endforeach()

@@ -48,7 +48,10 @@ jobs:
             ninja-build \
             libgtest-dev \
             libgmock-dev \
-            libzmq3-dev && \
+            libzmq3-dev \
+            wget && \
+          # Download ZeroMQ C++ header (not provided by libzmq3-dev)
+          wget -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp && \
           mkdir -p ClusterDisplay/build && \
           cd ClusterDisplay/build && \
           cmake .. -GNinja && \
