@@ -1,10 +1,10 @@
 # ClusterDisplay Tests
 
-This directory contains tests for the ClusterDisplay application.
+This directory contains the test suite for the Automotive Cluster Display application.
 
 ## Prerequisites
 
-To run the tests, you need to have the following installed:
+To run the tests, you need:
 - CMake (version 3.16 or higher)
 - Qt6 (with Test, Core, Gui, Qml, Quick, QuickControls2 components)
 - Google Test (gtest and gmock)
@@ -12,59 +12,69 @@ To run the tests, you need to have the following installed:
 
 ## Directory Structure
 
-- `unit/`: Contains unit tests for individual classes
-  - `test_ClusterModel.cpp`: Tests for the ClusterModel class
-  - `test_ZmqSubscriber.cpp`: Tests for the ZmqSubscriber class
-  - `test_BatteryIconObj.cpp`: Tests for the BatteryIconObj class
-  - `test_SpeedometerObj.cpp`: Tests for the SpeedometerObj class
+```
+tests/
+├── CMakeLists.txt                   # Test build configuration
+└── unit/                            # Unit tests
+    ├── test_ClusterModel.cpp        # Tests for ClusterModel class
+    ├── test_ZmqSubscriber.cpp       # Tests for ZmqSubscriber class
+    ├── test_BatteryIconObj.cpp      # Tests for BatteryIconObj class
+    └── test_SpeedometerObj.cpp      # Tests for SpeedometerObj class
+```
 
 ## Building and Running Tests
 
-To build and run the tests:
+### From Project Root
 
-1. Make sure you're in the project root directory
-2. Create a build directory if it doesn't exist:
-   ```
-   mkdir -p build && cd build
-   ```
-3. Configure the project with CMake:
-   ```
-   cmake ..
-   ```
-4. Build the tests:
-   ```
-   make
-   ```
-5. Run the tests:
-   ```
-   ctest
-   ```
+```bash
+# Create build directory
+mkdir -p build && cd build
 
-Or run individual tests:
+# Configure with CMake (enable code coverage if needed)
+cmake -DCODE_COVERAGE=ON ..
+
+# Build the tests
+make -j4
+
+# Run all tests
+ctest
+
+# Generate coverage report (if enabled)
+make coverage
 ```
-./tests/unit/test_ClusterModel
-./tests/unit/test_ZmqSubscriber
-./tests/unit/test_BatteryIconObj
-./tests/unit/test_SpeedometerObj
+
+### Running Individual Tests
+
+```bash
+# From build directory
+./ClusterDisplay/tests/unit/test_ClusterModel
+./ClusterDisplay/tests/unit/test_ZmqSubscriber
+./ClusterDisplay/tests/unit/test_BatteryIconObj
+./ClusterDisplay/tests/unit/test_SpeedometerObj
 ```
 
 ## Test Coverage
 
-The unit tests cover:
+The test suite covers:
 
-- ClusterModel:
-  - Initial values
-  - Property setters and signal emissions
+### ClusterModel
+- Initial property values
+- Property setters and getters
+- Signal emission on property changes
+- DateTime updates
+- Mock data simulation
 
-- ZmqSubscriber:
-  - Message reception and signal emission
+### ZmqSubscriber
+- Socket initialization
+- Message reception
+- Signal emission with received data
 
-- BatteryIconObj:
-  - Initial values
-  - Percentage property setter
-  - Message handling
+### BatteryIconObj
+- Initial values
+- Percentage property handling
+- ZeroMQ message processing
 
-- SpeedometerObj:
-  - Initial values
-  - Speed property setter
-  - Message handling
+### SpeedometerObj
+- Initial values
+- Speed property handling
+- ZeroMQ message processing

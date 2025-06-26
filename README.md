@@ -1,9 +1,5 @@
 # Automotive Cluster Display
 
-[![Build for ARM64 Raspberry Pi](https://github.com/username/cluster/actions/workflows/build.yml/badge.svg)](https://github.com/username/cluster/actions/workflows/build.yml)
-[![Test with Coverage](https://github.com/username/cluster/actions/workflows/test.yml/badge.svg)](https://github.com/username/cluster/actions/workflows/test.yml)
-[![codecov](https://codecov.io/gh/username/cluster/branch/main/graph/badge.svg)](https://codecov.io/gh/username/cluster)
-
 ## Overview
 
 A modern automotive cluster display designed for high-end vehicle dashboards. The system receives real-time data via ZeroMQ and presents it through a professional Qt6-based interface featuring:
@@ -65,14 +61,16 @@ The display features a dynamic border that provides visual feedback about batter
 - **Qt Version**: Qt 6.4+
 - **C++ Standard**: C++17
 - **Platform**: Linux
-- **Dependencies**: ZeroMQ library
+- **Dependencies**:
+  - ZeroMQ library
+  - Google Test (for running tests)
 
 ## Build Instructions
 
 ```bash
 # Clone the repository
-git clone https://github.com/username/cluster.git
-cd cluster/ClusterDisplay
+git clone <repository-url>
+cd cluster
 
 # Create build directory
 mkdir build && cd build
@@ -84,8 +82,28 @@ cmake ..
 make -j4
 
 # Run the application
-./ClusterDisplay
+./ClusterDisplay/ClusterDisplay
 ```
+
+## Testing
+
+The project includes a comprehensive test suite in the `ClusterDisplay/tests` directory:
+
+```bash
+# Build and run all tests
+cd build
+ctest
+
+# Run specific test
+./ClusterDisplay/tests/unit/test_ClusterModel
+```
+
+The tests cover core functionality including:
+- ClusterModel properties and signals
+- ZeroMQ communication
+- Battery and speedometer object behavior
+
+See `ClusterDisplay/tests/README.md` for detailed testing information.
 
 ## ZeroMQ Configuration
 
@@ -113,13 +131,15 @@ ClusterDisplay/
 │   ├── ZmqSubscriber.cpp            # ZeroMQ communication implementation
 │   ├── SpeedometerObj.cpp           # Speed data implementation
 │   └── BatteryIconObj.cpp           # Battery data implementation
-└── ui/                              # QML UI components
-    ├── JetracerAlertDisplay.qml     # Road visualization with alerts
-    ├── BatteryPercentDisplay.qml    # Battery indicator with color coding
-    ├── NumberSpeedometer.qml        # Digital speedometer
-    ├── AlertsDisplay.qml            # Alert visualization
-    ├── ClockDisplay.qml             # Time display
-    └── Other components...          # Additional UI elements
+├── ui/                              # QML UI components
+│   ├── JetracerAlertDisplay.qml     # Road visualization with alerts
+│   ├── BatteryPercentDisplay.qml    # Battery indicator with color coding
+│   ├── NumberSpeedometer.qml        # Digital speedometer
+│   ├── AlertsDisplay.qml            # Alert visualization
+│   ├── ClockDisplay.qml             # Time display
+│   └── Other components...          # Additional UI elements
+└── tests/                           # Test suite
+    └── unit/                        # Unit tests for C++ classes
 ```
 
 ## Development Mode
