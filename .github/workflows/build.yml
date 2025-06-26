@@ -91,26 +91,26 @@ jobs:
       - name: Deploy binary to Raspberry Pi
         run: |
           sshpass -p "${{ secrets.RASP_PASSWORD }}" \
-          scp -r ./deploy/bin \
+          scp -o StrictHostKeyChecking=no -r ./deploy/bin \
           team06@100.93.193.159:/home/team06/
 
       # Set executable permissions on deployed files
       - name: Set executable permissions
         run: |
           sshpass -p "${{ secrets.RASP_PASSWORD }}" \
-          ssh team06@100.93.193.159 'chmod +x /home/team06/bin/*'
+          ssh -o StrictHostKeyChecking=no team06@100.93.193.159 'chmod +x /home/team06/bin/*'
 
       # Record deployment in history log
       - name: Create deployment record
         run: |
           sshpass -p "${{ secrets.RASP_PASSWORD }}" \
-          ssh team06@100.93.193.159 "echo 'Deployed version ${{ env.APP_VERSION }} on $(date)' >> /home/team06/deployment-history.log"
+          ssh -o StrictHostKeyChecking=no team06@100.93.193.159 "echo 'Deployed version ${{ env.APP_VERSION }} on $(date)' >> /home/team06/deployment-history.log"
 
       # Verify successful deployment
       - name: Verify deployment
         run: |
           sshpass -p "${{ secrets.RASP_PASSWORD }}" \
-          ssh team06@100.93.193.159 'test -f /home/team06/bin/version.txt'
+          ssh -o StrictHostKeyChecking=no team06@100.93.193.159 'test -f /home/team06/bin/version.txt'
 
       # Notify on successful deployment
       - name: Notify deployment status
