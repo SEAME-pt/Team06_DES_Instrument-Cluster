@@ -43,6 +43,8 @@ jobs:
         cd ClusterDisplay
         mkdir -p build
         cd build
+        # Remove any existing CMake cache
+        rm -rf CMakeCache.txt CMakeFiles/
         cmake .. -DCODE_COVERAGE=ON
         make
         ctest --output-on-failure
@@ -52,6 +54,8 @@ jobs:
         cd ClusterDisplay/build
         lcov --directory . --capture --output-file coverage.info --ignore-errors mismatch
         lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --remove coverage.info '*/tests/unit/*' --output-file coverage.info
+        lcov --remove coverage.info '*/ClusterDisplayLib_autogen/*' --output-file coverage.info
         lcov --list coverage.info
         # Generate HTML report
         genhtml coverage.info --output-directory coverage_report

@@ -28,7 +28,7 @@ jobs:
     - name: Build in Docker container
       run: |
         docker run --platform linux/arm64 --rm -v ${{ github.workspace }}:/workspace \
-        -w /workspace ubuntu:24.04 /bin/bash -c '
+        -w /workspace ubuntu:22.04 /bin/bash -c '
           apt-get update && \
           apt-get install -y --no-install-recommends \
             build-essential \
@@ -54,6 +54,8 @@ jobs:
           wget --no-check-certificate -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp && \
           mkdir -p ClusterDisplay/build && \
           cd ClusterDisplay/build && \
+          # Remove any existing CMake cache
+          rm -rf CMakeCache.txt CMakeFiles/ && \
           cmake .. -GNinja && \
           ninja
         '
