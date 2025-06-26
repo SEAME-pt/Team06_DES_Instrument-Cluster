@@ -45,7 +45,6 @@ jobs:
             qml6-module-qtquick-window \
             qml6-module-qtquick-templates \
             libqt6opengl6-dev \
-            qt6-opengl-dev \
             pkg-config \
             ninja-build \
             libgtest-dev \
