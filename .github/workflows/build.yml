@@ -44,12 +44,22 @@ jobs:
             qml6-module-qt-labs-platform \
             qml6-module-qtquick-window \
             qml6-module-qtquick-templates \
+            libqt6opengl6-dev \
+            qt6-opengl-dev \
             pkg-config \
             ninja-build \
             libgtest-dev \
             libgmock-dev \
             libzmq3-dev \
-            wget && \
+            wget \
+            libgl1-mesa-dev \
+            libgles2-mesa-dev \
+            libegl1-mesa-dev \
+            libxkbcommon-dev \
+            libvulkan-dev \
+            libglx-dev \
+            libxcb-*-dev \
+            libx11-xcb-dev && \
           # Download ZeroMQ C++ header (not provided by libzmq3-dev)
           wget --no-check-certificate -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp && \
           mkdir -p ClusterDisplay/build && \
