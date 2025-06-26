@@ -2,7 +2,6 @@
 #include <QQmlApplicationEngine>
 #include <QQuickStyle>
 #include <QQmlContext>
-#include <QFontDatabase>
 #include <QDir>
 #include <QDebug>
 #include "ClusterModel.hpp"
