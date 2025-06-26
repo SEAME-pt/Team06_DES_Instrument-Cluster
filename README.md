@@ -1,5 +1,9 @@
 # CLUSTER DISPLAY
 
+[![Build for ARM64 Raspberry Pi](https://github.com/username/cluster/actions/workflows/build.yml/badge.svg)](https://github.com/username/cluster/actions/workflows/build.yml)
+[![Test with Coverage](https://github.com/username/cluster/actions/workflows/test.yml/badge.svg)](https://github.com/username/cluster/actions/workflows/test.yml)
+[![codecov](https://codecov.io/gh/username/cluster/branch/main/graph/badge.svg)](https://codecov.io/gh/username/cluster)
+
 ## General Context
 This is a program written in Qt which receives information from a socket using ZeroMQ and displays it on screen. The information displayed includes:
 - **Speed (in Km/h)**

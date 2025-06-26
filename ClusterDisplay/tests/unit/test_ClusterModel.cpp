@@ -1,0 +1,194 @@
+#include <gtest/gtest.h>
+#include <QSignalSpy>
+#include "ClusterModel.hpp"
+
+class ClusterModelTest : public ::testing::Test {
+protected:
+    void SetUp() override {
+        model = new ClusterModel();
+    }
+
+    void TearDown() override {
+        delete model;
+    }
+
+    ClusterModel* model;
+};
+
+TEST_F(ClusterModelTest, InitialValues) {
+    // Test initial values
+    EXPECT_EQ(model->speed(), 0);
+    EXPECT_EQ(model->battery(), 100);
+    EXPECT_FALSE(model->charging());
+    EXPECT_EQ(model->odometer(), 0);
+    EXPECT_EQ(model->drivingMode(), "MAN");
+    EXPECT_FALSE(model->objectAlert());
+    EXPECT_FALSE(model->laneAlert());
+    EXPECT_EQ(model->laneDeviationSide(), "left");
+}
+
+TEST_F(ClusterModelTest, SpeedSetter) {
+    QSignalSpy spy(model, &ClusterModel::speedChanged);
+
+    // Set a new value
+    model->setSpeed(50);
+
+    // Check if the value was updated
+    EXPECT_EQ(model->speed(), 50);
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toInt(), 50);
+
+    // Set the same value again
+    model->setSpeed(50);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, BatterySetter) {
+    QSignalSpy spy(model, &ClusterModel::batteryChanged);
+
+    // Set a new value
+    model->setBattery(75);
+
+    // Check if the value was updated
+    EXPECT_EQ(model->battery(), 75);
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toInt(), 75);
+
+    // Set the same value again
+    model->setBattery(75);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, ChargingSetter) {
+    QSignalSpy spy(model, &ClusterModel::chargingChanged);
+
+    // Set a new value
+    model->setCharging(true);
+
+    // Check if the value was updated
+    EXPECT_TRUE(model->charging());
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toBool(), true);
+
+    // Set the same value again
+    model->setCharging(true);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, OdometerSetter) {
+    QSignalSpy spy(model, &ClusterModel::odometerChanged);
+
+    // Set a new value
+    model->setOdometer(1000);
+
+    // Check if the value was updated
+    EXPECT_EQ(model->odometer(), 1000);
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toInt(), 1000);
+
+    // Set the same value again
+    model->setOdometer(1000);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, DrivingModeSetter) {
+    QSignalSpy spy(model, &ClusterModel::drivingModeChanged);
+
+    // Set a new value
+    model->setDrivingMode("AUTO");
+
+    // Check if the value was updated
+    EXPECT_EQ(model->drivingMode(), "AUTO");
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toString(), "AUTO");
+
+    // Set the same value again
+    model->setDrivingMode("AUTO");
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, ObjectAlertSetter) {
+    QSignalSpy spy(model, &ClusterModel::objectAlertChanged);
+
+    // Set a new value
+    model->setObjectAlert(true);
+
+    // Check if the value was updated
+    EXPECT_TRUE(model->objectAlert());
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toBool(), true);
+
+    // Set the same value again
+    model->setObjectAlert(true);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, LaneAlertSetter) {
+    QSignalSpy spy(model, &ClusterModel::laneAlertChanged);
+
+    // Set a new value
+    model->setLaneAlert(true);
+
+    // Check if the value was updated
+    EXPECT_TRUE(model->laneAlert());
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toBool(), true);
+
+    // Set the same value again
+    model->setLaneAlert(true);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, LaneDeviationSideSetter) {
+    QSignalSpy spy(model, &ClusterModel::laneDeviationSideChanged);
+
+    // Set a new value
+    model->setLaneDeviationSide("right");
+
+    // Check if the value was updated
+    EXPECT_EQ(model->laneDeviationSide(), "right");
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toString(), "right");
+
+    // Set the same value again
+    model->setLaneDeviationSide("right");
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+int main(int argc, char **argv) {
+    QCoreApplication app(argc, argv);
+    ::testing::InitGoogleTest(&argc, argv);
+    return RUN_ALL_TESTS();
+}

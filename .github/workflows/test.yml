@@ -1,0 +1,84 @@
+name: Test with Coverage
+
+on:
+  push:
+    branches: [ main, dev ]
+  pull_request:
+    branches: [ main, dev ]
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          cmake \
+          qt6-base-dev \
+          qt6-declarative-dev \
+          qt6-tools-dev \
+          qt6-tools-dev-tools \
+          qt6-qml-dev \
+          libqt6quick6 \
+          libqt6quickcontrols2-6 \
+          qml6-module-qtquick \
+          qml6-module-qtquick-controls \
+          qml6-module-qtquick-layouts \
+          qml6-module-qtqml-workerscript \
+          qml6-module-qt-labs-platform \
+          qml6-module-qtquick-window \
+          qml6-module-qtquick-templates \
+          libgtest-dev \
+          libgmock-dev \
+          lcov \
+          gcovr
+
+    - name: Install ZeroMQ
+      run: |
+        sudo apt-get install -y libzmq3-dev
+
+    - name: Configure CMake with coverage flags
+      run: |
+        mkdir -p ClusterDisplay/build
+        cd ClusterDisplay/build
+        cmake .. -DCMAKE_BUILD_TYPE=Debug -DCMAKE_CXX_FLAGS="--coverage -g -O0"
+
+    - name: Build
+      run: |
+        cd ClusterDisplay/build
+        make -j$(nproc)
+
+    - name: Run tests
+      run: |
+        cd ClusterDisplay/build
+        ctest --verbose
+
+    - name: Generate coverage report
+      run: |
+        cd ClusterDisplay/build
+        lcov --capture --directory . --output-file coverage.info
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --list coverage.info
+
+    - name: Generate HTML coverage report
+      run: |
+        cd ClusterDisplay/build
+        genhtml coverage.info --output-directory coverage_report
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ClusterDisplay/build/coverage_report
+
+    - name: Upload coverage to Codecov
+      uses: codecov/codecov-action@v3
+      with:
+        file: ClusterDisplay/build/coverage.info
+        fail_ci_if_error: false
+        verbose: true

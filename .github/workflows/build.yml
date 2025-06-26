@@ -2,7 +2,7 @@ name: Build for ARM64 Raspberry Pi
 
 on:
   push:
-    branches: [ dev, zm/new-features ]
+    branches: [ dev ]
   pull_request:
     branches: [ main ]
 
