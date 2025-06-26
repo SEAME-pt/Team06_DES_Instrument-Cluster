@@ -45,7 +45,10 @@ jobs:
             qml6-module-qtquick-window \
             qml6-module-qtquick-templates \
             pkg-config \
-            ninja-build && \
+            ninja-build \
+            libgtest-dev \
+            libgmock-dev \
+            libzmq3-dev && \
           mkdir -p ClusterDisplay/build && \
           cd ClusterDisplay/build && \
           cmake .. -GNinja && \

@@ -23,7 +23,7 @@ signals:
     void    percentageChanged(int);
 
 protected:
-    void    _handleMsg(QString& message) override;
+    void    _handleMsg(QString& message);
 
 private:
     int     m_percentage;

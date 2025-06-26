@@ -23,7 +23,7 @@ signals:
     void    speedChanged(double);
 
 protected:
-    void    _handleMsg(QString& message) override;
+    void    _handleMsg(QString& message);
 private:
     double              m_speed;
 };
