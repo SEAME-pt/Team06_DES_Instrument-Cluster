@@ -7,32 +7,39 @@
 #include <QDebug>
 #include "ClusterModel.hpp"
 
+/**
+ * @brief Main entry point for the Automotive Cluster Display application
+ *
+ * Sets up the Qt application, registers the cluster model with QML,
+ * and loads the main QML interface.
+ */
 int main(int argc, char *argv[])
 {
+    // Create Qt application
     QGuiApplication app(argc, argv);
-
-    // Set application properties
     app.setApplicationName("Automotive Cluster Display");
     app.setApplicationVersion("2.0");
     app.setOrganizationName("Team06");
 
-    // Set modern Qt Quick style
+    // Apply Material Design style for modern look
     QQuickStyle::setStyle("Material");
 
-    // Create cluster model instance
+    // Create and initialize the cluster data model
     ClusterModel clusterModel;
 
-    // Set up QML engine
+    // Set up QML engine and expose the model to QML
     QQmlApplicationEngine engine;
-
-    // Register cluster model with QML
     engine.rootContext()->setContextProperty("clusterModel", &clusterModel);
 
-    // Load the main QML file
+    // Load the main QML interface
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
-    if (engine.rootObjects().isEmpty())
+    // Check if QML loaded successfully
+    if (engine.rootObjects().isEmpty()) {
+        qCritical() << "Failed to load QML interface";
         return -1;
+    }
 
+    // Start the application event loop
     return app.exec();
 }

@@ -1,55 +1,57 @@
 #include "ZmqSubscriber.hpp"
-#include <QDateTime>
 #include <QDebug>
-#include <iostream>
 
 ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
     : QObject(parent), _context(1), _socket(_context, zmq::socket_type::sub)
 {
-    // Set HWM to 1 to only keep latest message
-    int hwm = 1;
-    _socket.set(zmq::sockopt::rcvhwm, hwm);
+    // Configure socket options for optimal performance
+
+    // Set high water mark to 1 to only keep latest message
+    _socket.set(zmq::sockopt::rcvhwm, 1);
 
     // Enable conflate option to only keep most recent message
-    int conflate = 1;
-    _socket.set(zmq::sockopt::conflate, conflate);
+    _socket.set(zmq::sockopt::conflate, 1);
 
     // Set zero linger period for clean exits
-    int linger = 0;
-    _socket.set(zmq::sockopt::linger, linger);
+    _socket.set(zmq::sockopt::linger, 0);
 
     // Disable Nagle's algorithm for TCP connections
-    int tcp_nodelay = 1;
-    _socket.set(zmq::sockopt::ipv6, tcp_nodelay);  // This option also disables Nagle's algorithm
+    _socket.set(zmq::sockopt::ipv6, 1);
 
-    // Sets the address the socket should read from and subscribes to it.
+    // Connect to the specified address
     _socket.connect(address.toStdString());
+
+    // Subscribe to all messages (empty filter)
     _socket.set(zmq::sockopt::subscribe, "");
 
-    // Sets up a socket notifier to send a signal in case of activity.
+    // Set up socket notifier for Qt event integration
     int socketFd = _socket.get(zmq::sockopt::fd);
-    _notifier = std::unique_ptr<QSocketNotifier>(
-                new QSocketNotifier(socketFd, QSocketNotifier::Read));
+    _notifier = std::make_unique<QSocketNotifier>(socketFd, QSocketNotifier::Read);
     connect(_notifier.get(), &QSocketNotifier::activated,
             this, &ZmqSubscriber::onMessageReceived);
 }
 
-ZmqSubscriber::~ZmqSubscriber(){}
+ZmqSubscriber::~ZmqSubscriber()
+{
+    // Socket and context are automatically closed by their destructors
+}
 
 void ZmqSubscriber::onMessageReceived()
 {
-    // Gets messages while there are messages to get.
+    // Process all available messages in the queue
     while (true)
     {
         zmq::message_t message;
         zmq::recv_result_t result = _socket.recv(message, zmq::recv_flags::dontwait);
+
+        // Break if no more messages
         if (!result)
             break;
-        std::string messageStr = message.to_string();
-        QString msgContent = QString::fromStdString(message.to_string());
-        std::cout << "Received message: " << messageStr << std::endl;
 
-        // Emit signal with the message
+        // Convert message to QString and emit signal
+        QString msgContent = QString::fromStdString(message.to_string());
+        qDebug() << "ZMQ received:" << msgContent;
+
         emit messageReceived(msgContent);
     }
 }

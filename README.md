@@ -1,64 +1,127 @@
-# CLUSTER DISPLAY
+# Automotive Cluster Display
 
 [![Build for ARM64 Raspberry Pi](https://github.com/username/cluster/actions/workflows/build.yml/badge.svg)](https://github.com/username/cluster/actions/workflows/build.yml)
 [![Test with Coverage](https://github.com/username/cluster/actions/workflows/test.yml/badge.svg)](https://github.com/username/cluster/actions/workflows/test.yml)
 [![codecov](https://codecov.io/gh/username/cluster/branch/main/graph/badge.svg)](https://codecov.io/gh/username/cluster)
 
-## General Context
-This is a program written in Qt which receives information from a socket using ZeroMQ and displays it on screen. The information displayed includes:
-- **Speed (in Km/h)**
-- **Battery level**
-- **Current time**
-- **Lane departure alerts**
-- **Object detection alerts**
+## Overview
 
----
+A modern automotive cluster display designed for high-end vehicle dashboards. The system receives real-time data via ZeroMQ and presents it through a professional Qt6-based interface featuring:
 
-## System Structure
-### 1. QML
-- The actual display is done using QtQuick 6.4, an application written in QML. All logic which needs no external values is done there, such as the time label (which is updated using a QML function) and the animations.
-- The display features modern visual elements including animated speedometer, battery indicators, and alert systems.
-- To receive values from the outside, QML accesses values exposed by C++ classes.
+- Digital speedometer with smooth animations
+- Dynamic battery level indicator with color-coded states
+- Real-time clock display
+- Advanced driver assistance visualizations:
+  - Lane departure warnings
+  - Object detection alerts
+  - 3D perspective road visualization
 
-### 2. C++
-- Currently, each external value displayed has its own C++ class. This allows a different update rate for each value, reducing the amount of unnecessary data displayed and sent.
-- The class exposes the property to be shown to QML, which updates it on screen automatically, due to the signal that is emitted when the property changes.
-- The value is received through ZeroMQ, a library which handles sockets at low level.
+## Architecture
 
-### 3. ZeroMQ
-- Each C++ class inherits from a ZmqSubscriber class, which handles the communication with the "outside world".
-- Currently, the communication only works one way. The pattern used is the "Publisher-Subscriber" pattern, where a publisher (in this case, the middleware) publishes a value and a subscriber receives it.
+### UI Layer (QML)
+- Built with QtQuick 6.4
+- Modern circular gauges and dynamic visual elements
+- Responsive animations and transitions
+- Dark theme with automotive-grade styling
+- High DPI display support
 
----
+### Application Layer (C++)
+- Each display value has a dedicated C++ class
+- Properties exposed to QML via Qt's property system
+- Signal-based updates for efficient rendering
+- C++17 standard compliance
+
+### Communication Layer (ZeroMQ)
+- Publisher-Subscriber pattern
+- Real-time data reception from external systems
+- Each C++ class inherits from ZmqSubscriber base class
 
 ## Visual Features
 
 ### Border Animation System
-The cluster display features a dynamic border animation system that provides visual feedback about the battery status:
+The display features a dynamic border that provides visual feedback about battery status:
 
-- **When Charging**: The border animates with a pulsing strong light blue color (#B3E5FC)
-- **When Not Charging**: The border color reflects the battery percentage:
-  - **80-100%**: Light Green (#90EE90)
-  - **50-80%**: Lighter Green (#C1FFC1)
-  - **25-50%**: Light Lemon Chiffon Yellow (#FFFACD)
-  - **10-25%**: Light Orange (#FFDAB9)
-  - **0-10%**: Light Red (#FFC0CB)
+- **Charging Mode**: Pulsing light blue animation (#B3E5FC)
+- **Battery Level Colors**:
+  - 80-100%: Light Green (#90EE90)
+  - 50-80%: Lighter Green (#C1FFC1)
+  - 25-50%: Light Lemon Chiffon Yellow (#FFFACD)
+  - 10-25%: Light Orange (#FFDAB9)
+  - 0-10%: Light Red (#FFC0CB)
 
 ### Alert Systems
-- **Lane Departure Warning**: Visual indicators when the vehicle deviates from its lane
-- **Object Detection**: Displays obstacles detected in front of the vehicle
+- **Lane Departure Warning**: Visual indicators when vehicle deviates from lane
+- **Object Detection**: 3D visualization of obstacles detected ahead
+- **Color-coded warnings** with intuitive green/yellow/red states
 
-### Mock Mode
-The system includes a mock mode that cycles through battery percentages from 0-100% to demonstrate the different border colors and animations.
+### Animation Effects
+- Smooth transitions with professional easing curves
+- Speed-responsive road line animations
+- Subtle opacity variations for elegant visual feedback
+- Gradient backgrounds with proper layering
 
-### Border Animation
-- Slow, subtle breathing effect with 6-second cycle
-- Opacity varies between 0.75 and 0.95 for a gentle pulsing
-- When charging, color alternates between blue shades with 5-second cycle
+## Technical Requirements
 
----
+- **Qt Version**: Qt 6.4+
+- **C++ Standard**: C++17
+- **Platform**: Linux
+- **Dependencies**: ZeroMQ library
 
-### Dependencies
-- Linux
-- Qt 6.4 required, with Qt.Quick library for QML support
-- ZeroMQ library
+## Build Instructions
+
+```bash
+# Clone the repository
+git clone https://github.com/username/cluster.git
+cd cluster/ClusterDisplay
+
+# Create build directory
+mkdir build && cd build
+
+# Configure with CMake
+cmake ..
+
+# Build the project
+make -j4
+
+# Run the application
+./ClusterDisplay
+```
+
+## ZeroMQ Configuration
+
+The display expects data on the following endpoints:
+- **Speed Data**: `tcp://localhost:5555`
+- **Battery Data**: `tcp://localhost:5556`
+
+Data format should be numeric strings (e.g., "45" for 45 km/h or "78" for 78% battery).
+
+## Project Structure
+
+```
+ClusterDisplay/
+├── main.cpp                         # Application entry point
+├── main.qml                         # Main UI layout with border animations
+├── CMakeLists.txt                   # Build configuration
+├── qml.qrc                          # QML resources
+├── inc/                             # Header files
+│   ├── ClusterModel.hpp             # Main model class
+│   ├── ZmqSubscriber.hpp            # ZeroMQ communication base class
+│   ├── SpeedometerObj.hpp           # Speed data handler
+│   └── BatteryIconObj.hpp           # Battery data handler
+├── src/                             # C++ implementation files
+│   ├── ClusterModel.cpp             # Main model implementation
+│   ├── ZmqSubscriber.cpp            # ZeroMQ communication implementation
+│   ├── SpeedometerObj.cpp           # Speed data implementation
+│   └── BatteryIconObj.cpp           # Battery data implementation
+└── ui/                              # QML UI components
+    ├── JetracerAlertDisplay.qml     # Road visualization with alerts
+    ├── BatteryPercentDisplay.qml    # Battery indicator with color coding
+    ├── NumberSpeedometer.qml        # Digital speedometer
+    ├── AlertsDisplay.qml            # Alert visualization
+    ├── ClockDisplay.qml             # Time display
+    └── Other components...          # Additional UI elements
+```
+
+## Development Mode
+
+The system includes a mock mode that cycles through battery percentages from 0-100% to demonstrate the different border colors and animations, useful for development and demonstration purposes.
