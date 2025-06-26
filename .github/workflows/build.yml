@@ -2,9 +2,9 @@ name: Build for ARM64 Raspberry Pi
 
 on:
   push:
-    branches: [ dev, zm/tests ]
+    branches: [ dev ]
   pull_request:
-    branches: [ main ]
+    branches: [ main, dev ]
 
 # Add environment variables at workflow level
 env:

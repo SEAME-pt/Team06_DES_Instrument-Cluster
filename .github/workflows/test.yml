@@ -2,7 +2,7 @@ name: Test with Coverage
 
 on:
   push:
-    branches: [ main, dev, zm/tests ]
+    branches: [ dev ]
   pull_request:
     branches: [ main, dev ]
 
