@@ -1,0 +1,209 @@
+name: CI/CD Pipeline
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+env:
+  APP_VERSION: 1.0.${{ github.run_number }}
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          cmake \
+          qt6-base-dev \
+          qt6-declarative-dev \
+          qt6-tools-dev \
+          qt6-tools-dev-tools \
+          qml6-module-qtquick \
+          qml6-module-qtquick-controls \
+          qml6-module-qtquick-layouts \
+          qml6-module-qtqml-workerscript \
+          qml6-module-qt-labs-platform \
+          qml6-module-qtquick-window \
+          qml6-module-qtquick-templates \
+          libgtest-dev \
+          libgmock-dev \
+          libzmq3-dev \
+          wget \
+          lcov \
+          clang \
+          clang-tidy \
+          clang-format
+        # Download ZeroMQ C++ header (not provided by libzmq3-dev)
+        sudo wget --no-check-certificate -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp
+
+    - name: Run Clang Format
+      run: |
+        cd ClusterDisplay
+        find src inc tests -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -style=file -i
+        git diff --exit-code || (echo "Clang format check failed. Run clang-format locally and commit changes." && exit 1)
+
+    - name: Run Clang Tidy
+      run: |
+        cd ClusterDisplay
+        mkdir -p build_tidy
+        cd build_tidy
+        cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        cd ..
+        find src inc tests -name "*.cpp" | xargs clang-tidy -p build_tidy/compile_commands.json
+
+    - name: Build and Test
+      run: |
+        cd ClusterDisplay
+        mkdir -p build
+        cd build
+        # Remove any existing CMake cache
+        rm -rf CMakeCache.txt CMakeFiles/
+        cmake .. -DCODE_COVERAGE=ON
+        make
+        ctest --output-on-failure
+
+    - name: Generate coverage report
+      run: |
+        cd ClusterDisplay/build
+        lcov --directory . --capture --output-file coverage.info --ignore-errors mismatch
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --remove coverage.info '*/tests/unit/*' --output-file coverage.info
+        lcov --remove coverage.info '*/ClusterDisplayLib_autogen/*' --output-file coverage.info
+        lcov --list coverage.info
+        # Generate HTML report
+        genhtml coverage.info --output-directory coverage_report
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ClusterDisplay/build/coverage_report
+
+  build:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up QEMU
+      uses: docker/setup-qemu-action@v3
+      with:
+        platforms: arm64
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Build in Docker container
+      run: |
+        docker run --platform linux/arm64 --rm -v ${{ github.workspace }}:/workspace \
+        -w /workspace ubuntu:22.04 /bin/bash -c '
+          apt-get update && \
+          apt-get install -y --no-install-recommends \
+            build-essential \
+            cmake \
+            qt6-base-dev \
+            qt6-declarative-dev \
+            qt6-tools-dev \
+            qt6-tools-dev-tools \
+            qml6-module-qtquick \
+            qml6-module-qtquick-controls \
+            qml6-module-qtquick-layouts \
+            qml6-module-qtqml-workerscript \
+            qml6-module-qt-labs-platform \
+            qml6-module-qtquick-window \
+            qml6-module-qtquick-templates \
+            libqt6opengl6-dev \
+            pkg-config \
+            ninja-build \
+            libgtest-dev \
+            libgmock-dev \
+            libzmq3-dev \
+            wget \
+            libgl1-mesa-dev \
+            libgles2-mesa-dev \
+            libegl1-mesa-dev \
+            libxkbcommon-dev \
+            libvulkan-dev \
+            libglx-dev \
+            libxcb-*-dev \
+            libx11-xcb-dev && \
+          # Download ZeroMQ C++ header (not provided by libzmq3-dev)
+          wget --no-check-certificate -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp && \
+          mkdir -p ClusterDisplay/build && \
+          cd ClusterDisplay/build && \
+          # Remove any existing CMake cache
+          rm -rf CMakeCache.txt CMakeFiles/ && \
+          cmake .. -GNinja && \
+          ninja
+        '
+
+    - name: Upload artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: cluster-display-arm64-${{ env.APP_VERSION }}
+        path: ClusterDisplay/build/ClusterDisplay
+
+  deploy:
+    needs: build
+    if: github.event_name != 'pull_request' && github.ref == 'refs/heads/dev'
+    runs-on: [self-hosted]
+
+    steps:
+      # Prepare deployment directory
+      - name: Ensure target directory exists
+        run: |
+          mkdir -p ./deploy/bin
+          rm -rf ./deploy/bin/*
+
+      # Download the build artifacts
+      - name: Download build artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: cluster-display-arm64-${{ env.APP_VERSION }}
+          path: ./deploy/bin
+
+      # Create version file
+      - name: Create version file
+        run: |
+          echo '${{ env.APP_VERSION }}' > ./deploy/bin/version.txt
+
+      # Deploy the binaries to Raspberry Pi
+      - name: Deploy binary to Raspberry Pi
+        run: |
+          sshpass -p "${{ secrets.RASP_PASSWORD }}" \
+          scp -o StrictHostKeyChecking=no -r ./deploy/bin \
+          team06@100.93.193.159:/home/team06/
+
+      # Set executable permissions on deployed files
+      - name: Set executable permissions
+        run: |
+          sshpass -p "${{ secrets.RASP_PASSWORD }}" \
+          ssh -o StrictHostKeyChecking=no team06@100.93.193.159 'chmod +x /home/team06/bin/*'
+
+      # Record deployment in history log
+      - name: Create deployment record
+        run: |
+          sshpass -p "${{ secrets.RASP_PASSWORD }}" \
+          ssh -o StrictHostKeyChecking=no team06@100.93.193.159 "echo 'Deployed version ${{ env.APP_VERSION }} on $(date)' >> /home/team06/deployment-history.log"
+
+      # Verify successful deployment
+      - name: Verify deployment
+        run: |
+          sshpass -p "${{ secrets.RASP_PASSWORD }}" \
+          ssh -o StrictHostKeyChecking=no team06@100.93.193.159 'test -f /home/team06/bin/version.txt'
+
+      # Notify on successful deployment
+      - name: Notify deployment status
+        if: ${{ success() }}
+        run: echo "::notice::Successfully deployed version ${{ env.APP_VERSION }} to Raspberry Pi"

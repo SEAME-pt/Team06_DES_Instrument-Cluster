@@ -1,11 +1,8 @@
 name: Build for ARM64 Raspberry Pi
 
 on:
-  workflow_run:
-    workflows: ["Test with Coverage"]
-    types:
-      - completed
-    branches: [ dev, main ]
+  repository_dispatch:
+    types: [tests-passed]
   workflow_dispatch:
     inputs:
       reason:
@@ -20,23 +17,23 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
     - name: Debug workflow trigger
       run: |
         echo "Event name: ${{ github.event_name }}"
-        if [ "${{ github.event_name }}" == "workflow_run" ]; then
-          echo "Triggered by workflow: ${{ github.event.workflow_run.name }}"
-          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
-          echo "Workflow SHA: ${{ github.event.workflow_run.head_sha }}"
+        if [ "${{ github.event_name }}" == "repository_dispatch" ]; then
+          echo "Triggered by repository_dispatch event"
+          echo "Event type: ${{ github.event.action }}"
+          echo "Commit SHA: ${{ github.event.client_payload.sha }}"
+          echo "Ref: ${{ github.event.client_payload.ref }}"
         else
           echo "Manually triggered: ${{ github.event.inputs.reason }}"
         fi
 
     - uses: actions/checkout@v4
       with:
-        ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
+        ref: ${{ github.event_name == 'repository_dispatch' && github.event.client_payload.sha || github.ref }}
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
