@@ -37,13 +37,13 @@ A modern automotive cluster display designed for high-end vehicle dashboards. Th
 ### Border Animation System
 The display features a dynamic border that provides visual feedback about battery status:
 
-- **Charging Mode**: Pulsing light blue animation (#B3E5FC)
+- **Charging Mode**: Pulsing light blue animation
 - **Battery Level Colors**:
-  - 80-100%: Light Green (#90EE90)
-  - 50-80%: Lighter Green (#C1FFC1)
-  - 25-50%: Light Lemon Chiffon Yellow (#FFFACD)
-  - 10-25%: Light Orange (#FFDAB9)
-  - 0-10%: Light Red (#FFC0CB)
+  - 80-100%: Light Green
+  - 50-80%: Lighter Green
+  - 25-50%: Light Yellow
+  - 10-25%: Light Orange
+  - 0-10%: Light Red
 
 ### Alert Systems
 - **Lane Departure Warning**: Visual indicators when vehicle deviates from lane
@@ -64,6 +64,7 @@ The display features a dynamic border that provides visual feedback about batter
 - **Dependencies**:
   - ZeroMQ library
   - Google Test (for running tests)
+  - Clang (for code formatting and static analysis)
 
 ## Build Instructions
 
@@ -105,6 +106,51 @@ The tests cover core functionality including:
 
 See `ClusterDisplay/tests/README.md` for detailed testing information.
 
+## Code Quality Tools
+
+### Clang Format
+The project uses clang-format to maintain consistent code style. To format your code:
+
+```bash
+# Format all source files
+find ClusterDisplay/src ClusterDisplay/inc ClusterDisplay/tests -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -style=file -i
+```
+
+### Clang Tidy
+Static analysis is performed using clang-tidy:
+
+```bash
+# Generate compile commands
+mkdir -p build_tidy && cd build_tidy
+cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+cd ..
+
+# Run clang-tidy on source files
+find ClusterDisplay/src ClusterDisplay/inc ClusterDisplay/tests -name "*.cpp" | xargs clang-tidy -p build_tidy/compile_commands.json
+```
+
+## CI/CD Pipeline
+
+The project uses GitHub Actions for continuous integration and deployment:
+
+1. **Test Stage**:
+   - Runs clang-format to verify code style
+   - Performs static analysis with clang-tidy
+   - Builds the project and runs unit tests
+   - Generates code coverage reports
+
+2. **Build Stage**:
+   - Builds the application for ARM64 architecture (Raspberry Pi)
+   - Only runs after successful tests
+   - Uses Docker for cross-compilation
+
+3. **Deploy Stage**:
+   - Deploys the built application to the target Raspberry Pi
+   - Only runs for pushes to the dev branch
+   - Creates version tracking and deployment logs
+
+The pipeline ensures that only code that passes all tests and quality checks will be deployed.
+
 ## ZeroMQ Configuration
 
 The display expects data on the following endpoints:
@@ -121,6 +167,7 @@ ClusterDisplay/
 ├── main.qml                         # Main UI layout with border animations
 ├── CMakeLists.txt                   # Build configuration
 ├── qml.qrc                          # QML resources
+├── .clang-format                    # Code style configuration
 ├── inc/                             # Header files
 │   ├── ClusterModel.hpp             # Main model class
 │   ├── ZmqSubscriber.hpp            # ZeroMQ communication base class
