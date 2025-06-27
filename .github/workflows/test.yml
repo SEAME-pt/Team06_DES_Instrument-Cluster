@@ -44,7 +44,7 @@ jobs:
     - name: Run Clang Format
       run: |
         cd ClusterDisplay
-        find src include tests -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -style=file -i
+        find src inc tests -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -style=file -i
         git diff --exit-code || (echo "Clang format check failed. Run clang-format locally and commit changes." && exit 1)
 
     - name: Run Clang Tidy
@@ -54,7 +54,7 @@ jobs:
         cd build_tidy
         cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
         cd ..
-        find src include -name "*.cpp" | xargs clang-tidy -p build_tidy/compile_commands.json
+        find src inc tests -name "*.cpp" | xargs clang-tidy -p build_tidy/compile_commands.json
 
     - name: Build and Test
       run: |
