@@ -1,4 +1,5 @@
 #include "BatteryIconObj.hpp"
+
 #include <QTimer>
 
 BatteryIconObj::BatteryIconObj(QObject *parent)
@@ -6,18 +7,21 @@ BatteryIconObj::BatteryIconObj(QObject *parent)
 {
     setPercentage(0);
 };
-BatteryIconObj::~BatteryIconObj(){}
+BatteryIconObj::~BatteryIconObj() {}
 
-int BatteryIconObj::percentage(void) const {return m_percentage;}
-void    BatteryIconObj::setPercentage(int newPercentage)
+int BatteryIconObj::percentage(void) const
+{
+    return m_percentage;
+}
+void BatteryIconObj::setPercentage(int newPercentage)
 {
     if (newPercentage == m_percentage)
-        return ;
+        return;
     m_percentage = newPercentage;
     emit percentageChanged(newPercentage);
 }
 
-void    BatteryIconObj::_handleMsg(QString &message)
+void BatteryIconObj::_handleMsg(QString &message)
 {
     setPercentage(message.toInt());
 }

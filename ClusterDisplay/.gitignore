@@ -7,7 +7,7 @@ release/
 # Qt Creator user files
 *.user
 *.user.*
-CMakeLists.txt.user*
+CMakeLists.txt.user
 
 # Compiled Object files
 *.slo

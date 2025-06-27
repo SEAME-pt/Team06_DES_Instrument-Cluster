@@ -1,9 +1,10 @@
+#include <QDebug>
+#include <QDir>
 #include <QGuiApplication>
 #include <QQmlApplicationEngine>
-#include <QQuickStyle>
 #include <QQmlContext>
-#include <QDir>
-#include <QDebug>
+#include <QQuickStyle>
+
 #include "ClusterModel.hpp"
 
 /**
@@ -34,7 +35,8 @@ int main(int argc, char *argv[])
     engine.load(QUrl(QStringLiteral("qrc:/main.qml")));
 
     // Check if QML loaded successfully
-    if (engine.rootObjects().isEmpty()) {
+    if (engine.rootObjects().isEmpty())
+    {
         qCritical() << "Failed to load QML interface";
         return -1;
     }

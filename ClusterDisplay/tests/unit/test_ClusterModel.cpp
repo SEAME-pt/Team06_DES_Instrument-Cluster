@@ -1,21 +1,21 @@
 #include <gtest/gtest.h>
+
 #include <QSignalSpy>
+
 #include "ClusterModel.hpp"
 
-class ClusterModelTest : public ::testing::Test {
+class ClusterModelTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
-        model = new ClusterModel();
-    }
+    void SetUp() override { model = new ClusterModel(); }
 
-    void TearDown() override {
-        delete model;
-    }
+    void TearDown() override { delete model; }
 
     ClusterModel* model;
 };
 
-TEST_F(ClusterModelTest, InitialValues) {
+TEST_F(ClusterModelTest, InitialValues)
+{
     // Test initial values
     EXPECT_EQ(model->speed(), 0);
     EXPECT_EQ(model->battery(), 100);
@@ -27,7 +27,8 @@ TEST_F(ClusterModelTest, InitialValues) {
     EXPECT_EQ(model->laneDeviationSide(), "left");
 }
 
-TEST_F(ClusterModelTest, SpeedSetter) {
+TEST_F(ClusterModelTest, SpeedSetter)
+{
     QSignalSpy spy(model, &ClusterModel::speedChanged);
 
     // Set a new value
@@ -47,7 +48,8 @@ TEST_F(ClusterModelTest, SpeedSetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(ClusterModelTest, BatterySetter) {
+TEST_F(ClusterModelTest, BatterySetter)
+{
     QSignalSpy spy(model, &ClusterModel::batteryChanged);
 
     // Set a new value
@@ -67,7 +69,8 @@ TEST_F(ClusterModelTest, BatterySetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(ClusterModelTest, ChargingSetter) {
+TEST_F(ClusterModelTest, ChargingSetter)
+{
     QSignalSpy spy(model, &ClusterModel::chargingChanged);
 
     // Set a new value
@@ -87,7 +90,8 @@ TEST_F(ClusterModelTest, ChargingSetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(ClusterModelTest, OdometerSetter) {
+TEST_F(ClusterModelTest, OdometerSetter)
+{
     QSignalSpy spy(model, &ClusterModel::odometerChanged);
 
     // Set a new value
@@ -107,7 +111,8 @@ TEST_F(ClusterModelTest, OdometerSetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(ClusterModelTest, DrivingModeSetter) {
+TEST_F(ClusterModelTest, DrivingModeSetter)
+{
     QSignalSpy spy(model, &ClusterModel::drivingModeChanged);
 
     // Set a new value
@@ -127,7 +132,8 @@ TEST_F(ClusterModelTest, DrivingModeSetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(ClusterModelTest, ObjectAlertSetter) {
+TEST_F(ClusterModelTest, ObjectAlertSetter)
+{
     QSignalSpy spy(model, &ClusterModel::objectAlertChanged);
 
     // Set a new value
@@ -147,7 +153,8 @@ TEST_F(ClusterModelTest, ObjectAlertSetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(ClusterModelTest, LaneAlertSetter) {
+TEST_F(ClusterModelTest, LaneAlertSetter)
+{
     QSignalSpy spy(model, &ClusterModel::laneAlertChanged);
 
     // Set a new value
@@ -167,7 +174,8 @@ TEST_F(ClusterModelTest, LaneAlertSetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(ClusterModelTest, LaneDeviationSideSetter) {
+TEST_F(ClusterModelTest, LaneDeviationSideSetter)
+{
     QSignalSpy spy(model, &ClusterModel::laneDeviationSideChanged);
 
     // Set a new value
@@ -187,7 +195,8 @@ TEST_F(ClusterModelTest, LaneDeviationSideSetter) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     QCoreApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

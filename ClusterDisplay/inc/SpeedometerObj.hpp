@@ -3,9 +3,10 @@
 
 #include <QObject>
 #include <QQmlEngine>
+
 #include "ZmqSubscriber.hpp"
 
-# define SPEEDOMETER_ADDRESS "tcp://localhost:5555"
+#define SPEEDOMETER_ADDRESS "tcp://localhost:5555"
 
 class SpeedometerObj : public ZmqSubscriber
 {
@@ -13,19 +14,20 @@ class SpeedometerObj : public ZmqSubscriber
     Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged FINAL)
 
 public:
-    explicit SpeedometerObj(QObject *parent = nullptr);
+    explicit SpeedometerObj(QObject* parent = nullptr);
     ~SpeedometerObj();
 
-    double     speed(void) const;
-    void    setSpeed(int newSpeed);
+    double speed(void) const;
+    void setSpeed(int newSpeed);
 
 signals:
-    void    speedChanged(double);
+    void speedChanged(double);
 
 protected:
-    void    _handleMsg(QString& message);
+    void _handleMsg(QString& message);
+
 private:
-    double              m_speed;
+    double m_speed;
 };
 
-#endif // SPEEDOMETEROBJ_HPP
+#endif  // SPEEDOMETEROBJ_HPP

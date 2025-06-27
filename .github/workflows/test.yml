@@ -34,9 +34,27 @@ jobs:
           libgmock-dev \
           libzmq3-dev \
           wget \
-          lcov
+          lcov \
+          clang \
+          clang-tidy \
+          clang-format
         # Download ZeroMQ C++ header (not provided by libzmq3-dev)
         sudo wget --no-check-certificate -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp
+
+    - name: Run Clang Format
+      run: |
+        cd ClusterDisplay
+        find src include tests -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -style=file -i
+        git diff --exit-code || (echo "Clang format check failed. Run clang-format locally and commit changes." && exit 1)
+
+    - name: Run Clang Tidy
+      run: |
+        cd ClusterDisplay
+        mkdir -p build_tidy
+        cd build_tidy
+        cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        cd ..
+        find src include -name "*.cpp" | xargs clang-tidy -p build_tidy/compile_commands.json
 
     - name: Build and Test
       run: |

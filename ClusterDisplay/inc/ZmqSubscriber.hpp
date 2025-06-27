@@ -3,8 +3,8 @@
 
 #include <QObject>
 #include <QSocketNotifier>
-#include <zmq.hpp>
 #include <memory>
+#include <zmq.hpp>
 
 /**
  * @brief ZeroMQ subscriber class for receiving messages from publishers
@@ -43,9 +43,9 @@ signals:
     void messageReceived(const QString& message);
 
 private:
-    zmq::context_t  _context;   ///< ZMQ context managing thread resources
-    zmq::socket_t   _socket;    ///< ZMQ socket for receiving messages
+    zmq::context_t _context;                     ///< ZMQ context managing thread resources
+    zmq::socket_t _socket;                       ///< ZMQ socket for receiving messages
     std::unique_ptr<QSocketNotifier> _notifier;  ///< Notifier for socket activity
 };
 
-#endif // ZMQSUBSCRIBER_HPP
+#endif  // ZMQSUBSCRIBER_HPP

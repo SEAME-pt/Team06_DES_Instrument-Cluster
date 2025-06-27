@@ -1,38 +1,37 @@
 #include <gtest/gtest.h>
+
 #include <QSignalSpy>
+
 #include "BatteryIconObj.hpp"
 
 // Mock class for BatteryIconObj to avoid actual network connections
-class MockBatteryIconObj : public BatteryIconObj {
+class MockBatteryIconObj : public BatteryIconObj
+{
 public:
-    MockBatteryIconObj(QObject* parent = nullptr)
-        : BatteryIconObj(parent) {}
+    MockBatteryIconObj(QObject* parent = nullptr) : BatteryIconObj(parent) {}
 
     // Expose protected method for testing
-    void callHandleMsg(QString& message) {
-        _handleMsg(message);
-    }
+    void callHandleMsg(QString& message) { _handleMsg(message); }
 };
 
-class BatteryIconObjTest : public ::testing::Test {
+class BatteryIconObjTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
-        batteryIcon = new MockBatteryIconObj();
-    }
+    void SetUp() override { batteryIcon = new MockBatteryIconObj(); }
 
-    void TearDown() override {
-        delete batteryIcon;
-    }
+    void TearDown() override { delete batteryIcon; }
 
     MockBatteryIconObj* batteryIcon;
 };
 
-TEST_F(BatteryIconObjTest, InitialValue) {
+TEST_F(BatteryIconObjTest, InitialValue)
+{
     // Test initial value
     EXPECT_EQ(batteryIcon->percentage(), 0);
 }
 
-TEST_F(BatteryIconObjTest, SetPercentage) {
+TEST_F(BatteryIconObjTest, SetPercentage)
+{
     QSignalSpy spy(batteryIcon, &BatteryIconObj::percentageChanged);
 
     // Set a new value
@@ -52,7 +51,8 @@ TEST_F(BatteryIconObjTest, SetPercentage) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(BatteryIconObjTest, HandleMessage) {
+TEST_F(BatteryIconObjTest, HandleMessage)
+{
     QSignalSpy spy(batteryIcon, &BatteryIconObj::percentageChanged);
 
     // Create a message
@@ -69,7 +69,8 @@ TEST_F(BatteryIconObjTest, HandleMessage) {
     EXPECT_EQ(spy.at(0).at(0).toInt(), 85);
 }
 
-TEST_F(BatteryIconObjTest, HandleInvalidMessage) {
+TEST_F(BatteryIconObjTest, HandleInvalidMessage)
+{
     // Set initial value
     batteryIcon->setPercentage(50);
 
@@ -88,7 +89,8 @@ TEST_F(BatteryIconObjTest, HandleInvalidMessage) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     QCoreApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

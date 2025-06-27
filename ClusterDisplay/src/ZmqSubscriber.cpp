@@ -1,4 +1,5 @@
 #include "ZmqSubscriber.hpp"
+
 #include <QDebug>
 
 ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
@@ -27,8 +28,7 @@ ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
     // Set up socket notifier for Qt event integration
     int socketFd = _socket.get(zmq::sockopt::fd);
     _notifier = std::make_unique<QSocketNotifier>(socketFd, QSocketNotifier::Read);
-    connect(_notifier.get(), &QSocketNotifier::activated,
-            this, &ZmqSubscriber::onMessageReceived);
+    connect(_notifier.get(), &QSocketNotifier::activated, this, &ZmqSubscriber::onMessageReceived);
 }
 
 ZmqSubscriber::~ZmqSubscriber()

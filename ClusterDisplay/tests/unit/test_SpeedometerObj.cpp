@@ -1,38 +1,37 @@
 #include <gtest/gtest.h>
+
 #include <QSignalSpy>
+
 #include "SpeedometerObj.hpp"
 
 // Mock class for SpeedometerObj to avoid actual network connections
-class MockSpeedometerObj : public SpeedometerObj {
+class MockSpeedometerObj : public SpeedometerObj
+{
 public:
-    MockSpeedometerObj(QObject* parent = nullptr)
-        : SpeedometerObj(parent) {}
+    MockSpeedometerObj(QObject* parent = nullptr) : SpeedometerObj(parent) {}
 
     // Expose protected method for testing
-    void callHandleMsg(QString& message) {
-        _handleMsg(message);
-    }
+    void callHandleMsg(QString& message) { _handleMsg(message); }
 };
 
-class SpeedometerObjTest : public ::testing::Test {
+class SpeedometerObjTest : public ::testing::Test
+{
 protected:
-    void SetUp() override {
-        speedometer = new MockSpeedometerObj();
-    }
+    void SetUp() override { speedometer = new MockSpeedometerObj(); }
 
-    void TearDown() override {
-        delete speedometer;
-    }
+    void TearDown() override { delete speedometer; }
 
     MockSpeedometerObj* speedometer;
 };
 
-TEST_F(SpeedometerObjTest, InitialValue) {
+TEST_F(SpeedometerObjTest, InitialValue)
+{
     // Test initial value
     EXPECT_EQ(speedometer->speed(), 0);
 }
 
-TEST_F(SpeedometerObjTest, SetSpeed) {
+TEST_F(SpeedometerObjTest, SetSpeed)
+{
     QSignalSpy spy(speedometer, &SpeedometerObj::speedChanged);
 
     // Set a new value
@@ -52,7 +51,8 @@ TEST_F(SpeedometerObjTest, SetSpeed) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-TEST_F(SpeedometerObjTest, HandleMessage) {
+TEST_F(SpeedometerObjTest, HandleMessage)
+{
     QSignalSpy spy(speedometer, &SpeedometerObj::speedChanged);
 
     // Create a message
@@ -69,7 +69,8 @@ TEST_F(SpeedometerObjTest, HandleMessage) {
     EXPECT_EQ(spy.at(0).at(0).toDouble(), 85);
 }
 
-TEST_F(SpeedometerObjTest, HandleInvalidMessage) {
+TEST_F(SpeedometerObjTest, HandleInvalidMessage)
+{
     // Set initial value
     speedometer->setSpeed(50);
 
@@ -88,7 +89,8 @@ TEST_F(SpeedometerObjTest, HandleInvalidMessage) {
     EXPECT_EQ(spy.count(), 1);
 }
 
-int main(int argc, char **argv) {
+int main(int argc, char** argv)
+{
     QCoreApplication app(argc, argv);
     ::testing::InitGoogleTest(&argc, argv);
     return RUN_ALL_TESTS();

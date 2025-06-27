@@ -18,7 +18,8 @@ class ClusterModel : public QObject
     Q_PROPERTY(QString currentDate READ currentDate NOTIFY currentDateChanged)
     Q_PROPERTY(bool objectAlert READ objectAlert WRITE setObjectAlert NOTIFY objectAlertChanged)
     Q_PROPERTY(bool laneAlert READ laneAlert WRITE setLaneAlert NOTIFY laneAlertChanged)
-    Q_PROPERTY(QString laneDeviationSide READ laneDeviationSide WRITE setLaneDeviationSide NOTIFY laneDeviationSideChanged)
+    Q_PROPERTY(QString laneDeviationSide READ laneDeviationSide WRITE setLaneDeviationSide NOTIFY
+                   laneDeviationSideChanged)
 
 public:
     explicit ClusterModel(QObject *parent = nullptr);
@@ -74,8 +75,8 @@ private:
     bool m_laneAlert;
     QString m_laneDeviationSide;
 
-    QTimer* m_timeUpdateTimer;
-    QTimer* m_dataSimulationTimer;
+    QTimer *m_timeUpdateTimer;
+    QTimer *m_dataSimulationTimer;
 };
 
-#endif // CLUSTERMODEL_HPP
+#endif  // CLUSTERMODEL_HPP

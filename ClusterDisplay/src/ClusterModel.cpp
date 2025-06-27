@@ -1,9 +1,10 @@
 #include "ClusterModel.hpp"
+
 #include <QDateTime>
-#include <QTimer>
-#include <iostream>
-#include <QtMath>
 #include <QRandomGenerator>
+#include <QTimer>
+#include <QtMath>
+#include <iostream>
 
 ClusterModel::ClusterModel(QObject *parent)
     : QObject(parent),
@@ -40,7 +41,8 @@ ClusterModel::~ClusterModel()
 
 void ClusterModel::setSpeed(int value)
 {
-    if (m_speed != value) {
+    if (m_speed != value)
+    {
         m_speed = value;
         emit speedChanged(value);
     }
@@ -48,7 +50,8 @@ void ClusterModel::setSpeed(int value)
 
 void ClusterModel::setBattery(int value)
 {
-    if (m_battery != value) {
+    if (m_battery != value)
+    {
         m_battery = value;
         emit batteryChanged(value);
     }
@@ -56,7 +59,8 @@ void ClusterModel::setBattery(int value)
 
 void ClusterModel::setCharging(bool value)
 {
-    if (m_charging != value) {
+    if (m_charging != value)
+    {
         m_charging = value;
         emit chargingChanged(value);
     }
@@ -64,7 +68,8 @@ void ClusterModel::setCharging(bool value)
 
 void ClusterModel::setOdometer(int value)
 {
-    if (m_odometer != value) {
+    if (m_odometer != value)
+    {
         m_odometer = value;
         emit odometerChanged(value);
     }
@@ -72,7 +77,8 @@ void ClusterModel::setOdometer(int value)
 
 void ClusterModel::setDrivingMode(const QString &value)
 {
-    if (m_drivingMode != value) {
+    if (m_drivingMode != value)
+    {
         m_drivingMode = value;
         emit drivingModeChanged(value);
     }
@@ -80,7 +86,8 @@ void ClusterModel::setDrivingMode(const QString &value)
 
 void ClusterModel::setObjectAlert(bool value)
 {
-    if (m_objectAlert != value) {
+    if (m_objectAlert != value)
+    {
         m_objectAlert = value;
         emit objectAlertChanged(value);
     }
@@ -88,7 +95,8 @@ void ClusterModel::setObjectAlert(bool value)
 
 void ClusterModel::setLaneAlert(bool value)
 {
-    if (m_laneAlert != value) {
+    if (m_laneAlert != value)
+    {
         m_laneAlert = value;
         emit laneAlertChanged(value);
     }
@@ -96,7 +104,8 @@ void ClusterModel::setLaneAlert(bool value)
 
 void ClusterModel::setLaneDeviationSide(const QString &value)
 {
-    if (m_laneDeviationSide != value) {
+    if (m_laneDeviationSide != value)
+    {
         m_laneDeviationSide = value;
         emit laneDeviationSideChanged(value);
     }
@@ -108,12 +117,14 @@ void ClusterModel::updateDateTime()
     QString newTime = now.toString("hh:mm");
     QString newDate = now.toString("dd MMM yyyy");
 
-    if (m_currentTime != newTime) {
+    if (m_currentTime != newTime)
+    {
         m_currentTime = newTime;
         emit currentTimeChanged(m_currentTime);
     }
 
-    if (m_currentDate != newDate) {
+    if (m_currentDate != newDate)
+    {
         m_currentDate = newDate;
         emit currentDateChanged(m_currentDate);
     }
@@ -137,7 +148,8 @@ void ClusterModel::simulateDataUpdate()
 
     // Simulate charging status changes
     static int chargingCounter = 0;
-    if (++chargingCounter >= 20) { // Toggle every 10 seconds
+    if (++chargingCounter >= 20)
+    {  // Toggle every 10 seconds
         setCharging(!m_charging);
         chargingCounter = 0;
     }
@@ -147,24 +159,31 @@ void ClusterModel::simulateDataUpdate()
 
     // Toggle driving mode occasionally
     static int modeCounter = 0;
-    if (++modeCounter >= 40) { // Toggle every 20 seconds
+    if (++modeCounter >= 40)
+    {  // Toggle every 20 seconds
         setDrivingMode(m_drivingMode == "MAN" ? "AUTO" : "MAN");
         modeCounter = 0;
     }
 
     // Simulate alerts - cycle through different alert states
     static int alertCounter = 0;
-    if (++alertCounter >= 30) { // Change alert state every 15 seconds
+    if (++alertCounter >= 30)
+    {  // Change alert state every 15 seconds
         alertCounter = 0;
 
         // Cycle through: no alerts -> lane alert -> object alert -> no alerts
-        if (!m_laneAlert && !m_objectAlert) {
+        if (!m_laneAlert && !m_objectAlert)
+        {
             setLaneAlert(true);
             setLaneDeviationSide(QRandomGenerator::global()->bounded(2) == 0 ? "left" : "right");
-        } else if (m_laneAlert) {
+        }
+        else if (m_laneAlert)
+        {
             setLaneAlert(false);
             setObjectAlert(true);
-        } else {
+        }
+        else
+        {
             setObjectAlert(false);
         }
     }
