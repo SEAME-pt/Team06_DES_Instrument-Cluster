@@ -1,0 +1,103 @@
+name: Test with Coverage
+
+on:
+  push:
+    branches: [ dev ]
+  pull_request:
+    branches: [ main, dev ]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  actions: write
+  checks: write
+  pull-requests: write
+  repository-projects: write
+  statuses: write
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Install dependencies
+      run: |
+        sudo apt-get update
+        sudo apt-get install -y --no-install-recommends \
+          build-essential \
+          cmake \
+          qt6-base-dev \
+          qt6-declarative-dev \
+          qt6-tools-dev \
+          qt6-tools-dev-tools \
+          qml6-module-qtquick \
+          qml6-module-qtquick-controls \
+          qml6-module-qtquick-layouts \
+          qml6-module-qtqml-workerscript \
+          qml6-module-qt-labs-platform \
+          qml6-module-qtquick-window \
+          qml6-module-qtquick-templates \
+          libgtest-dev \
+          libgmock-dev \
+          libzmq3-dev \
+          wget \
+          lcov \
+          clang \
+          clang-tidy \
+          clang-format
+        # Download ZeroMQ C++ header (not provided by libzmq3-dev)
+        sudo wget --no-check-certificate -O /usr/include/zmq.hpp https://raw.githubusercontent.com/zeromq/cppzmq/master/zmq.hpp
+
+    - name: Run Clang Format
+      run: |
+        cd ClusterDisplay
+        find src inc tests -name "*.cpp" -o -name "*.h" -o -name "*.hpp" | xargs clang-format -style=file -i
+        git diff --exit-code || (echo "Clang format check failed. Run clang-format locally and commit changes." && exit 1)
+
+    - name: Run Clang Tidy
+      run: |
+        cd ClusterDisplay
+        mkdir -p build_tidy
+        cd build_tidy
+        cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
+        cd ..
+        find src inc tests -name "*.cpp" | xargs clang-tidy -p build_tidy/compile_commands.json
+
+    - name: Build and Test
+      run: |
+        cd ClusterDisplay
+        mkdir -p build
+        cd build
+        # Remove any existing CMake cache
+        rm -rf CMakeCache.txt CMakeFiles/
+        cmake .. -DCODE_COVERAGE=ON
+        make
+        ctest --output-on-failure
+
+    - name: Generate coverage report
+      run: |
+        cd ClusterDisplay/build
+        lcov --directory . --capture --output-file coverage.info --ignore-errors mismatch
+        lcov --remove coverage.info '/usr/*' --output-file coverage.info
+        lcov --remove coverage.info '*/tests/unit/*' --output-file coverage.info
+        lcov --remove coverage.info '*/ClusterDisplayLib_autogen/*' --output-file coverage.info
+        lcov --list coverage.info
+        # Generate HTML report
+        genhtml coverage.info --output-directory coverage_report
+
+    - name: Upload coverage report
+      uses: actions/upload-artifact@v4
+      with:
+        name: coverage-report
+        path: ClusterDisplay/build/coverage_report
+
+    - name: Trigger build workflow
+      if: success() && github.event_name != 'pull_request'
+      run: |
+        curl -X POST \
+          -H "Authorization: token ${{ secrets.WORKFLOW_DISPATCH_PAT }}" \
+          -H "Accept: application/vnd.github.v3+json" \
+          https://api.github.com/repos/${{ github.repository }}/dispatches \
+          -d '{"event_type":"tests-passed","client_payload":{"ref":"${{ github.ref }}","sha":"${{ github.sha }}"}}'

@@ -3,9 +3,10 @@
 
 #include <QObject>
 #include <QQmlEngine>
+
 #include "ZmqSubscriber.hpp"
 
-# define BATTERY_ADDRESS "tcp://localhost:5556"
+#define BATTERY_ADDRESS "tcp://localhost:5556"
 
 class BatteryIconObj : public ZmqSubscriber
 {
@@ -13,20 +14,20 @@ class BatteryIconObj : public ZmqSubscriber
     Q_PROPERTY(int percentage READ percentage WRITE setPercentage NOTIFY percentageChanged FINAL)
 
 public:
-    explicit BatteryIconObj(QObject *parent = nullptr);
+    explicit BatteryIconObj(QObject* parent = nullptr);
     ~BatteryIconObj();
 
-    int     percentage(void) const;
-    void    setPercentage(int newPercentage);
+    int percentage(void) const;
+    void setPercentage(int newPercentage);
 
 signals:
-    void    percentageChanged(int);
+    void percentageChanged(int);
 
 protected:
-    void    _handleMsg(QString& message) override;
+    void _handleMsg(QString& message);
 
 private:
-    int     m_percentage;
+    int m_percentage;
 };
 
-#endif // BATTERYICONOBJ_HPP
+#endif  // BATTERYICONOBJ_HPP

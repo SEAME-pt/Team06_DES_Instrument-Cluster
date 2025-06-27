@@ -1,0 +1,62 @@
+# Build directories
+build/
+debug/
+release/
+*-build-*/
+
+# Qt Creator user files
+*.user
+*.user.*
+CMakeLists.txt.user
+
+# Compiled Object files
+*.slo
+*.lo
+*.o
+*.obj
+
+# Precompiled Headers
+*.gch
+*.pch
+
+# Compiled Dynamic libraries
+*.so
+*.dylib
+*.dll
+
+# Compiled Static libraries
+*.lai
+*.la
+*.a
+*.lib
+
+# Executables
+*.exe
+*.out
+*.app
+
+# Generated MOC, UI, and QRC files
+moc_*.cpp
+ui_*.h
+qrc_*.cpp
+*.moc
+
+# Coverage data
+*.gcda
+*.gcno
+*.info
+coverage/
+
+# Editor temporary files
+*~
+*.swp
+*.swo
+.vscode/
+.idea/
+
+# macOS specific
+.DS_Store
+
+# Temporary files
+*.tmp
+*.temp
