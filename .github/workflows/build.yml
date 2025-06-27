@@ -6,6 +6,12 @@ on:
     types:
       - completed
     branches: [ dev, main ]
+  workflow_dispatch:
+    inputs:
+      reason:
+        description: 'Reason for manual build'
+        required: false
+        default: 'Manual trigger'
 
 # Add environment variables at workflow level
 env:
@@ -14,12 +20,23 @@ env:
 jobs:
   build:
     runs-on: ubuntu-latest
-    if: ${{ github.event.workflow_run.conclusion == 'success' }}
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
 
     steps:
+    - name: Debug workflow trigger
+      run: |
+        echo "Event name: ${{ github.event_name }}"
+        if [ "${{ github.event_name }}" == "workflow_run" ]; then
+          echo "Triggered by workflow: ${{ github.event.workflow_run.name }}"
+          echo "Workflow conclusion: ${{ github.event.workflow_run.conclusion }}"
+          echo "Workflow SHA: ${{ github.event.workflow_run.head_sha }}"
+        else
+          echo "Manually triggered: ${{ github.event.inputs.reason }}"
+        fi
+
     - uses: actions/checkout@v4
       with:
-        ref: ${{ github.event.workflow_run.head_branch }}
+        ref: ${{ github.event_name == 'workflow_run' && github.event.workflow_run.head_sha || github.ref }}
 
     - name: Set up QEMU
       uses: docker/setup-qemu-action@v3
