@@ -31,7 +31,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: speed.toString()
                 color: "#ffffff"
-                font.pixelSize: 140
+                font.pixelSize: 105  // Reduced from 140 to 75% size
                 font.family: window.primaryFont
                 font.weight: window.fontNormal
                 font.letterSpacing: window.letterSpacingTight
@@ -42,7 +42,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: "km/h"
                 color: "#5a6580"
-                font.pixelSize: 20
+                font.pixelSize: 15  // Reduced from 20 to 75% size
                 font.letterSpacing: window.letterSpacingWide
                 font.family: window.secondaryFont
             }

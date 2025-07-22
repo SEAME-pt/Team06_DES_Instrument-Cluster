@@ -6,8 +6,8 @@ import "ui"
 ApplicationWindow {
     id: window
     visible: true
-    width: 1920
-    height: 720
+    width: 1280  // Changed to correct target width
+    height: 400  // Changed to correct target height
     title: qsTr("Automotive Cluster Display")
 
     // Remove window frame for embedded automotive look
@@ -83,11 +83,11 @@ ApplicationWindow {
         }
     }
 
-    // Main cluster content
+    // Main cluster content - Horizontal layout adapted for 1280x400
     Item {
         id: mainContent
         anchors.fill: parent
-        anchors.margins: 40  // Reduced margins to position closer to corners
+        anchors.margins: 20  // Reduced margins for shorter height
 
         // Top left - Time display
         ClockDisplay {
@@ -95,8 +95,8 @@ ApplicationWindow {
             anchors {
                 top: parent.top
                 left: parent.left
-                topMargin: 20
-                leftMargin: 20
+                topMargin: 10
+                leftMargin: 15
             }
         }
 
@@ -106,8 +106,8 @@ ApplicationWindow {
             anchors {
                 top: parent.top
                 right: parent.right
-                topMargin: 20
-                rightMargin: 20
+                topMargin: 10
+                rightMargin: 15
             }
         }
 
@@ -117,11 +117,10 @@ ApplicationWindow {
             anchors {
                 bottom: parent.bottom
                 left: parent.left
-                bottomMargin: 20
-                leftMargin: 20
+                bottomMargin: 10
+                leftMargin: 15
             }
-            batteryPercent: 0 // Start at 0%
-            isCharging: false // Not charging
+            // Now uses clusterModel.battery and clusterModel.charging from the model
         }
 
         // Bottom right - Odometer
@@ -130,89 +129,85 @@ ApplicationWindow {
             anchors {
                 bottom: parent.bottom
                 right: parent.right
-                bottomMargin: 20
-                rightMargin: 20
+                bottomMargin: 10
+                rightMargin: 15
             }
         }
 
-        // Digital speedometer - centered upper area
+        // Digital speedometer - smaller, centered horizontally, positioned higher
         NumberSpeedometer {
             id: speedometer
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: parent.top
-                topMargin: 40
+                topMargin: 50  // Positioned higher to make room for jetcar below
             }
-            width: Math.min(parent.width * 0.5, parent.height * 0.5)
-            height: width
+            width: 140  // Made smaller
+            height: 140
         }
 
-        // Jetracer road graphic - below speedometer (where mode used to be)
+        // Jetracer road graphic - larger for proper lane line size, positioned lower
         JetracerAlertDisplay {
             id: jetracerGraphic
             anchors {
                 horizontalCenter: parent.horizontalCenter
                 top: speedometer.bottom
-                topMargin: 20
-                leftMargin: 30
-                rightMargin: 30
+                topMargin: 10  // Even lower positioning
             }
-            width: 500  // Much wider for better presentation
-            height: 300 // Taller for better presentation
-            speed: clusterModel.speed // Connect to actual speed from cluster model
-            objectAlertActive: clusterModel.objectAlert // Connect to object alert from model
-            laneAlertActive: clusterModel.laneAlert // Connect to lane alert from model
-            laneDeviationSide: clusterModel.laneDeviationSide // Connect to lane deviation side from model
+            width: 300  // Back to larger size for proper lane lines
+            height: 180  // Back to larger size for proper lane lines
+            speed: clusterModel.speed
+            objectAlertActive: clusterModel.objectAlert
+            laneAlertActive: clusterModel.laneAlert
+            laneDeviationSide: clusterModel.laneDeviationSide
         }
 
-        // Right side - Street sign recognition
+        // Street sign recognition - positioned between speedometer and right edge
         StreetSignDisplay {
             id: streetSignDisplay
             anchors {
                 right: parent.right
-                rightMargin: 300
+                rightMargin: 260  // More to the left, between center and edge
                 verticalCenter: parent.verticalCenter
             }
-            width: 220
-            height: 220
+            width: 100
+            height: 100
         }
 
-        // Alerts display - centered on the left side
+        // Alerts display - more centered on y axis with LKAS lower and OBS higher
         AlertsDisplay {
             id: alertsDisplay
             anchors {
                 left: parent.left
-                leftMargin: 150
+                leftMargin: 220  // Closer to center
                 verticalCenter: parent.verticalCenter
+                verticalCenterOffset: 0  // Reset to proper center
             }
-            // Connect to model's alert properties
+            width: 160
             laneAlertActive: clusterModel.laneAlert
             objectAlertActive: clusterModel.objectAlert
-            laneDeviationSide: clusterModel.laneDeviationSide // Added to sync lane deviation side
+            laneDeviationSide: clusterModel.laneDeviationSide
         }
     }
 
-        // Border with rounded corners - enhanced breathing effect with fading border
+    // Border with rounded corners - restored to original enhanced settings
     Rectangle {
         id: borderFrame
         anchors.fill: parent
-        anchors.margins: 12  // Reduced margins to make room for wider border effect
+        anchors.margins: 12  // Restored original margins
         color: "transparent"
-        radius: 40
+        radius: 40  // Restored original radius
 
-        // No border on this element anymore - we'll use the multi-layer approach below
-
-        // Outer glow effect - widest, most transparent layer
+        // Outer glow effect - restored original settings
         Rectangle {
             id: outerGlowBorder
             anchors.fill: parent
-            anchors.margins: -8  // Negative margin makes it extend outward
+            anchors.margins: -8  // Restored original negative margin
             color: "transparent"
-            radius: 48  // Increased radius to match the expanded size
-            border.width: 6
+            radius: 48  // Restored original radius
+            border.width: 6  // Restored original width
             border.color: Qt.alpha(batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor, 0.4)
 
-            // Breathing animation
             SequentialAnimation on opacity {
                 loops: Animation.Infinite
                 NumberAnimation {
@@ -228,17 +223,16 @@ ApplicationWindow {
             }
         }
 
-        // Middle glow layer
+        // Middle glow layer - restored original settings
         Rectangle {
             id: middleGlowBorder
             anchors.fill: parent
-            anchors.margins: -4  // Slightly smaller negative margin than outer
+            anchors.margins: -4  // Restored original margin
             color: "transparent"
-            radius: 44  // Adjusted radius
-            border.width: 6
+            radius: 44  // Restored original radius
+            border.width: 6  // Restored original width
             border.color: Qt.alpha(batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor, 0.6)
 
-            // Breathing animation slightly offset from outer layer
             SequentialAnimation on opacity {
                 loops: Animation.Infinite
                 NumberAnimation {
@@ -254,16 +248,15 @@ ApplicationWindow {
             }
         }
 
-        // Main border - brightest, most visible
+        // Main border - restored original settings
         Rectangle {
             id: mainBorder
             anchors.fill: parent
             color: "transparent"
-            radius: 40
-            border.width: 8
+            radius: 40  // Restored original radius
+            border.width: 8  // Restored original width
             border.color: batteryPercent.isCharging ? batteryPercent.chargingColor : batteryPercent.batteryColor
 
-            // Main border animation
             SequentialAnimation on opacity {
                 loops: Animation.Infinite
                 NumberAnimation {
@@ -278,7 +271,6 @@ ApplicationWindow {
                 }
             }
 
-            // Enhanced color animation based on charging state
             SequentialAnimation on border.color {
                 running: batteryPercent.isCharging
                 loops: Animation.Infinite
@@ -293,17 +285,16 @@ ApplicationWindow {
             }
         }
 
-        // Inner glow effect
+        // Inner glow effect - restored original settings
         Rectangle {
             anchors.fill: parent
-            anchors.margins: 5
+            anchors.margins: 5  // Restored original margins
             color: "transparent"
-            radius: 35
+            radius: 35  // Restored original radius
             border.width: 2
             border.color: Qt.lighter(mainBorder.border.color, 1.2)
             opacity: 0.7
 
-            // Synchronized animation with main border
             SequentialAnimation on opacity {
                 loops: Animation.Infinite
                 NumberAnimation {

@@ -10,14 +10,14 @@ Item {
     property bool objectAlertActive: false // Object detection alert
     property string laneDeviationSide: "left" // Which side the lane deviation is on ("left" or "right")
 
-    // Lane departure alert - fixed position at top
+    // Lane departure alert - positioned above center for symmetrical alignment
     Item {
         id: laneAlertBox
         visible: laneAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
-            top: parent.top
-            topMargin: 50  // Much larger margin
+            verticalCenter: parent.verticalCenter
+            verticalCenterOffset: -50  // 50px above center
         }
         width: 150
         height: 60
@@ -147,14 +147,15 @@ Item {
         }
     }
 
-    // Object detection alert - fixed position at bottom
+    // Object detection alert - positioned below center for symmetrical alignment
     Item {
         id: objectAlertBox
         visible: objectAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
-            bottom: parent.bottom
-            bottomMargin: 50  // Much larger margin
+            horizontalCenterOffset: 8
+            verticalCenter: parent.verticalCenter
+            verticalCenterOffset: 50   // 50px below center
         }
         width: 160
         height: 60
@@ -260,7 +261,7 @@ Item {
             color: "white"  // White text as requested
             font.pixelSize: 32  // Bigger text (was 24)
             font.bold: false  // Remove bold
-            text: "OBS"
+            text: " OBS"
         }
     }
 }

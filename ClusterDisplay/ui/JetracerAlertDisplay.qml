@@ -211,15 +211,15 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
-            bottomMargin: 70 // Increased from 50 to raise the car higher
+            bottomMargin: 60 // Reduced from 70 to position car lower
         }
-        width: 100
-        height: 180
+        width: 60  // 20% bigger: 50 * 1.2 = 60
+        height: 108  // 20% bigger: 90 * 1.2 = 108
 
         // Add lateral movement for lane deviation warning - increased movement amount to touch lines
         transform: Translate {
             x: laneAlertActive ?
-               (laneDeviationSide === "left" ? -40 : 40) : 0  // Increased from 25 to 40 to touch lane lines
+               (laneDeviationSide === "left" ? -25 : 25) : 0  // Increased from 25 to 40 to touch lane lines
 
             Behavior on x {
                 NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
@@ -230,7 +230,7 @@ Item {
             var ctx = getContext("2d");
             ctx.clearRect(0, 0, width, height);
 
-            // Car Body
+            // Car Body - shorter front with squared front and rounded transitions
             var bodyGradient = ctx.createLinearGradient(0, 0, width, 0);
             bodyGradient.addColorStop(0, "#2E8B57"); // Sea Green
             bodyGradient.addColorStop(0.5, "#3CB371"); // Medium Sea Green
@@ -238,10 +238,19 @@ Item {
             ctx.fillStyle = bodyGradient;
 
             ctx.beginPath();
+            // Start at bottom left
             ctx.moveTo(width * 0.2, height);
-            ctx.quadraticCurveTo(width * 0.1, height * 0.6, width * 0.3, height * 0.2);
-            ctx.quadraticCurveTo(width * 0.5, 0, width * 0.7, height * 0.2);
-            ctx.quadraticCurveTo(width * 0.9, height * 0.6, width * 0.8, height);
+            // Curved left side up to shoulder
+            ctx.quadraticCurveTo(width * 0.15, height * 0.6, width * 0.25, height * 0.45);
+            // Rounded transition to squared front - left corner (wider and shorter front)
+            ctx.quadraticCurveTo(width * 0.3, height * 0.35, width * 0.35, height * 0.3);
+            // Squared front top edge (wider and shorter)
+            ctx.lineTo(width * 0.65, height * 0.3);
+            // Rounded transition to squared front - right corner (wider and shorter front)
+            ctx.quadraticCurveTo(width * 0.7, height * 0.35, width * 0.75, height * 0.45);
+            // Curved right side down
+            ctx.quadraticCurveTo(width * 0.85, height * 0.6, width * 0.8, height);
+            // Close path back to start
             ctx.closePath();
             ctx.fill();
 
@@ -251,16 +260,17 @@ Item {
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 5;
 
-            // Cockpit/Glass
-            var cockpitGradient = ctx.createLinearGradient(0, height * 0.2, 0, height * 0.5);
+            // Cockpit/Glass - positioned lower between the wheels
+            var cockpitGradient = ctx.createLinearGradient(0, height * 0.45, 0, height * 0.75);
             cockpitGradient.addColorStop(0, "rgba(173, 216, 230, 0.7)"); // Light Blue, semi-transparent
             cockpitGradient.addColorStop(1, "rgba(0, 0, 139, 0.6)"); // Dark Blue, semi-transparent
             ctx.fillStyle = cockpitGradient;
 
             ctx.beginPath();
-            ctx.moveTo(width * 0.35, height * 0.5);
-            ctx.quadraticCurveTo(width * 0.5, height * 0.3, width * 0.65, height * 0.5);
-            ctx.quadraticCurveTo(width * 0.5, height * 0.6, width * 0.35, height * 0.5);
+            // Cockpit positioned between front wheels (height-50) and rear wheels (height-18)
+            ctx.moveTo(width * 0.35, height * 0.75);
+            ctx.quadraticCurveTo(width * 0.5, height * 0.55, width * 0.65, height * 0.75);
+            ctx.quadraticCurveTo(width * 0.5, height * 0.85, width * 0.35, height * 0.75);
             ctx.closePath();
             ctx.fill();
 
@@ -270,14 +280,14 @@ Item {
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
 
-            // Wheels
+            // Wheels - scaled up 20% for larger 60x108 car size
             ctx.fillStyle = "black";
-            // Rear wheels
-            ctx.fillRect(5, height - 40, 15, 30);
-            ctx.fillRect(width - 20, height - 40, 15, 30);
-            // Front wheels
-            ctx.fillRect(15, height - 120, 10, 25);
-            ctx.fillRect(width - 25, height - 120, 10, 25);
+            // Rear wheels - 20% bigger and proportionally positioned
+            ctx.fillRect(4, height - 22, 8, 17);        // Left rear wheel (20% bigger)
+            ctx.fillRect(width - 12, height - 22, 8, 17); // Right rear wheel (20% bigger)
+            // Front wheels - 20% bigger and proportionally positioned
+            ctx.fillRect(10, height - 60, 6, 14);       // Left front wheel (20% bigger)
+            ctx.fillRect(width - 16, height - 60, 6, 14); // Right front wheel (20% bigger)
 
             // Draw lane warning indicators when lane alert is active
             if (laneAlertActive) {
