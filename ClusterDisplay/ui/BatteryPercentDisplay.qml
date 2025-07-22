@@ -5,9 +5,9 @@ Item {
     width: 150
     height: 60
 
-    // Properties
-    property real batteryPercent: 75.0  // Battery percentage (0-100)
-    property bool isCharging: false      // Charging status
+    // Properties connected to ClusterModel
+    property real batteryPercent: clusterModel.battery  // Battery percentage from ClusterModel
+    property bool isCharging: clusterModel.charging     // Charging status from ClusterModel
     property bool isLowBattery: false    // Low battery status (automatically set when < 20%)
 
     // Computed properties
@@ -25,24 +25,6 @@ Item {
 
     // Light blue color for charging animation
     property color chargingColor: "#B3E5FC" // Stronger Light Blue
-
-    // Timer to cycle battery percentage
-    Timer {
-        id: batteryUpdateTimer
-        interval: 3000 // Update every 3 seconds
-        running: true
-        repeat: true
-        onTriggered: {
-            // Cycle through different battery percentages - 0 to 100
-            batteryPercent = (batteryPercent + 5) % 105
-            if (batteryPercent > 100) batteryPercent = 0 // Reset to 0
-
-            // Randomly toggle charging state for demo
-            if (Math.random() > 0.9) {
-                isCharging = !isCharging
-            }
-        }
-    }
 
     Column {
         anchors.fill: parent

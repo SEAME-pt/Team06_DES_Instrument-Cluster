@@ -5,11 +5,9 @@ Item {
     width: 220
     height: 220
 
-    property string signType: "SPEED_LIMIT"  // Demo property for sign type
-    property int signValue: 50               // Demo speed limit value
-
-    // Visibility property to toggle demo
-    property bool signVisible: true
+    property string signType: "SPEED_LIMIT"  // Type of sign (keeping for possible future expansion)
+    property int signValue: clusterModel.speedLimitSignal  // Speed limit value from ClusterModel
+    property bool signVisible: clusterModel.speedLimitVisible  // Visibility controlled by ClusterModel
 
     // Sign is only visible when signVisible is true
     visible: signVisible
@@ -50,33 +48,14 @@ Item {
         }
     }
 
-    // Demo animation to mimic sign recognition
-    SequentialAnimation {
-        running: true
-        loops: Animation.Infinite
-
-        // Wait time between sign appearances
-        PauseAnimation { duration: 8000 }
-
-        // Fade in
-        PropertyAnimation {
-            target: streetSignDisplay
-            property: "opacity"
-            from: 0.0
-            to: 1.0
+    // Fade in/out animation when sign visibility changes
+    Behavior on opacity {
+        NumberAnimation {
             duration: 500
-        }
-
-        // Display time - extended significantly
-        PauseAnimation { duration: 12000 }
-
-        // Fade out
-        PropertyAnimation {
-            target: streetSignDisplay
-            property: "opacity"
-            from: 1.0
-            to: 0.0
-            duration: 500
+            easing.type: Easing.InOutQuad
         }
     }
+
+    // Opacity is controlled by visibility
+    opacity: signVisible ? 1.0 : 0.0
 }

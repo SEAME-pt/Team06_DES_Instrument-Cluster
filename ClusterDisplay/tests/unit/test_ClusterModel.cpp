@@ -25,6 +25,8 @@ TEST_F(ClusterModelTest, InitialValues)
     EXPECT_FALSE(model->objectAlert());
     EXPECT_FALSE(model->laneAlert());
     EXPECT_EQ(model->laneDeviationSide(), "left");
+    EXPECT_EQ(model->speedLimitSignal(), 50);
+    EXPECT_FALSE(model->speedLimitVisible());
 }
 
 TEST_F(ClusterModelTest, SpeedSetter)
@@ -190,6 +192,48 @@ TEST_F(ClusterModelTest, LaneDeviationSideSetter)
 
     // Set the same value again
     model->setLaneDeviationSide("right");
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, SpeedLimitSignalSetter)
+{
+    QSignalSpy spy(model, &ClusterModel::speedLimitSignalChanged);
+
+    // Set a new value
+    model->setSpeedLimitSignal(70);
+
+    // Check if the value was updated
+    EXPECT_EQ(model->speedLimitSignal(), 70);
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toInt(), 70);
+
+    // Set the same value again
+    model->setSpeedLimitSignal(70);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, SpeedLimitVisibleSetter)
+{
+    QSignalSpy spy(model, &ClusterModel::speedLimitVisibleChanged);
+
+    // Set a new value
+    model->setSpeedLimitVisible(true);
+
+    // Check if the value was updated
+    EXPECT_TRUE(model->speedLimitVisible());
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toBool(), true);
+
+    // Set the same value again
+    model->setSpeedLimitVisible(true);
 
     // Signal should not be emitted again
     EXPECT_EQ(spy.count(), 1);

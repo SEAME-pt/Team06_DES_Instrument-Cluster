@@ -20,6 +20,8 @@ class ClusterModel : public QObject
     Q_PROPERTY(bool laneAlert READ laneAlert WRITE setLaneAlert NOTIFY laneAlertChanged)
     Q_PROPERTY(QString laneDeviationSide READ laneDeviationSide WRITE setLaneDeviationSide NOTIFY
                    laneDeviationSideChanged)
+    Q_PROPERTY(int speedLimitSignal READ speedLimitSignal WRITE setSpeedLimitSignal NOTIFY speedLimitSignalChanged)
+    Q_PROPERTY(bool speedLimitVisible READ speedLimitVisible WRITE setSpeedLimitVisible NOTIFY speedLimitVisibleChanged)
 
 public:
     explicit ClusterModel(QObject *parent = nullptr);
@@ -36,6 +38,8 @@ public:
     bool objectAlert() const { return m_objectAlert; }
     bool laneAlert() const { return m_laneAlert; }
     QString laneDeviationSide() const { return m_laneDeviationSide; }
+    int speedLimitSignal() const { return m_speedLimitSignal; }
+    bool speedLimitVisible() const { return m_speedLimitVisible; }
 
     // Setters
     void setSpeed(int value);
@@ -46,6 +50,8 @@ public:
     void setObjectAlert(bool value);
     void setLaneAlert(bool value);
     void setLaneDeviationSide(const QString &value);
+    void setSpeedLimitSignal(int value);
+    void setSpeedLimitVisible(bool value);
 
 signals:
     void speedChanged(int value);
@@ -58,10 +64,11 @@ signals:
     void objectAlertChanged(bool value);
     void laneAlertChanged(bool value);
     void laneDeviationSideChanged(const QString &value);
+    void speedLimitSignalChanged(int value);
+    void speedLimitVisibleChanged(bool value);
 
 private slots:
     void updateDateTime();
-    void simulateDataUpdate();
 
 private:
     int m_speed;
@@ -74,9 +81,10 @@ private:
     bool m_objectAlert;
     bool m_laneAlert;
     QString m_laneDeviationSide;
+    int m_speedLimitSignal;
+    bool m_speedLimitVisible;
 
     QTimer *m_timeUpdateTimer;
-    QTimer *m_dataSimulationTimer;
 };
 
 #endif  // CLUSTERMODEL_HPP
