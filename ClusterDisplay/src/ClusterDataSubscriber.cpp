@@ -110,7 +110,7 @@ void ClusterDataSubscriber::generateMockData()
         signalCounter = 0;
         static const QList<int> speedLimits = {30, 50, 70, 90, 120};
         int signalIndex = QRandomGenerator::global()->bounded(speedLimits.size());
-        mockData["signal"] = QString::number(speedLimits[signalIndex]);
+        mockData["sign"] = QString::number(speedLimits[signalIndex]);
     }
 
     // Driving mode (0 for manual, 1 for autonomous)
@@ -183,8 +183,8 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
     }
 
     // Handle speed limit signal
-    if (data.contains("signal")) {
-        int signalValue = data["signal"].toInt();
+    if (data.contains("sign")) {
+        int signalValue = data["sign"].toInt();
 
         // Show the speed limit sign with the received value
         m_clusterModel->setSpeedLimitSignal(signalValue);

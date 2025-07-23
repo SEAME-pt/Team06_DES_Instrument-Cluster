@@ -42,7 +42,7 @@ Item {
         Text {
             anchors.centerIn: parent
             text: signValue
-            font.pixelSize: 80
+            font.pixelSize: 70
             font.bold: true
             color: "black"
         }

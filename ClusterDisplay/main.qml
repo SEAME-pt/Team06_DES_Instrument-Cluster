@@ -167,7 +167,7 @@ ApplicationWindow {
             id: streetSignDisplay
             anchors {
                 right: parent.right
-                rightMargin: 260  // More to the left, between center and edge
+                rightMargin: 270  // More to the left, between center and edge
                 verticalCenter: parent.verticalCenter
             }
             width: 100

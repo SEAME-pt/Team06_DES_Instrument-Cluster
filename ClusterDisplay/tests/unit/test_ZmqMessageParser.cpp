@@ -82,7 +82,7 @@ TEST_F(ZmqMessageParserTest, EmptyString)
 
 TEST_F(ZmqMessageParserTest, RealWorldExample)
 {
-    QString message = "battery:20;charging:1;lane:1;obs:1;signal:50";
+    QString message = "battery:20;charging:1;lane:1;obs:1;sign:50";
 
     QMap<QString, QString> result = parser->parseMessage(message);
 
@@ -91,7 +91,7 @@ TEST_F(ZmqMessageParserTest, RealWorldExample)
     EXPECT_TRUE(parser->getBoolValue("charging"));
     EXPECT_EQ(parser->getIntValue("lane"), 1);
     EXPECT_TRUE(parser->getBoolValue("obs"));
-    EXPECT_EQ(parser->getIntValue("signal"), 50);
+    EXPECT_EQ(parser->getIntValue("sign"), 50);
 }
 
 int main(int argc, char** argv)

@@ -140,8 +140,8 @@ Item {
                 leftMargin: 15
                 verticalCenter: parent.verticalCenter
             }
-            color: "white"  // White text as requested
-            font.pixelSize: 32  // Bigger text (was 24)
+            color: "grey"  // White text as requested
+            font.pixelSize: 24  // Bigger text (was 24)
             font.bold: false  // Remove bold
             text: "LKAS"  // Lane Keeping Assist System
         }
@@ -258,8 +258,8 @@ Item {
                 leftMargin: 15
                 verticalCenter: parent.verticalCenter
             }
-            color: "white"  // White text as requested
-            font.pixelSize: 32  // Bigger text (was 24)
+            color: "grey"  // White text as requested
+            font.pixelSize: 24  // Bigger text (was 24)
             font.bold: false  // Remove bold
             text: " OBS"
         }
