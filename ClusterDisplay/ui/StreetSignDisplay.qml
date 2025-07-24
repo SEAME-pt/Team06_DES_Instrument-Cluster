@@ -16,8 +16,8 @@ Item {
     Rectangle {
         id: signCircle
         anchors.centerIn: parent
-        width: 180
-        height: 180
+        width: 140
+        height: 140
         radius: width/2
         color: "white"
         border {
@@ -42,7 +42,7 @@ Item {
         Text {
             anchors.centerIn: parent
             text: signValue
-            font.pixelSize: 70
+            font.pixelSize: 40
             font.bold: true
             color: "black"
         }

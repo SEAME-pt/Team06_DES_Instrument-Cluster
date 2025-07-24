@@ -100,7 +100,9 @@ void ClusterDataSubscriber::generateMockData()
         mockData["lane"] = QString::number(QRandomGenerator::global()->bounded(1, 3));
         // Add obstacle detection occasionally
         if (QRandomGenerator::global()->bounded(3) == 0) {
-            mockData["obs"] = "1"; // Obstacle detected
+            // Generate either obs:1 or obs:2 for testing
+            int obsValue = QRandomGenerator::global()->bounded(1, 3); // 1 or 2
+            mockData["obs"] = QString::number(obsValue);
         }
     }
 
@@ -179,7 +181,7 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
 
     // Handle obstacle detection
     if (data.contains("obs")) {
-        m_clusterModel->setObjectAlert(data["obs"].toInt() == 1);
+        m_clusterModel->setObjectAlert(data["obs"].toInt() > 0);
     }
 
     // Handle speed limit signal
