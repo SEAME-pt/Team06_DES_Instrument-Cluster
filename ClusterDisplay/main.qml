@@ -10,8 +10,9 @@ ApplicationWindow {
     height: 400  // Changed to correct target height
     title: qsTr("Automotive Cluster Display")
 
-    // Remove window frame for embedded automotive look
-    flags: Qt.FramelessWindowHint
+    // Remove window frame for embedded automotive look and make it full screen
+    flags: Qt.FramelessWindowHint | Qt.WindowStaysOnTopHint
+    visibility: ApplicationWindow.FullScreen
     color: "transparent"
 
     // Define modern EV-style fonts using system fonts that are more futuristic/modern
