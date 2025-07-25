@@ -37,10 +37,16 @@ Item {
             requestPaint()
         }
 
-        // Force repaint when object alert changes
+        // Force repaint when alerts change
         Connections {
             target: jetracerAlertDisplay
             function onObjectAlertActiveChanged() {
+                roadLines.requestPaint();
+            }
+            function onLaneAlertActiveChanged() {
+                roadLines.requestPaint();
+            }
+            function onLaneDeviationSideChanged() {
                 roadLines.requestPaint();
             }
         }
