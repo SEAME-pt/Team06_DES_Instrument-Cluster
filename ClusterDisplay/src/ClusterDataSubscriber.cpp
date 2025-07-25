@@ -4,8 +4,8 @@
 #include <QRandomGenerator>
 
 // Connection string templates
-const QString CRITICAL_DATA_ADDRESS = "tcp://100.93.113.185:%1";
-const QString NON_CRITICAL_DATA_ADDRESS = "tcp://100.93.113.185:%1";
+const QString CRITICAL_DATA_ADDRESS = "tcp://100.93.45.188:%1";
+const QString NON_CRITICAL_DATA_ADDRESS = "tcp://100.93.45.188:%1";
 
 ClusterDataSubscriber::ClusterDataSubscriber(ClusterModel* clusterModel, QObject* parent)
     : QObject(parent)
