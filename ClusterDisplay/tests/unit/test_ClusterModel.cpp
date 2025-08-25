@@ -202,17 +202,17 @@ TEST_F(ClusterModelTest, SpeedLimitSignalSetter)
     QSignalSpy spy(model, &ClusterModel::speedLimitSignalChanged);
 
     // Set a new value
-    model->setSpeedLimitSignal(70);
+    model->setSpeedLimitSignal(80);
 
     // Check if the value was updated
-    EXPECT_EQ(model->speedLimitSignal(), 70);
+    EXPECT_EQ(model->speedLimitSignal(), 80);
 
     // Check if the signal was emitted
     EXPECT_EQ(spy.count(), 1);
-    EXPECT_EQ(spy.at(0).at(0).toInt(), 70);
+    EXPECT_EQ(spy.at(0).at(0).toInt(), 80);
 
     // Set the same value again
-    model->setSpeedLimitSignal(70);
+    model->setSpeedLimitSignal(80);
 
     // Signal should not be emitted again
     EXPECT_EQ(spy.count(), 1);

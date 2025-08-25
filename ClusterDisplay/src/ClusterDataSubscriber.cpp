@@ -106,11 +106,11 @@ void ClusterDataSubscriber::generateMockData()
         }
     }
 
-    // Speed limit sign (varying between 30, 50, 70, 90, 120)
+    // Speed limit sign (varying between 50, 80)
     static int signalCounter = 0;
     if (++signalCounter >= 60) { // Change signal every 30 seconds
         signalCounter = 0;
-        static const QList<int> speedLimits = {30, 50, 70, 90, 120};
+        static const QList<int> speedLimits = {50, 80};
         int signalIndex = QRandomGenerator::global()->bounded(speedLimits.size());
         mockData["sign"] = QString::number(speedLimits[signalIndex]);
     }
