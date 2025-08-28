@@ -165,8 +165,8 @@ Item {
 
                                 // Draw exactly 5 crosswalk stripes - angled to match triangle perspective
                 var numStripes = 5;
-                var stripeWidth = 3;
-                var stripeLength = 18;
+                var stripeWidth = 5; // Made bolder
+                var stripeLength = 20; // Made slightly longer
 
                 // Position stripes in lower triangle area
                 var stripeAreaCenterY = bottomY - 12;
@@ -204,12 +204,12 @@ Item {
                 // Body - vertical line like classic stick figure
                 ctx.fillRect(pedX - 1.5, pedY - 6, 3, 14);
 
-                                // Arms positioned for walking from right to left
-                // Right arm swinging forward (leading the motion)
+                                                // Arms positioned for walking from right to left
+                // Right arm longer and flexed downward (like in reference image)
                 ctx.save();
-                ctx.translate(pedX, pedY - 2);
-                ctx.rotate(0.2); // Forward swing to the left
-                ctx.fillRect(0, -1.5, 10, 3);
+                ctx.translate(pedX, pedY - 1);
+                ctx.rotate(0.6); // Flexed downward angle
+                ctx.fillRect(0, -1.5, 14, 3); // Made longer
                 ctx.restore();
 
                 // Left arm swinging back
@@ -219,19 +219,26 @@ Item {
                 ctx.fillRect(-9, -1.5, 9, 3);
                 ctx.restore();
 
-                // Legs in walking stride from right to left - made longer
-                // Right leg stepping forward to the left
+                                // Legs much longer to intercept the crosswalk stripes with white outline
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "white";
+
+                // Right leg stepping forward to the left - reaching into stripes
                 ctx.save();
                 ctx.translate(pedX, pedY + 8);
                 ctx.rotate(0.5); // Strong forward stride to the left
-                ctx.fillRect(-1.5, 0, 3, 16); // Made longer (16 instead of 12)
+                // Draw black leg with white outline
+                ctx.fillRect(-2, 0, 4, 28); // Much longer to reach stripes
+                ctx.strokeRect(-2, 0, 4, 28); // White outline
                 ctx.restore();
 
-                // Left leg pushing back/supporting
+                // Left leg pushing back/supporting - also reaching into stripes
                 ctx.save();
                 ctx.translate(pedX, pedY + 8);
                 ctx.rotate(-0.2); // Slight back angle
-                ctx.fillRect(-1.5, 0, 3, 16); // Made longer (16 instead of 12)
+                // Draw black leg with white outline
+                ctx.fillRect(-2, 0, 4, 28); // Much longer to reach stripes
+                ctx.strokeRect(-2, 0, 4, 28); // White outline
                 ctx.restore();
             }
         }

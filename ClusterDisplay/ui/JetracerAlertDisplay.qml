@@ -257,6 +257,11 @@ Item {
             ctx.closePath();
             ctx.fill();
 
+            // Add grey contour to the car body
+            ctx.strokeStyle = "#808080"; // Grey color
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
             // Add shadow to car for 3D effect
             ctx.shadowColor = "rgba(0, 0, 0, 0.5)";
             ctx.shadowBlur = 15;
@@ -277,6 +282,11 @@ Item {
             ctx.closePath();
             ctx.fill();
 
+            // Add grey contour to the cockpit/driver area
+            ctx.strokeStyle = "#808080"; // Grey color
+            ctx.lineWidth = 1;
+            ctx.stroke();
+
             // Reset shadow
             ctx.shadowColor = "transparent";
             ctx.shadowBlur = 0;
@@ -291,6 +301,14 @@ Item {
             // Front wheels - 20% bigger and proportionally positioned
             ctx.fillRect(10, height - 60, 6, 14);       // Left front wheel (20% bigger)
             ctx.fillRect(width - 16, height - 60, 6, 14); // Right front wheel (20% bigger)
+
+            // Add grey contours to all wheels
+            ctx.strokeStyle = "#808080"; // Grey color
+            ctx.lineWidth = 1;
+            ctx.strokeRect(4, height - 22, 8, 17);        // Left rear wheel contour
+            ctx.strokeRect(width - 12, height - 22, 8, 17); // Right rear wheel contour
+            ctx.strokeRect(10, height - 60, 6, 14);       // Left front wheel contour
+            ctx.strokeRect(width - 16, height - 60, 6, 14); // Right front wheel contour
 
             // Draw lane warning indicators when lane alert is active
             if (laneAlertActive) {
