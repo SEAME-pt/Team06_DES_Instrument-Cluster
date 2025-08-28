@@ -8,7 +8,7 @@ ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
     // Configure socket options for optimal performance
 
     // Set high water mark to 1 to only keep latest message
-    _socket.set(zmq::sockopt::rcvhwm, 1);
+    _socket.set(zmq::sockopt::rcvhwm, 1000);
 
     // Enable conflate option to only keep most recent message
     _socket.set(zmq::sockopt::conflate, 1);
@@ -17,7 +17,7 @@ ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
     _socket.set(zmq::sockopt::linger, 0);
 
     // Disable Nagle's algorithm for TCP connections
-    _socket.set(zmq::sockopt::ipv6, 1);
+    _socket.set(zmq::sockopt::ipv6, 0);
 
     // Connect to the specified address
     _socket.connect(address.toStdString());
