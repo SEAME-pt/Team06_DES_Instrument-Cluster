@@ -71,6 +71,11 @@ private:
     ZmqMessageParser m_parser;                      ///< Message parser
     QTimer* m_mockTimer;                            ///< Timer for mock data generation
     bool m_mockingEnabled;                          ///< Mocking status
+
+    // Sign tracking for prolonging display instead of resetting
+    QString m_currentSignType;                      ///< Currently displayed sign type
+    QString m_currentSignValue;                     ///< Currently displayed sign value
+    QTimer* m_signHideTimer;                        ///< Timer for hiding the current sign
 };
 
 #endif // CLUSTERDATASUBSCRIBER_HPP

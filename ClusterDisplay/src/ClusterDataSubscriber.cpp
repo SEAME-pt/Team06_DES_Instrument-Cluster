@@ -12,6 +12,8 @@ ClusterDataSubscriber::ClusterDataSubscriber(ClusterModel* clusterModel, QObject
     , m_clusterModel(clusterModel)
     , m_parser(this)
     , m_mockingEnabled(false)
+    , m_currentSignType("")
+    , m_currentSignValue("")
 {
     // Create critical data subscriber (for speed, lane, etc.)
     m_criticalSub = std::make_unique<ZmqSubscriber>(
@@ -29,6 +31,16 @@ ClusterDataSubscriber::ClusterDataSubscriber(ClusterModel* clusterModel, QObject
     m_mockTimer = new QTimer(this);
     m_mockTimer->setInterval(500); // Update every 500ms
     connect(m_mockTimer, &QTimer::timeout, this, &ClusterDataSubscriber::generateMockData);
+
+    // Create sign hide timer but don't start it yet
+    m_signHideTimer = new QTimer(this);
+    m_signHideTimer->setSingleShot(true);
+    connect(m_signHideTimer, &QTimer::timeout, [this]() {
+        m_clusterModel->setSpeedLimitVisible(false);
+        m_clusterModel->setSignVisible(false);
+        m_currentSignType = "";
+        m_currentSignValue = "";
+    });
 }
 
 ClusterDataSubscriber::~ClusterDataSubscriber()
@@ -36,6 +48,11 @@ ClusterDataSubscriber::~ClusterDataSubscriber()
     // Stop mock timer if running
     if (m_mockTimer->isActive()) {
         m_mockTimer->stop();
+    }
+
+    // Stop sign hide timer if running
+    if (m_signHideTimer && m_signHideTimer->isActive()) {
+        m_signHideTimer->stop();
     }
 }
 
@@ -89,9 +106,11 @@ void ClusterDataSubscriber::generateMockData()
 
     // Mock critical data (speed, lane, signal, etc.)
     static qreal angle = 0;
-    int speed = qRound(100 + 100 * qSin(angle));
+    int speedKmH = qRound(100 + 100 * qSin(angle)); // Generate speed in km/h for display
+    // Convert to mm/s for transmission (km/h / 0.0036 = mm/s)
+    int speedMmS = qRound(speedKmH / 0.0036);
     angle += 0.1;
-    mockData["speed"] = QString::number(speed);
+    mockData["speed"] = QString::number(speedMmS);
 
     // Lane detection (1 for left, 2 for right, alternating)
     static int laneCounter = 0;
@@ -106,13 +125,13 @@ void ClusterDataSubscriber::generateMockData()
         }
     }
 
-    // Speed limit sign (varying between 50, 80)
+    // Street signs (varying between speed limits, stop, and crosswalk)
     static int signalCounter = 0;
     if (++signalCounter >= 60) { // Change signal every 30 seconds
         signalCounter = 0;
-        static const QList<int> speedLimits = {50, 80};
-        int signalIndex = QRandomGenerator::global()->bounded(speedLimits.size());
-        mockData["sign"] = QString::number(speedLimits[signalIndex]);
+        static const QStringList signs = {"50", "80", "stop", "crosswalk"};
+        int signalIndex = QRandomGenerator::global()->bounded(signs.size());
+        mockData["sign"] = signs[signalIndex];
     }
 
     // Driving mode (0 for manual, 1 for autonomous)
@@ -141,7 +160,7 @@ void ClusterDataSubscriber::generateMockData()
 
     // Odometer (constantly increasing)
     static int odo = 0;
-    odo += speed / 10; // Faster increase at higher speeds
+    odo += speedKmH / 10; // Faster increase at higher speeds
     mockData["odo"] = QString::number(odo);
 
     // Process the mock data
@@ -150,9 +169,12 @@ void ClusterDataSubscriber::generateMockData()
 
 void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
 {
-    // Handle speed
+    // Handle speed - convert from mm/s to km/h
     if (data.contains("speed")) {
-        m_clusterModel->setSpeed(data["speed"].toInt());
+        int speedMmPerSec = data["speed"].toInt();
+        // Convert mm/s to km/h: mm/s * 0.0036 = km/h
+        int speedKmPerHour = static_cast<int>(speedMmPerSec * 0.0036);
+        m_clusterModel->setSpeed(speedKmPerHour);
     }
 
     // Handle battery level
@@ -186,16 +208,67 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
 
     // Handle speed limit signal
     if (data.contains("sign")) {
-        int signalValue = data["sign"].toInt();
+        QString signValue = data["sign"];
+        QString signType;
+        QString displayValue;
 
-        // Show the speed limit sign with the received value
-        m_clusterModel->setSpeedLimitSignal(signalValue);
-        m_clusterModel->setSpeedLimitVisible(true);
+        // Determine sign type and display value
+        bool isNumeric;
+        int speedLimit = signValue.toInt(&isNumeric);
 
-        // Create a timer to hide the sign after a few seconds
-        QTimer::singleShot(6000, [this]() {
-            m_clusterModel->setSpeedLimitVisible(false);
-        });
+        if (isNumeric) {
+            // Traditional speed limit sign
+            signType = "SPEED_LIMIT";
+            displayValue = QString::number(speedLimit);
+        } else if (signValue == "stop") {
+            // Stop sign
+            signType = "STOP";
+            displayValue = "STOP";
+        } else if (signValue == "crosswalk") {
+            // Crosswalk sign
+            signType = "CROSSWALK";
+            displayValue = "CROSSWALK";
+        } else {
+            // Unknown sign type, skip processing
+            return;
+        }
+
+        // Check if this is the same sign we're currently displaying
+        bool isSameSign = (m_currentSignType == signType && m_currentSignValue == displayValue);
+
+        if (isSameSign) {
+            // Same sign detected - just prolong the display by restarting the timer
+            m_signHideTimer->start(6000);
+        } else {
+            // Different sign or no current sign - update display and start new timer
+            m_currentSignType = signType;
+            m_currentSignValue = displayValue;
+
+            if (isNumeric) {
+                // Traditional speed limit sign
+                m_clusterModel->setSpeedLimitSignal(speedLimit);
+                m_clusterModel->setSpeedLimitVisible(true);
+
+                // Update the persistent speed limit display
+                m_clusterModel->setLastSpeedLimit(speedLimit);
+
+                // Also update the new generic sign system for consistency
+                m_clusterModel->setSignType(signType);
+                m_clusterModel->setSignValue(displayValue);
+                m_clusterModel->setSignVisible(true);
+            } else {
+                // Non-numeric sign (stop, crosswalk, etc.)
+                m_clusterModel->setSignType(signType);
+                m_clusterModel->setSignValue(displayValue);
+                m_clusterModel->setSignVisible(true);
+
+                // Hide old speed limit display
+                m_clusterModel->setSpeedLimitVisible(false);
+            }
+
+            // Start the hide timer for the new sign
+            m_signHideTimer->start(6000);
+        }
     }
 
     // Handle driving mode

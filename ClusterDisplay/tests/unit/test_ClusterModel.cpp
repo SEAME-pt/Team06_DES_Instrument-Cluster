@@ -27,6 +27,9 @@ TEST_F(ClusterModelTest, InitialValues)
     EXPECT_EQ(model->laneDeviationSide(), "left");
     EXPECT_EQ(model->speedLimitSignal(), 50);
     EXPECT_FALSE(model->speedLimitVisible());
+    EXPECT_EQ(model->signType(), "");
+    EXPECT_EQ(model->signValue(), "");
+    EXPECT_FALSE(model->signVisible());
 }
 
 TEST_F(ClusterModelTest, SpeedSetter)
@@ -234,6 +237,69 @@ TEST_F(ClusterModelTest, SpeedLimitVisibleSetter)
 
     // Set the same value again
     model->setSpeedLimitVisible(true);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, SignTypeSetter)
+{
+    QSignalSpy spy(model, &ClusterModel::signTypeChanged);
+
+    // Set a new value
+    model->setSignType("STOP");
+
+    // Check if the value was updated
+    EXPECT_EQ(model->signType(), "STOP");
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toString(), "STOP");
+
+    // Set the same value again
+    model->setSignType("STOP");
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, SignValueSetter)
+{
+    QSignalSpy spy(model, &ClusterModel::signValueChanged);
+
+    // Set a new value
+    model->setSignValue("CROSSWALK");
+
+    // Check if the value was updated
+    EXPECT_EQ(model->signValue(), "CROSSWALK");
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toString(), "CROSSWALK");
+
+    // Set the same value again
+    model->setSignValue("CROSSWALK");
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, SignVisibleSetter)
+{
+    QSignalSpy spy(model, &ClusterModel::signVisibleChanged);
+
+    // Set a new value
+    model->setSignVisible(true);
+
+    // Check if the value was updated
+    EXPECT_TRUE(model->signVisible());
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toBool(), true);
+
+    // Set the same value again
+    model->setSignVisible(true);
 
     // Signal should not be emitted again
     EXPECT_EQ(spy.count(), 1);

@@ -14,9 +14,6 @@ Item {
     // Use actual speed directly without stopping for objects
     property int _effectiveSpeed: speed
 
-    // Calculate animation speed based on vehicle speed - more realistic curve but faster overall
-    property real animationSpeed: _effectiveSpeed > 0 ? 5000 / (1 + _effectiveSpeed) : 0
-
     // Road lines (central perspective) - no background, larger and lower on screen
     Canvas {
         id: roadLines
@@ -189,8 +186,8 @@ Item {
             onTriggered: {
                 // Calculate how much progress to add based on speed and time
                 var timeDelta = interval / 1000.0; // Time in seconds
-                // Increased speed factor from 500.0 to 200.0 for faster movement
-                var progressDelta = (jetracerAlertDisplay._effectiveSpeed / 200.0) * timeDelta;
+                // Adjusted speed factor for 9km/h top speed - reduced from 200.0 to 25.0 for much faster movement
+                var progressDelta = (jetracerAlertDisplay._effectiveSpeed / 25.0) * timeDelta;
                 roadLines.progress = (roadLines.progress + progressDelta) % 1.0;
             }
         }

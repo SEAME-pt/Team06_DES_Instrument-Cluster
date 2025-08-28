@@ -17,7 +17,11 @@ ClusterModel::ClusterModel(QObject *parent)
       m_laneAlert(false),
       m_laneDeviationSide("left"),
       m_speedLimitSignal(50),
-      m_speedLimitVisible(false)
+      m_speedLimitVisible(false),
+      m_signType(""),
+      m_signValue(""),
+      m_signVisible(false),
+      m_lastSpeedLimit(0)
 {
     // Initialize time update timer
     m_timeUpdateTimer = new QTimer(this);
@@ -121,6 +125,42 @@ void ClusterModel::setSpeedLimitVisible(bool value)
     {
         m_speedLimitVisible = value;
         emit speedLimitVisibleChanged(value);
+    }
+}
+
+void ClusterModel::setSignType(const QString &value)
+{
+    if (m_signType != value)
+    {
+        m_signType = value;
+        emit signTypeChanged(value);
+    }
+}
+
+void ClusterModel::setSignValue(const QString &value)
+{
+    if (m_signValue != value)
+    {
+        m_signValue = value;
+        emit signValueChanged(value);
+    }
+}
+
+void ClusterModel::setSignVisible(bool value)
+{
+    if (m_signVisible != value)
+    {
+        m_signVisible = value;
+        emit signVisibleChanged(value);
+    }
+}
+
+void ClusterModel::setLastSpeedLimit(int value)
+{
+    if (m_lastSpeedLimit != value)
+    {
+        m_lastSpeedLimit = value;
+        emit lastSpeedLimitChanged(value);
     }
 }
 

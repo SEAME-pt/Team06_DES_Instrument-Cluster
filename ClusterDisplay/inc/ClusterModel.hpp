@@ -22,6 +22,10 @@ class ClusterModel : public QObject
                    laneDeviationSideChanged)
     Q_PROPERTY(int speedLimitSignal READ speedLimitSignal WRITE setSpeedLimitSignal NOTIFY speedLimitSignalChanged)
     Q_PROPERTY(bool speedLimitVisible READ speedLimitVisible WRITE setSpeedLimitVisible NOTIFY speedLimitVisibleChanged)
+    Q_PROPERTY(QString signType READ signType WRITE setSignType NOTIFY signTypeChanged)
+    Q_PROPERTY(QString signValue READ signValue WRITE setSignValue NOTIFY signValueChanged)
+    Q_PROPERTY(bool signVisible READ signVisible WRITE setSignVisible NOTIFY signVisibleChanged)
+    Q_PROPERTY(int lastSpeedLimit READ lastSpeedLimit WRITE setLastSpeedLimit NOTIFY lastSpeedLimitChanged)
 
 public:
     explicit ClusterModel(QObject *parent = nullptr);
@@ -40,6 +44,10 @@ public:
     QString laneDeviationSide() const { return m_laneDeviationSide; }
     int speedLimitSignal() const { return m_speedLimitSignal; }
     bool speedLimitVisible() const { return m_speedLimitVisible; }
+    QString signType() const { return m_signType; }
+    QString signValue() const { return m_signValue; }
+    bool signVisible() const { return m_signVisible; }
+    int lastSpeedLimit() const { return m_lastSpeedLimit; }
 
     // Setters
     void setSpeed(int value);
@@ -52,6 +60,10 @@ public:
     void setLaneDeviationSide(const QString &value);
     void setSpeedLimitSignal(int value);
     void setSpeedLimitVisible(bool value);
+    void setSignType(const QString &value);
+    void setSignValue(const QString &value);
+    void setSignVisible(bool value);
+    void setLastSpeedLimit(int value);
 
 signals:
     void speedChanged(int value);
@@ -66,6 +78,10 @@ signals:
     void laneDeviationSideChanged(const QString &value);
     void speedLimitSignalChanged(int value);
     void speedLimitVisibleChanged(bool value);
+    void signTypeChanged(const QString &value);
+    void signValueChanged(const QString &value);
+    void signVisibleChanged(bool value);
+    void lastSpeedLimitChanged(int value);
 
 private slots:
     void updateDateTime();
@@ -83,6 +99,10 @@ private:
     QString m_laneDeviationSide;
     int m_speedLimitSignal;
     bool m_speedLimitVisible;
+    QString m_signType;
+    QString m_signValue;
+    bool m_signVisible;
+    int m_lastSpeedLimit;
 
     QTimer *m_timeUpdateTimer;
 };

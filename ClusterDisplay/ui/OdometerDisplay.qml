@@ -23,7 +23,7 @@ Item {
         Text {
             id: valueText
             anchors.right: parent.right
-            text: value.toString() + " km"
+            text: value.toString() + " m"
             font.family: window.monoFont
             font.pixelSize: 30
             color: "#ffffff"

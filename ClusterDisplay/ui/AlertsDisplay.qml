@@ -9,6 +9,7 @@ Item {
     property bool laneAlertActive: false // Lane deviation alert
     property bool objectAlertActive: false // Object detection alert
     property string laneDeviationSide: "left" // Which side the lane deviation is on ("left" or "right")
+    property int lastSpeedLimit: 50 // Last received speed limit value
 
     // Lane departure alert - positioned above center for symmetrical alignment
     Item {
@@ -17,7 +18,7 @@ Item {
         anchors {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: -50  // 50px above center
+            verticalCenterOffset: 10  // Moved down below center
         }
         width: 150
         height: 60
@@ -155,7 +156,7 @@ Item {
             horizontalCenter: parent.horizontalCenter
             horizontalCenterOffset: 8
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: 50   // 50px below center
+            verticalCenterOffset: 80   // Moved down further below center
         }
         width: 160
         height: 60
@@ -262,6 +263,40 @@ Item {
             font.pixelSize: 24  // Bigger text (was 24)
             font.bold: false  // Remove bold
             text: " OBS"
+        }
+    }
+
+    // Permanent speed limit sign - positioned to align with speedometer
+    Item {
+        id: speedLimitBox
+        visible: lastSpeedLimit > 0
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            verticalCenter: parent.verticalCenter
+            verticalCenterOffset: -70  // Moved down to align with speedometer level
+        }
+        width: 60
+        height: 60
+
+        // Speed limit sign background (circular like real traffic signs)
+        Rectangle {
+            id: speedLimitBackground
+            anchors.centerIn: parent
+            width: 50
+            height: 50
+            radius: 25  // Circular
+            color: "white"
+            border.width: 3
+            border.color: "#FF0000"  // Red border like real speed limit signs
+
+            // Speed limit text
+            Text {
+                anchors.centerIn: parent
+                text: lastSpeedLimit.toString()
+                color: "black"
+                font.pixelSize: 22
+                font.bold: true
+            }
         }
     }
 }

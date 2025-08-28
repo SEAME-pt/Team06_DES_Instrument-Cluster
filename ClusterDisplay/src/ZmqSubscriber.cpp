@@ -1,23 +1,28 @@
 #include "ZmqSubscriber.hpp"
 
 #include <QDebug>
+#include <QThread>
 
 ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
     : QObject(parent), _context(1), _socket(_context, zmq::socket_type::sub)
 {
     // Configure socket options for optimal performance
 
-    // Set high water mark to 1 to only keep latest message
-    _socket.set(zmq::sockopt::rcvhwm, 1000);
+    // Set high water mark to allow more messages to be queued
+    _socket.set(zmq::sockopt::rcvhwm, 100);
 
-    // Enable conflate option to only keep most recent message
-    _socket.set(zmq::sockopt::conflate, 1);
+    // Disable conflate option to receive all messages (not just the latest)
+    _socket.set(zmq::sockopt::conflate, 0);
 
     // Set zero linger period for clean exits
     _socket.set(zmq::sockopt::linger, 0);
 
-    // Disable Nagle's algorithm for TCP connections
-    _socket.set(zmq::sockopt::ipv6, 0);
+        // Set immediate option to receive messages as soon as they arrive
+    try {
+        _socket.set(zmq::sockopt::immediate, 1);
+    } catch (const zmq::error_t &e) {
+        qDebug() << "ZmqSubscriber: immediate option not supported, continuing without it";
+    }
 
     // Connect to the specified address
     _socket.connect(address.toStdString());

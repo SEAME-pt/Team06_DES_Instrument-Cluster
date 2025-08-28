@@ -94,6 +94,36 @@ TEST_F(ZmqMessageParserTest, RealWorldExample)
     EXPECT_EQ(parser->getIntValue("sign"), 50);
 }
 
+TEST_F(ZmqMessageParserTest, NewSignTypes)
+{
+    // Test stop sign message
+    QString stopMessage = "speed:30;sign:stop;battery:80;";
+    QMap<QString, QString> stopResult = parser->parseMessage(stopMessage);
+
+    EXPECT_EQ(stopResult.size(), 3);
+    EXPECT_EQ(parser->getValue("sign"), "stop");
+    EXPECT_EQ(parser->getIntValue("speed"), 30);
+    EXPECT_EQ(parser->getIntValue("battery"), 80);
+
+    // Test crosswalk sign message
+    QString crosswalkMessage = "speed:45;sign:crosswalk;mode:1;";
+    QMap<QString, QString> crosswalkResult = parser->parseMessage(crosswalkMessage);
+
+    EXPECT_EQ(crosswalkResult.size(), 3);
+    EXPECT_EQ(parser->getValue("sign"), "crosswalk");
+    EXPECT_EQ(parser->getIntValue("speed"), 45);
+    EXPECT_EQ(parser->getIntValue("mode"), 1);
+
+    // Test numeric speed limit still works
+    QString speedLimitMessage = "speed:60;sign:70;battery:90;";
+    QMap<QString, QString> speedLimitResult = parser->parseMessage(speedLimitMessage);
+
+    EXPECT_EQ(speedLimitResult.size(), 3);
+    EXPECT_EQ(parser->getValue("sign"), "70");
+    EXPECT_EQ(parser->getIntValue("sign"), 70);
+    EXPECT_EQ(parser->getIntValue("speed"), 60);
+}
+
 int main(int argc, char** argv)
 {
     ::testing::InitGoogleTest(&argc, argv);

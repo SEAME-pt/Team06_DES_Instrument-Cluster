@@ -23,5 +23,8 @@ void SpeedometerObj::setSpeed(int newSpeed)
 
 void SpeedometerObj::_handleMsg(QString &message)
 {
-    setSpeed(message.toInt());
+    int speedMmPerSec = message.toInt();
+    // Convert mm/s to km/h: mm/s * 0.0036 = km/h
+    int speedKmPerHour = static_cast<int>(std::round(speedMmPerSec * 0.0036));
+    setSpeed(speedKmPerHour);
 }

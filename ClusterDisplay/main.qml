@@ -188,6 +188,7 @@ ApplicationWindow {
             laneAlertActive: clusterModel.laneAlert
             objectAlertActive: clusterModel.objectAlert
             laneDeviationSide: clusterModel.laneDeviationSide
+            lastSpeedLimit: clusterModel.lastSpeedLimit
         }
     }
 

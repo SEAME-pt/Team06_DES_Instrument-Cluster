@@ -55,13 +55,14 @@ TEST_F(SpeedometerObjTest, HandleMessage)
 {
     QSignalSpy spy(speedometer, &SpeedometerObj::speedChanged);
 
-    // Create a message
-    QString message = "85";
+    // Create a message with speed in mm/s that converts to 85 km/h
+    // 85 km/h = 85 / 0.0036 ≈ 23612 mm/s
+    QString message = "23612";
 
     // Call the handle message method
     speedometer->callHandleMsg(message);
 
-    // Check if the value was updated
+    // Check if the value was updated (should be 85 km/h)
     EXPECT_EQ(speedometer->speed(), 85);
 
     // Check if the signal was emitted
@@ -82,11 +83,34 @@ TEST_F(SpeedometerObjTest, HandleInvalidMessage)
     // Call the handle message method
     speedometer->callHandleMsg(message);
 
-    // Check if the value was updated to 0 (default for toInt() on invalid string)
+    // Check if the value was updated to 0 (invalid string converts to 0 mm/s, which is 0 km/h)
     EXPECT_EQ(speedometer->speed(), 0);
 
     // Check if the signal was emitted
     EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(SpeedometerObjTest, ConversionFromMmSToKmH)
+{
+    QSignalSpy spy(speedometer, &SpeedometerObj::speedChanged);
+
+    // Test conversion: 100 km/h = 100 / 0.0036 ≈ 27778 mm/s
+    QString message100 = "27778";
+    speedometer->callHandleMsg(message100);
+    EXPECT_EQ(speedometer->speed(), 100);
+
+    // Test conversion: 50 km/h = 50 / 0.0036 ≈ 13889 mm/s
+    QString message50 = "13889";
+    speedometer->callHandleMsg(message50);
+    EXPECT_EQ(speedometer->speed(), 50);
+
+    // Test conversion: 0 km/h = 0 mm/s
+    QString message0 = "0";
+    speedometer->callHandleMsg(message0);
+    EXPECT_EQ(speedometer->speed(), 0);
+
+    // Check signals were emitted for each change
+    EXPECT_EQ(spy.count(), 3);
 }
 
 int main(int argc, char** argv)
