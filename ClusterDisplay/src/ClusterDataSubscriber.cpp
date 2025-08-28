@@ -173,7 +173,8 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
     if (data.contains("speed")) {
         int speedMmPerSec = data["speed"].toInt();
         // Convert mm/s to km/h: mm/s * 0.0036 = km/h
-        int speedKmPerHour = static_cast<int>(speedMmPerSec * 0.0036);
+        // Then multiply by 10 for scaled display
+        int speedKmPerHour = static_cast<int>(speedMmPerSec * 0.0036 * 10);
         m_clusterModel->setSpeed(speedKmPerHour);
     }
 

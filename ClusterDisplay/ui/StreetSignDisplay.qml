@@ -206,51 +206,61 @@ Item {
                 ctx.fill();
                 ctx.stroke(); // White contour
 
-                // Body - much bolder torso like reference image
-                ctx.fillRect(pedX - 4, pedY - 6, 8, 14); // Much bolder torso (8 instead of 5)
-                ctx.strokeRect(pedX - 4, pedY - 6, 8, 14); // White contour
+                                                // Body and arms as one single continuous shape - no internal lines
+                ctx.beginPath();
 
-                                // Arms positioned for walking from right to left - much bolder
-                // Right arm upper part - bolder
-                ctx.save();
-                ctx.translate(pedX, pedY - 1);
-                ctx.rotate(0.6); // Flexed downward angle
-                ctx.fillRect(0, -2.5, 10, 5); // Much bolder arm (5 instead of 3)
-                ctx.strokeRect(0, -2.5, 10, 5); // White contour
-                ctx.restore();
+                // Draw complete outline of torso + arms as one shape
+                // Start from top-left of torso (longer torso)
+                ctx.moveTo(pedX - 4, pedY - 6);
+                // Top of torso
+                ctx.lineTo(pedX + 4, pedY - 6);
+                // Right side going down to where right arm starts
+                ctx.lineTo(pedX + 4, pedY - 2);
+                // Right arm outline - longer arm
+                ctx.lineTo(pedX + 15, pedY + 2);
+                ctx.lineTo(pedX + 17, pedY + 8);
+                ctx.lineTo(pedX + 13, pedY + 10);
+                ctx.lineTo(pedX + 10, pedY + 4);
+                // Back to torso right side
+                ctx.lineTo(pedX + 4, pedY + 1);
+                // Continue down right side of torso (longer torso)
+                ctx.lineTo(pedX + 4, pedY + 12);
+                // Bottom of torso (longer)
+                ctx.lineTo(pedX - 4, pedY + 12);
+                // Left side of torso going up
+                ctx.lineTo(pedX - 4, pedY + 3);
+                // Left arm outline - longer arm
+                ctx.lineTo(pedX - 10, pedY + 3);
+                ctx.lineTo(pedX - 15, pedY + 1);
+                ctx.lineTo(pedX - 13, pedY - 2);
+                // Back to left side of torso
+                ctx.lineTo(pedX - 4, pedY);
+                // Continue up left side to close the shape
+                ctx.lineTo(pedX - 4, pedY - 6);
 
-                // Right arm lower part (bent down) - bolder
-                ctx.save();
-                ctx.translate(pedX + 7, pedY + 4); // Position at end of upper arm
-                ctx.rotate(1.2); // Bent downward more
-                ctx.fillRect(0, -2.5, 8, 5); // Much bolder arm (5 instead of 3)
-                ctx.strokeRect(0, -2.5, 8, 5); // White contour
-                ctx.restore();
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke(); // Single white outline around entire shape
 
-                // Left arm swinging back - much bolder
-                ctx.save();
-                ctx.translate(pedX, pedY);
-                ctx.rotate(-0.3); // Back swing
-                ctx.fillRect(-9, -2.5, 9, 5); // Much bolder arm (5 instead of 3)
-                ctx.strokeRect(-9, -2.5, 9, 5); // White contour
-                ctx.restore();
+                // Legs with flat tops parallel to torso bottom, reaching into stripes
+                ctx.lineWidth = 2;
+                ctx.strokeStyle = "white";
 
-                // Legs - wider and starting lower to intercept the crosswalk stripes
-                // Right leg stepping forward to the left - wider and starting lower
+                // Right leg stepping forward to the left - flat top connection to torso
                 ctx.save();
-                ctx.translate(pedX, pedY + 12); // Start lower (12 instead of 8)
+                ctx.translate(pedX + 2, pedY + 12); // Start from torso bottom edge
                 ctx.rotate(0.5); // Strong forward stride to the left
-                // Draw black leg with white outline - wider
-                ctx.fillRect(-3, 0, 6, 28); // Wider legs (6 instead of 4)
+                // Draw black leg with white outline - flat top
+                ctx.fillRect(-3, 0, 6, 28); // Flat top, extends into stripes
                 ctx.strokeRect(-3, 0, 6, 28); // White outline
                 ctx.restore();
 
-                // Left leg pushing back/supporting - wider and starting lower
+                // Left leg pushing back/supporting - flat top connection to torso
                 ctx.save();
-                ctx.translate(pedX, pedY + 12); // Start lower (12 instead of 8)
+                ctx.translate(pedX - 2, pedY + 12); // Start from torso bottom edge
                 ctx.rotate(-0.2); // Slight back angle
-                // Draw black leg with white outline - wider
-                ctx.fillRect(-3, 0, 6, 28); // Wider legs (6 instead of 4)
+                // Draw black leg with white outline - flat top
+                ctx.fillRect(-3, 0, 6, 28); // Flat top, extends into stripes
                 ctx.strokeRect(-3, 0, 6, 28); // White outline
                 ctx.restore();
             }

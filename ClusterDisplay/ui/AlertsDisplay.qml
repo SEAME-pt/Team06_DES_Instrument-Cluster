@@ -5,30 +5,104 @@ Item {
     width: 400
     height: 350  // Increased height significantly for much more spacing
 
-    // Properties
-    property bool laneAlertActive: false // Lane deviation alert
-    property bool objectAlertActive: false // Object detection alert
-    property string laneDeviationSide: "left" // Which side the lane deviation is on ("left" or "right")
-    property int lastSpeedLimit: 50 // Last received speed limit value
+    // Properties for alerts
+    property bool laneAlertActive: false
+    property bool objectAlertActive: false
+    property string laneDeviationSide: "left"
+    property int lastSpeedLimit: 0
 
-    // Lane departure alert - positioned above center for symmetrical alignment
+    // Add property to check if current speed exceeds speed limit (speed is scaled 10x, speed limit is not)
+    property bool speedLimitExceeded: lastSpeedLimit > 0 && clusterModel.speed > lastSpeedLimit
+
+    // Centralized blinking control for synchronized alerts
+    property real alertOpacity: 1.0
+
+    // Synchronized blinking timer - only runs when alerts are active
+    SequentialAnimation {
+        id: blinkAnimation
+        running: laneAlertActive || objectAlertActive || speedLimitExceeded
+        loops: Animation.Infinite
+        NumberAnimation {
+            target: alertsDisplay
+            property: "alertOpacity"
+            to: 1.0
+            duration: 500  // Increased from 300ms for slower blinking
+        }
+        NumberAnimation {
+            target: alertsDisplay
+            property: "alertOpacity"
+            to: 0.3
+            duration: 500  // Increased from 300ms for slower blinking
+        }
+    }
+
+    // Reset opacity to 1.0 when no alerts are active
+    onLaneAlertActiveChanged: {
+        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded) {
+            alertOpacity = 1.0;
+        } else if (laneAlertActive) {
+            // Immediately start blinking when lane alert becomes active
+            blinkAnimation.restart();
+            alertOpacity = 1.0;  // Start with full opacity
+        }
+    }
+    onObjectAlertActiveChanged: {
+        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded) {
+            alertOpacity = 1.0;
+        } else if (objectAlertActive) {
+            // Immediately start blinking when object alert becomes active
+            blinkAnimation.restart();
+            alertOpacity = 1.0;  // Start with full opacity
+        }
+    }
+    onSpeedLimitExceededChanged: {
+        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded) {
+            alertOpacity = 1.0;
+        } else if (speedLimitExceeded) {
+            // Immediately start blinking when speed limit is exceeded
+            blinkAnimation.restart();
+            alertOpacity = 1.0;  // Start with full opacity
+        }
+    }
+
+    // Also watch for speed changes to immediately trigger blinking
+    Connections {
+        target: clusterModel
+        function onSpeedChanged() {
+            var wasExceeded = speedLimitExceeded;
+            // Force re-evaluation of speedLimitExceeded
+            if (lastSpeedLimit > 0 && clusterModel.speed > lastSpeedLimit) {
+                if (!wasExceeded) {
+                    // Speed just exceeded the limit - start blinking immediately
+                    blinkAnimation.restart();
+                    alertOpacity = 1.0;
+                }
+            } else if (wasExceeded) {
+                // Speed dropped below limit - stop blinking
+                if (!laneAlertActive && !objectAlertActive) {
+                    alertOpacity = 1.0;
+                }
+            }
+        }
+    }
+
+    // Lane departure alert - positioned below obstruction alert
     Item {
         id: laneAlertBox
         visible: laneAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: 10  // Moved down below center
+            verticalCenterOffset: 70  // Positioned below obstruction alert
         }
-        width: 150
+        width: 60  // Reduced width since no text
         height: 60
 
         // Icon first
         Item {
             id: laneIcon
             anchors {
-                left: parent.left
-                verticalCenter: parent.verticalCenter
+                centerIn: parent  // Center the icon in the container
             }
             width: 60
             height: 40
@@ -124,49 +198,29 @@ Item {
                 }
             }
 
-            // Flashing animation for icon
-            SequentialAnimation on opacity {
-                running: laneAlertActive
-                loops: Animation.Infinite
-                NumberAnimation { to: 1.0; duration: 300 }
-                NumberAnimation { to: 0.4; duration: 300 }
-            }
-        }
-
-        // Alert text after icon
-        Text {
-            id: laneAlertText
-            anchors {
-                left: laneIcon.right
-                leftMargin: 15
-                verticalCenter: parent.verticalCenter
-            }
-            color: "grey"  // White text as requested
-            font.pixelSize: 24  // Bigger text (was 24)
-            font.bold: false  // Remove bold
-            text: "LKAS"  // Lane Keeping Assist System
+            // Use centralized blinking opacity
+            opacity: laneAlertActive ? alertOpacity : 1.0
         }
     }
 
-    // Object detection alert - positioned below center for symmetrical alignment
+    // Object detection alert - positioned centered between speed and lane alerts
     Item {
         id: objectAlertBox
         visible: objectAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
-            horizontalCenterOffset: 8
+            horizontalCenterOffset: 0  // Center aligned
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: 80   // Moved down further below center
+            verticalCenterOffset: 6   // Slightly below center, closer to original position
         }
-        width: 160
+        width: 60  // Reduced width since no text
         height: 60
 
         // Icon first
         Item {
             id: objectIcon
             anchors {
-                left: parent.left
-                verticalCenter: parent.verticalCenter
+                centerIn: parent  // Center the icon in the container
             }
             width: 45
             height: 45
@@ -242,27 +296,8 @@ Item {
                 font.bold: true
             }
 
-            // Flashing animation for icon
-            SequentialAnimation on opacity {
-                running: objectAlertActive
-                loops: Animation.Infinite
-                NumberAnimation { to: 1.0; duration: 300 }
-                NumberAnimation { to: 0.4; duration: 300 }
-            }
-        }
-
-        // Alert text after icon
-        Text {
-            id: objectAlertText
-            anchors {
-                left: objectIcon.right
-                leftMargin: 15
-                verticalCenter: parent.verticalCenter
-            }
-            color: "grey"  // White text as requested
-            font.pixelSize: 24  // Bigger text (was 24)
-            font.bold: false  // Remove bold
-            text: " OBS"
+            // Use centralized blinking opacity
+            opacity: objectAlertActive ? alertOpacity : 1.0
         }
     }
 
@@ -297,6 +332,9 @@ Item {
                 font.pixelSize: 22
                 font.bold: true
             }
+
+            // Use centralized blinking opacity
+            opacity: speedLimitExceeded ? alertOpacity : 1.0
         }
     }
 }

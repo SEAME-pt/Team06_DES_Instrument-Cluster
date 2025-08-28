@@ -57,17 +57,18 @@ TEST_F(SpeedometerObjTest, HandleMessage)
 
     // Create a message with speed in mm/s that converts to 85 km/h
     // 85 km/h = 85 / 0.0036 ≈ 23612 mm/s
+    // With 10x scaling, display should show 850
     QString message = "23612";
 
     // Call the handle message method
     speedometer->callHandleMsg(message);
 
-    // Check if the value was updated (should be 85 km/h)
-    EXPECT_EQ(speedometer->speed(), 85);
+    // Check if the value was updated (should be 850 for 85 km/h * 10)
+    EXPECT_EQ(speedometer->speed(), 850);
 
     // Check if the signal was emitted
     EXPECT_EQ(spy.count(), 1);
-    EXPECT_EQ(spy.at(0).at(0).toDouble(), 85);
+    EXPECT_EQ(spy.at(0).at(0).toDouble(), 850);
 }
 
 TEST_F(SpeedometerObjTest, HandleInvalidMessage)

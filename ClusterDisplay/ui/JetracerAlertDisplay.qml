@@ -186,8 +186,8 @@ Item {
             onTriggered: {
                 // Calculate how much progress to add based on speed and time
                 var timeDelta = interval / 1000.0; // Time in seconds
-                // Adjusted speed factor for 9km/h top speed - reduced from 200.0 to 25.0 for much faster movement
-                var progressDelta = (jetracerAlertDisplay._effectiveSpeed / 25.0) * timeDelta;
+                // Adjusted speed factor for 9km/h top speed - updated from 25.0 to 250.0 for 10x speed scaling
+                var progressDelta = (jetracerAlertDisplay._effectiveSpeed / 250.0) * timeDelta;
                 roadLines.progress = (roadLines.progress + progressDelta) % 1.0;
             }
         }
