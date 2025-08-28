@@ -52,7 +52,7 @@ Item {
             anchors.centerIn: parent
             text: signValue
             font.pixelSize: 60
-            font.bold: true
+            font.bold: truegit
             color: "black"
         }
     }
