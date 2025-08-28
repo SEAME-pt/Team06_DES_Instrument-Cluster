@@ -192,53 +192,66 @@ Item {
                     ctx.restore();
                 }
 
-                // Draw pedestrian figure - exact proportions matching reference image
-                var pedX = centerX;
+                // Draw pedestrian figure - improved proportions and walking pose
+                var pedX = centerX - 2; // Shifted slightly left for walking direction
                 var pedY = height * 0.45; // Position in upper-middle of triangle
 
-                                                // Head - circular like standard pedestrian sign
+                // Set up white contour styling for all body parts
+                ctx.lineWidth = 1.5;
+                ctx.strokeStyle = "white";
+
+                // Head - circular, positioned more to the left for walking direction
                 ctx.beginPath();
-                ctx.arc(pedX, pedY - 12, 6, 0, 2 * Math.PI);
+                ctx.arc(pedX - 3, pedY - 12, 6, 0, 2 * Math.PI);
                 ctx.fill();
+                ctx.stroke(); // White contour
 
-                // Body - vertical line like classic stick figure
-                ctx.fillRect(pedX - 1.5, pedY - 6, 3, 14);
+                // Body - much bolder torso like reference image
+                ctx.fillRect(pedX - 4, pedY - 6, 8, 14); // Much bolder torso (8 instead of 5)
+                ctx.strokeRect(pedX - 4, pedY - 6, 8, 14); // White contour
 
-                                                // Arms positioned for walking from right to left
-                // Right arm longer and flexed downward (like in reference image)
+                                // Arms positioned for walking from right to left - much bolder
+                // Right arm upper part - bolder
                 ctx.save();
                 ctx.translate(pedX, pedY - 1);
                 ctx.rotate(0.6); // Flexed downward angle
-                ctx.fillRect(0, -1.5, 14, 3); // Made longer
+                ctx.fillRect(0, -2.5, 10, 5); // Much bolder arm (5 instead of 3)
+                ctx.strokeRect(0, -2.5, 10, 5); // White contour
                 ctx.restore();
 
-                // Left arm swinging back
+                // Right arm lower part (bent down) - bolder
+                ctx.save();
+                ctx.translate(pedX + 7, pedY + 4); // Position at end of upper arm
+                ctx.rotate(1.2); // Bent downward more
+                ctx.fillRect(0, -2.5, 8, 5); // Much bolder arm (5 instead of 3)
+                ctx.strokeRect(0, -2.5, 8, 5); // White contour
+                ctx.restore();
+
+                // Left arm swinging back - much bolder
                 ctx.save();
                 ctx.translate(pedX, pedY);
                 ctx.rotate(-0.3); // Back swing
-                ctx.fillRect(-9, -1.5, 9, 3);
+                ctx.fillRect(-9, -2.5, 9, 5); // Much bolder arm (5 instead of 3)
+                ctx.strokeRect(-9, -2.5, 9, 5); // White contour
                 ctx.restore();
 
-                                // Legs much longer to intercept the crosswalk stripes with white outline
-                ctx.lineWidth = 2;
-                ctx.strokeStyle = "white";
-
-                // Right leg stepping forward to the left - reaching into stripes
+                // Legs - wider and starting lower to intercept the crosswalk stripes
+                // Right leg stepping forward to the left - wider and starting lower
                 ctx.save();
-                ctx.translate(pedX, pedY + 8);
+                ctx.translate(pedX, pedY + 12); // Start lower (12 instead of 8)
                 ctx.rotate(0.5); // Strong forward stride to the left
-                // Draw black leg with white outline
-                ctx.fillRect(-2, 0, 4, 28); // Much longer to reach stripes
-                ctx.strokeRect(-2, 0, 4, 28); // White outline
+                // Draw black leg with white outline - wider
+                ctx.fillRect(-3, 0, 6, 28); // Wider legs (6 instead of 4)
+                ctx.strokeRect(-3, 0, 6, 28); // White outline
                 ctx.restore();
 
-                // Left leg pushing back/supporting - also reaching into stripes
+                // Left leg pushing back/supporting - wider and starting lower
                 ctx.save();
-                ctx.translate(pedX, pedY + 8);
+                ctx.translate(pedX, pedY + 12); // Start lower (12 instead of 8)
                 ctx.rotate(-0.2); // Slight back angle
-                // Draw black leg with white outline
-                ctx.fillRect(-2, 0, 4, 28); // Much longer to reach stripes
-                ctx.strokeRect(-2, 0, 4, 28); // White outline
+                // Draw black leg with white outline - wider
+                ctx.fillRect(-3, 0, 6, 28); // Wider legs (6 instead of 4)
+                ctx.strokeRect(-3, 0, 6, 28); // White outline
                 ctx.restore();
             }
         }
