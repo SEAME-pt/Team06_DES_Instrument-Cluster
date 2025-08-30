@@ -1,13 +1,13 @@
 #ifndef CLUSTERDATASUBSCRIBER_HPP
 #define CLUSTERDATASUBSCRIBER_HPP
 
-#include <QObject>
 #include <QMap>
+#include <QObject>
 #include <memory>
 
+#include "ClusterModel.hpp"
 #include "ZmqMessageParser.hpp"
 #include "ZmqSubscriber.hpp"
-#include "ClusterModel.hpp"
 
 // Port definitions
 #define CRITICAL_DATA_PORT 5555
@@ -65,17 +65,17 @@ private:
      */
     void processData(const QMap<QString, QString>& data);
 
-    ClusterModel* m_clusterModel;                   ///< Pointer to cluster model
-    std::unique_ptr<ZmqSubscriber> m_criticalSub;   ///< Critical data subscriber
-    std::unique_ptr<ZmqSubscriber> m_nonCriticalSub;///< Non-critical data subscriber
-    ZmqMessageParser m_parser;                      ///< Message parser
-    QTimer* m_mockTimer;                            ///< Timer for mock data generation
-    bool m_mockingEnabled;                          ///< Mocking status
+    ClusterModel* m_clusterModel;                     ///< Pointer to cluster model
+    std::unique_ptr<ZmqSubscriber> m_criticalSub;     ///< Critical data subscriber
+    std::unique_ptr<ZmqSubscriber> m_nonCriticalSub;  ///< Non-critical data subscriber
+    ZmqMessageParser m_parser;                        ///< Message parser
+    QTimer* m_mockTimer;                              ///< Timer for mock data generation
+    bool m_mockingEnabled;                            ///< Mocking status
 
     // Sign tracking for prolonging display instead of resetting
-    QString m_currentSignType;                      ///< Currently displayed sign type
-    QString m_currentSignValue;                     ///< Currently displayed sign value
-    QTimer* m_signHideTimer;                        ///< Timer for hiding the current sign
+    QString m_currentSignType;   ///< Currently displayed sign type
+    QString m_currentSignValue;  ///< Currently displayed sign value
+    QTimer* m_signHideTimer;     ///< Timer for hiding the current sign
 };
 
-#endif // CLUSTERDATASUBSCRIBER_HPP
+#endif  // CLUSTERDATASUBSCRIBER_HPP

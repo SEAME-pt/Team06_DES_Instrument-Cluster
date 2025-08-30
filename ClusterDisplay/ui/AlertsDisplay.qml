@@ -3,7 +3,7 @@ import QtQuick 6.4
 Item {
     id: alertsDisplay
     width: 400
-    height: 350  // Increased height significantly for much more spacing
+    height: 350
 
     // Properties for alerts
     property bool laneAlertActive: false
@@ -27,13 +27,13 @@ Item {
             target: alertsDisplay
             property: "alertOpacity"
             to: 1.0
-            duration: 500  // Increased from 300ms for slower blinking
+            duration: 500
         }
         NumberAnimation {
             target: alertsDisplay
             property: "alertOpacity"
             to: 0.3
-            duration: 500  // Increased from 300ms for slower blinking
+            duration: 500
         }
     }
 
@@ -96,24 +96,23 @@ Item {
         }
     }
 
-    // Lane departure alert - positioned at vertical center and to the right
+    // Lane departure alert
     Item {
         id: laneAlertBox
         visible: laneAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
-            horizontalCenterOffset: 80  // Moved to the right
+            horizontalCenterOffset: 80
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: 0  // At vertical center
+            verticalCenterOffset: 0
         }
-        width: 60  // Reduced width since no text
+        width: 60
         height: 60
 
-        // Icon first
         Item {
             id: laneIcon
             anchors {
-                centerIn: parent  // Center the icon in the container
+                centerIn: parent
             }
             width: 60
             height: 40
@@ -127,10 +126,10 @@ Item {
                 }
                 width: 4
                 height: 30
-                color: laneDeviationSide === "left" ? "#FF0000" : "#FF4444"  // Brighter red for active side
+                color: laneDeviationSide === "left" ? "#FF0000" : "#FF4444"
                 radius: 2
 
-                // Top segment (further away, thinner)
+                
                 Rectangle {
                     anchors {
                         top: parent.top
@@ -171,10 +170,10 @@ Item {
                 }
                 width: 4
                 height: 30
-                color: laneDeviationSide === "right" ? "#FF0000" : "#FF4444"  // Brighter red for active side
+                color: laneDeviationSide === "right" ? "#FF0000" : "#FF4444"  
                 radius: 2
 
-                // Top segment (further away, thinner)
+                
                 Rectangle {
                     anchors {
                         top: parent.top
@@ -214,17 +213,17 @@ Item {
         }
     }
 
-    // Object detection alert - positioned at vertical center and to the left
+    
     Item {
         id: objectAlertBox
         visible: objectAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
-            horizontalCenterOffset: -80  // Moved to the left
+            horizontalCenterOffset: -80  
             verticalCenter: parent.verticalCenter
             verticalCenterOffset: 0   // At vertical center
         }
-        width: 60  // Reduced width since no text
+        width: 60  
         height: 60
 
         // Icon first
@@ -244,7 +243,7 @@ Item {
                 height: 28
                 color: "#FF4444"  // Bright red
                 border.width: 2
-                border.color: "#CC0000"  // Darker red for definition
+                border.color: "#CC0000"  
                 radius: 3
 
 
@@ -260,7 +259,7 @@ Item {
                 }
                 width: 28
                 height: 12
-                color: "#FF7777"  // Lighter red for 3D effect
+                color: "#FF7777"  
                 border.width: 1
                 border.color: "#CC0000"
                 transform: [
@@ -293,7 +292,7 @@ Item {
         }
     }
 
-    // Emergency brake alert - positioned below other alerts and centered
+    
     Item {
         id: emergencyBrakeBox
         visible: emergencyBrakeActive
@@ -324,7 +323,7 @@ Item {
                 radius: 22.5
                 color: "#FF4444"  // Bright red
                 border.width: 3
-                border.color: "#CC0000"  // Darker red border
+                border.color: "#CC0000"  
 
                 // Inner brake disc details (concentric circles)
                 Rectangle {
@@ -363,14 +362,14 @@ Item {
         }
     }
 
-    // Permanent speed limit sign - positioned to align with speedometer
+    
     Item {
         id: speedLimitBox
         visible: lastSpeedLimit > 0
         anchors {
             horizontalCenter: parent.horizontalCenter
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: -70  // Moved down to align with speedometer level
+            verticalCenterOffset: -70  
         }
         width: 60
         height: 60

@@ -44,7 +44,7 @@ TEST_F(ZmqMessageParserTest, GetIntValue)
 
     EXPECT_EQ(parser->getIntValue("speed"), 120);
     EXPECT_EQ(parser->getIntValue("battery"), 85);
-    EXPECT_EQ(parser->getIntValue("invalid", 42), 42); // Should return default
+    EXPECT_EQ(parser->getIntValue("invalid", 42), 42);  // Should return default
     EXPECT_EQ(parser->getIntValue("nonexistent", 99), 99);
 }
 
@@ -55,7 +55,7 @@ TEST_F(ZmqMessageParserTest, GetBoolValue)
 
     EXPECT_TRUE(parser->getBoolValue("charging"));
     EXPECT_FALSE(parser->getBoolValue("off"));
-    EXPECT_EQ(parser->getBoolValue("invalid", true), true); // Should return default
+    EXPECT_EQ(parser->getBoolValue("invalid", true), true);  // Should return default
     EXPECT_EQ(parser->getBoolValue("nonexistent", false), false);
 }
 

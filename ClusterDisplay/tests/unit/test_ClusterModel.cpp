@@ -23,6 +23,7 @@ TEST_F(ClusterModelTest, InitialValues)
     EXPECT_EQ(model->odometer(), 0);
     EXPECT_EQ(model->drivingMode(), "MAN");
     EXPECT_FALSE(model->objectAlert());
+    EXPECT_FALSE(model->emergencyBrakeActive());
     EXPECT_FALSE(model->laneAlert());
     EXPECT_EQ(model->laneDeviationSide(), "left");
     EXPECT_EQ(model->speedLimitSignal(), 50);
@@ -30,6 +31,7 @@ TEST_F(ClusterModelTest, InitialValues)
     EXPECT_EQ(model->signType(), "");
     EXPECT_EQ(model->signValue(), "");
     EXPECT_FALSE(model->signVisible());
+    EXPECT_EQ(model->lastSpeedLimit(), 0);
 }
 
 TEST_F(ClusterModelTest, SpeedSetter)
@@ -296,13 +298,77 @@ TEST_F(ClusterModelTest, SignVisibleSetter)
 
     // Check if the signal was emitted
     EXPECT_EQ(spy.count(), 1);
-    EXPECT_EQ(spy.at(0).at(0).toBool(), true);
+    EXPECT_TRUE(spy.at(0).at(0).toBool());
 
     // Set the same value again
     model->setSignVisible(true);
 
     // Signal should not be emitted again
     EXPECT_EQ(spy.count(), 1);
+}
+
+TEST_F(ClusterModelTest, EmergencyBrakeActiveSetter)
+{
+    QSignalSpy spy(model, &ClusterModel::emergencyBrakeActiveChanged);
+
+    // Test setting to true
+    model->setEmergencyBrakeActive(true);
+
+    // Check if the value was updated
+    EXPECT_TRUE(model->emergencyBrakeActive());
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_TRUE(spy.at(0).at(0).toBool());
+
+    // Set the same value again
+    model->setEmergencyBrakeActive(true);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+
+    // Test setting to false
+    model->setEmergencyBrakeActive(false);
+
+    // Check if the value was updated
+    EXPECT_FALSE(model->emergencyBrakeActive());
+
+    // Check if the signal was emitted again
+    EXPECT_EQ(spy.count(), 2);
+    EXPECT_FALSE(spy.at(1).at(0).toBool());
+}
+
+TEST_F(ClusterModelTest, LastSpeedLimitSetter)
+{
+    QSignalSpy spy(model, &ClusterModel::lastSpeedLimitChanged);
+
+    // Set a new value
+    model->setLastSpeedLimit(80);
+
+    // Check if the value was updated
+    EXPECT_EQ(model->lastSpeedLimit(), 80);
+
+    // Check if the signal was emitted
+    EXPECT_EQ(spy.count(), 1);
+    EXPECT_EQ(spy.at(0).at(0).toInt(), 80);
+
+    // Set the same value again
+    model->setLastSpeedLimit(80);
+
+    // Signal should not be emitted again
+    EXPECT_EQ(spy.count(), 1);
+
+    // Test setting different speed limits
+    model->setLastSpeedLimit(120);
+    EXPECT_EQ(model->lastSpeedLimit(), 120);
+    EXPECT_EQ(spy.count(), 2);
+    EXPECT_EQ(spy.at(1).at(0).toInt(), 120);
+
+    // Test setting to zero (no speed limit)
+    model->setLastSpeedLimit(0);
+    EXPECT_EQ(model->lastSpeedLimit(), 0);
+    EXPECT_EQ(spy.count(), 3);
+    EXPECT_EQ(spy.at(2).at(0).toInt(), 0);
 }
 
 int main(int argc, char** argv)

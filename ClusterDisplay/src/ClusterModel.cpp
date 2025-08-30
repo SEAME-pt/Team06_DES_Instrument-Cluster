@@ -4,7 +4,6 @@
 #include <QRandomGenerator>
 #include <QTimer>
 #include <QtMath>
-#include <iostream>
 
 ClusterModel::ClusterModel(QObject *parent)
     : QObject(parent),

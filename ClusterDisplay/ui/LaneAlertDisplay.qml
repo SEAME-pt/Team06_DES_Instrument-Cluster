@@ -33,7 +33,7 @@ Item {
                 spacing: 15 // Spacing between dashes
 
                 Repeater {
-                    model: 10 // More dashes to fill the animation area
+                    model: 10 
                     Rectangle {
                         width: 4
                         height: 15

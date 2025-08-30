@@ -1,13 +1,8 @@
 #include "ZmqMessageParser.hpp"
 
-ZmqMessageParser::ZmqMessageParser(QObject* parent)
-    : QObject(parent)
-{
-}
+ZmqMessageParser::ZmqMessageParser(QObject* parent) : QObject(parent) {}
 
-ZmqMessageParser::~ZmqMessageParser()
-{
-}
+ZmqMessageParser::~ZmqMessageParser() {}
 
 QMap<QString, QString> ZmqMessageParser::parseMessage(const QString& message)
 {

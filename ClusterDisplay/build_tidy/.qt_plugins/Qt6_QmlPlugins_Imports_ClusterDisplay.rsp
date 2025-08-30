@@ -1,0 +1,9 @@
+-rootPath
+/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay
+-cmake-output
+-output-file
+/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/build_tidy/.qt_plugins/Qt6_QmlPlugins_Imports_ClusterDisplay.cmake
+-importPath
+/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/build_tidy
+-importPath
+/usr/lib/x86_64-linux-gnu/qt6/qml

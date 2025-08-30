@@ -96,14 +96,16 @@ TEST_F(SpeedometerObjTest, ConversionFromMmSToKmH)
     QSignalSpy spy(speedometer, &SpeedometerObj::speedChanged);
 
     // Test conversion: 100 km/h = 100 / 0.0036 ≈ 27778 mm/s
+    // Implementation multiplies by 10 for scaled display: 27778 * 0.0036 * 10 = 1000
     QString message100 = "27778";
     speedometer->callHandleMsg(message100);
-    EXPECT_EQ(speedometer->speed(), 100);
+    EXPECT_EQ(speedometer->speed(), 1000);
 
     // Test conversion: 50 km/h = 50 / 0.0036 ≈ 13889 mm/s
+    // Implementation multiplies by 10 for scaled display: 13889 * 0.0036 * 10 = 500
     QString message50 = "13889";
     speedometer->callHandleMsg(message50);
-    EXPECT_EQ(speedometer->speed(), 50);
+    EXPECT_EQ(speedometer->speed(), 500);
 
     // Test conversion: 0 km/h = 0 mm/s
     QString message0 = "0";

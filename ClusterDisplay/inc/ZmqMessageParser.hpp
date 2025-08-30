@@ -1,8 +1,8 @@
 #ifndef ZMQMESSAGEPARSER_HPP
 #define ZMQMESSAGEPARSER_HPP
 
-#include <QObject>
 #include <QMap>
+#include <QObject>
 #include <QString>
 
 /**
@@ -54,4 +54,4 @@ private:
     QMap<QString, QString> m_lastParsedMessage;
 };
 
-#endif // ZMQMESSAGEPARSER_HPP
+#endif  // ZMQMESSAGEPARSER_HPP

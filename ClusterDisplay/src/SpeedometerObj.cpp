@@ -1,7 +1,5 @@
 #include "SpeedometerObj.hpp"
 
-#include <iostream>
-
 SpeedometerObj::SpeedometerObj(QObject *parent)
     : ZmqSubscriber(SPEEDOMETER_ADDRESS, parent), m_speed{0}
 {

@@ -14,7 +14,7 @@ Item {
     // Use actual speed directly without stopping for objects
     property int _effectiveSpeed: speed
 
-    // Road lines (central perspective) - no background, larger and lower on screen
+    
     Canvas {
         id: roadLines
         anchors {
@@ -22,9 +22,9 @@ Item {
             right: parent.right
             bottom: parent.bottom
             top: parent.top
-            margins: 20  // Add margins to prevent reaching borders
-            // Move the entire road view higher up
-            bottomMargin: 40  // Increased bottom margin to move everything up
+            margins: 20  
+            
+            bottomMargin: 40  
         }
 
         // Road animation progress (0.0 to 1.0)
@@ -59,19 +59,19 @@ Item {
 
             // Draw obstacle when object alert is active - draw this first so it's behind the lines
             if (objectAlertActive) {
-                // Create a position for the obstacle in front of the car - higher up and thinner
-                var obstacleWidth = width * 0.20;  // Thinner width
-                var obstacleHeight = height * 0.12; // Slightly shorter
+                
+                var obstacleWidth = width * 0.20;  
+                var obstacleHeight = height * 0.12; 
                 var obstacleX = centerX - obstacleWidth / 2;
-                var obstacleY = height * 0.02; // Position it even higher up
+                var obstacleY = height * 0.02; 
                 var cornerRadius = 5; // Radius for rounded corners
 
                 // Create gradient for 3D effect
                 var gradient = ctx.createLinearGradient(obstacleX, obstacleY,
                                                       obstacleX + obstacleWidth, obstacleY + obstacleHeight);
                 gradient.addColorStop(0, "#F44336"); // Red
-                gradient.addColorStop(0.5, "#D32F2F"); // Darker red
-                gradient.addColorStop(1, "#B71C1C"); // Even darker red
+                gradient.addColorStop(0.5, "#D32F2F"); 
+                gradient.addColorStop(1, "#B71C1C"); 
                 ctx.fillStyle = gradient;
 
                 // Add shadow
@@ -165,7 +165,7 @@ Item {
                 var nextX = startX + (endX - startX) * nextT;
                 var nextY = startY + (endY - startY) * nextT;
 
-                // Adjust line width for perspective (thinner at top, thicker at bottom)
+                
                 var lineWidth = 2 + (6 * t);
                 ctx.lineWidth = lineWidth;
 
@@ -177,16 +177,16 @@ Item {
             }
         }
 
-        // Timer to manually control the animation progress - faster update rate
+        
         Timer {
             id: animationTimer
-            interval: 30 // Update rate in ms (reduced from 50 for smoother animation)
+            interval: 30 
             running: jetracerAlertDisplay._effectiveSpeed > 0
             repeat: true
             onTriggered: {
                 // Calculate how much progress to add based on speed and time
                 var timeDelta = interval / 1000.0; // Time in seconds
-                // Adjusted speed factor for 9km/h top speed - updated from 25.0 to 250.0 for 10x speed scaling
+                
                 var progressDelta = (jetracerAlertDisplay._effectiveSpeed / 250.0) * timeDelta;
                 roadLines.progress = (roadLines.progress + progressDelta) % 1.0;
             }
@@ -208,21 +208,21 @@ Item {
         }
     }
 
-    // Jetracer car - more detailed and futuristic design
+    
     Canvas {
         id: jetracerCanvas
         anchors {
             horizontalCenter: parent.horizontalCenter
             bottom: parent.bottom
-            bottomMargin: 60 // Reduced from 70 to position car lower
+            bottomMargin: 60 
         }
-        width: 60  // 20% bigger: 50 * 1.2 = 60
-        height: 108  // 20% bigger: 90 * 1.2 = 108
+        width: 60  
+        height: 108  
 
-        // Add lateral movement for lane deviation warning - increased movement amount to touch lines
+        
         transform: Translate {
             x: laneAlertActive ?
-               (laneDeviationSide === "left" ? -25 : 25) : 0  // Increased from 25 to 40 to touch lane lines
+               (laneDeviationSide === "left" ? -25 : 25) : 0  
 
             Behavior on x {
                 NumberAnimation { duration: 300; easing.type: Easing.OutQuad }
@@ -233,7 +233,7 @@ Item {
             var ctx = getContext("2d");
             ctx.clearRect(0, 0, width, height);
 
-            // Car Body - shorter front with squared front and rounded transitions
+            
             var bodyGradient = ctx.createLinearGradient(0, 0, width, 0);
             bodyGradient.addColorStop(0, "#2E8B57"); // Sea Green
             bodyGradient.addColorStop(0.5, "#3CB371"); // Medium Sea Green
@@ -245,15 +245,15 @@ Item {
             ctx.moveTo(width * 0.2, height);
             // Curved left side up to shoulder
             ctx.quadraticCurveTo(width * 0.15, height * 0.6, width * 0.25, height * 0.45);
-            // Rounded transition to squared front - left corner (wider and shorter front)
+            
             ctx.quadraticCurveTo(width * 0.3, height * 0.35, width * 0.35, height * 0.3);
-            // Squared front top edge (wider and shorter)
+            
             ctx.lineTo(width * 0.65, height * 0.3);
-            // Rounded transition to squared front - right corner (wider and shorter front)
+            
             ctx.quadraticCurveTo(width * 0.7, height * 0.35, width * 0.75, height * 0.45);
             // Curved right side down
             ctx.quadraticCurveTo(width * 0.85, height * 0.6, width * 0.8, height);
-            // Close path back to start
+            
             ctx.closePath();
             ctx.fill();
 
@@ -268,14 +268,14 @@ Item {
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 5;
 
-            // Cockpit/Glass - positioned lower between the wheels
+            
             var cockpitGradient = ctx.createLinearGradient(0, height * 0.45, 0, height * 0.75);
             cockpitGradient.addColorStop(0, "rgba(173, 216, 230, 0.7)"); // Light Blue, semi-transparent
             cockpitGradient.addColorStop(1, "rgba(0, 0, 139, 0.6)"); // Dark Blue, semi-transparent
             ctx.fillStyle = cockpitGradient;
 
             ctx.beginPath();
-            // Cockpit positioned between front wheels (height-50) and rear wheels (height-18)
+            
             ctx.moveTo(width * 0.35, height * 0.75);
             ctx.quadraticCurveTo(width * 0.5, height * 0.55, width * 0.65, height * 0.75);
             ctx.quadraticCurveTo(width * 0.5, height * 0.85, width * 0.35, height * 0.75);
@@ -293,14 +293,14 @@ Item {
             ctx.shadowOffsetX = 0;
             ctx.shadowOffsetY = 0;
 
-            // Wheels - scaled up 20% for larger 60x108 car size
+            
             ctx.fillStyle = "black";
-            // Rear wheels - 20% bigger and proportionally positioned
-            ctx.fillRect(4, height - 22, 8, 17);        // Left rear wheel (20% bigger)
-            ctx.fillRect(width - 12, height - 22, 8, 17); // Right rear wheel (20% bigger)
-            // Front wheels - 20% bigger and proportionally positioned
-            ctx.fillRect(10, height - 60, 6, 14);       // Left front wheel (20% bigger)
-            ctx.fillRect(width - 16, height - 60, 6, 14); // Right front wheel (20% bigger)
+            
+            ctx.fillRect(4, height - 22, 8, 17);        
+            ctx.fillRect(width - 12, height - 22, 8, 17); 
+            
+            ctx.fillRect(10, height - 60, 6, 14);       
+            ctx.fillRect(width - 16, height - 60, 6, 14); 
 
             // Add grey contours to all wheels
             ctx.strokeStyle = "#808080"; // Grey color

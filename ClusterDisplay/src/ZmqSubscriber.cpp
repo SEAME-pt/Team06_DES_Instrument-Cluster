@@ -17,10 +17,13 @@ ZmqSubscriber::ZmqSubscriber(const QString& address, QObject* parent)
     // Set zero linger period for clean exits
     _socket.set(zmq::sockopt::linger, 0);
 
-        // Set immediate option to receive messages as soon as they arrive
-    try {
+    // Set immediate option to receive messages as soon as they arrive
+    try
+    {
         _socket.set(zmq::sockopt::immediate, 1);
-    } catch (const zmq::error_t &e) {
+    }
+    catch (const zmq::error_t& e)
+    {
         qDebug() << "ZmqSubscriber: immediate option not supported, continuing without it";
     }
 

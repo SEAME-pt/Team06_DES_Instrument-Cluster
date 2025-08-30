@@ -1,0 +1,2 @@
+/usr/bin/ar qc libClusterDisplayLib.a CMakeFiles/ClusterDisplayLib.dir/ClusterDisplayLib_autogen/mocs_compilation.cpp.o CMakeFiles/ClusterDisplayLib.dir/src/ClusterModel.cpp.o CMakeFiles/ClusterDisplayLib.dir/src/ZmqSubscriber.cpp.o CMakeFiles/ClusterDisplayLib.dir/src/BatteryIconObj.cpp.o CMakeFiles/ClusterDisplayLib.dir/src/SpeedometerObj.cpp.o CMakeFiles/ClusterDisplayLib.dir/src/ZmqMessageParser.cpp.o CMakeFiles/ClusterDisplayLib.dir/src/ClusterDataSubscriber.cpp.o
+/usr/bin/ranlib libClusterDisplayLib.a

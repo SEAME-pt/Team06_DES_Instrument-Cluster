@@ -6,7 +6,7 @@ Item {
     height: 220
 
     property string signType: clusterModel.signType || "SPEED_LIMIT"  // Default to speed limit for backward compatibility
-    property string signValue: clusterModel.signValue || clusterModel.speedLimitSignal.toString()  // Fallback to old system
+    property string signValue: clusterModel.signValue || clusterModel.speedLimitSignal.toString()
     property bool signVisible: clusterModel.signVisible || clusterModel.speedLimitVisible  // Show if either system is active
 
     // Sign is only visible when signVisible is true
@@ -14,10 +14,10 @@ Item {
 
     // Debug output
     onSignTypeChanged: {
-        console.log("Sign type changed to:", signType)
+        requestPaint()
     }
     onSignVisibleChanged: {
-        console.log("Sign visibility changed to:", signVisible)
+        requestPaint()
     }
 
     // Speed Limit Sign
@@ -165,10 +165,10 @@ Item {
 
                 // Draw exactly 5 crosswalk stripes - angled to match triangle perspective
                 var numStripes = 5;
-                var stripeWidth = 7; // Made wider
-                var stripeLength = 20; // Made slightly longer
+                var stripeWidth = 7;
+                var stripeLength = 20;
 
-                // Position stripes in lower triangle area
+
                 var stripeAreaCenterY = bottomY - 12;
                 var stripeAreaWidth = (rightX - leftX) * 0.7; // Use 70% of triangle width
                 var stripeAreaStartX = leftX + (rightX - leftX) * 0.15; // Center the stripe area
@@ -201,9 +201,9 @@ Item {
                 ctx.strokeStyle = "white";
                 ctx.lineWidth = 1.5;
 
-                // Head - simple circle with white contour, positioned to the left (smaller)
+
                 ctx.beginPath();
-                ctx.arc(pedX - 3, pedY - 10, 4, 0, 2 * Math.PI); // Reduced radius from 5 to 4
+                ctx.arc(pedX - 3, pedY - 10, 4, 0, 2 * Math.PI);
                 ctx.fill();
                 ctx.stroke();
 
@@ -217,7 +217,7 @@ Item {
                 // Right arm starts at top of torso and angles down
                 ctx.lineTo(pedX + 13, pedY + 4); // Right arm end (angled down from top)
                 ctx.lineTo(pedX + 11, pedY + 9); // Right arm bottom edge (slightly thicker)
-                ctx.lineTo(pedX + 4, pedY + 2); // Back to torso right side
+                ctx.lineTo(pedX + 4, pedY + 2);
 
                 // Continue torso right side
                 ctx.lineTo(pedX + 4, pedY + 10); // Bottom right of torso
@@ -229,7 +229,7 @@ Item {
                 // Left arm starts at top of torso and angles down
                 ctx.lineTo(pedX - 11, pedY + 9); // Left arm bottom edge (slightly thicker)
                 ctx.lineTo(pedX - 13, pedY + 4); // Left arm end (angled down from top)
-                ctx.lineTo(pedX - 4, pedY - 6); // Back to top left of torso
+                ctx.lineTo(pedX - 4, pedY - 6);
 
                 ctx.closePath();
                 ctx.fill();
@@ -248,7 +248,7 @@ Item {
                 ctx.lineTo(pedX - 1, waistY + 22);
                 ctx.lineTo(pedX - 1, waistY + 8);
 
-                // Left leg (stepping leg) - angled for walking motion (longer)
+
                 ctx.lineTo(pedX - 10, waistY + 24); // Extended further down
                 ctx.lineTo(pedX - 14, waistY + 22); // Extended further out
                 ctx.lineTo(pedX - 7, waistY + 6);
@@ -308,7 +308,7 @@ Item {
                 ctx.lineTo(bottomX + cornerRadius * 0.7, bottomY - cornerRadius * 0.7);
                 ctx.quadraticCurveTo(bottomX, bottomY, bottomX - cornerRadius * 0.7, bottomY - cornerRadius * 0.7);
 
-                // Left oblique edge back to top
+
                 ctx.lineTo(topLeftX + cornerRadius * 0.7, topLeftY + cornerRadius * 0.7);
                 ctx.quadraticCurveTo(topLeftX, topLeftY, topLeftX + cornerRadius, topLeftY);
 
@@ -318,8 +318,8 @@ Item {
                 ctx.fill();
                 ctx.stroke();
 
-                // Draw inner white triangle (smaller, maintaining triangle proportions)
-                var innerBorderWidth = 14; // Slightly larger inner border for better visibility
+
+                var innerBorderWidth = 14;
                 var innerSize = size - innerBorderWidth;
                 var innerTopLeftX = centerX - innerSize;
                 var innerTopLeftY = centerY - innerSize * 0.6;
@@ -344,7 +344,7 @@ Item {
                 ctx.lineTo(innerBottomX + innerCornerRadius * 0.7, innerBottomY - innerCornerRadius * 0.7);
                 ctx.quadraticCurveTo(innerBottomX, innerBottomY, innerBottomX - innerCornerRadius * 0.7, innerBottomY - innerCornerRadius * 0.7);
 
-                // Left oblique edge back to top
+
                 ctx.lineTo(innerTopLeftX + innerCornerRadius * 0.7, innerTopLeftY + innerCornerRadius * 0.7);
                 ctx.quadraticCurveTo(innerTopLeftX, innerTopLeftY, innerTopLeftX + innerCornerRadius, innerTopLeftY);
 

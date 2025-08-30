@@ -1,0 +1,34 @@
+{
+	"BUILD_DIR" : "/home/dimoj/Team06_DES_Instrument-Cluster/build_tidy/ClusterDisplay_autogen",
+	"CMAKE_BINARY_DIR" : "/home/dimoj/Team06_DES_Instrument-Cluster/build_tidy",
+	"CMAKE_CURRENT_BINARY_DIR" : "/home/dimoj/Team06_DES_Instrument-Cluster/build_tidy",
+	"CMAKE_CURRENT_SOURCE_DIR" : "/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay",
+	"CMAKE_SOURCE_DIR" : "/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay",
+	"GENERATOR" : "Unix Makefiles",
+	"INCLUDE_DIR" : "/home/dimoj/Team06_DES_Instrument-Cluster/build_tidy/ClusterDisplay_autogen/include",
+	"INPUTS" : 
+	[
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/main.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/ObjectAlertDisplay.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/ModernBatteryBar.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/AlertsDisplay.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/ClockDisplay.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/DrivingModeIndicator.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/OdometerDisplay.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/JetracerAlertDisplay.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/BatteryPercentDisplay.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/NumberSpeedometer.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/LaneAlertDisplay.qml",
+		"/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/ui/StreetSignDisplay.qml"
+	],
+	"LOCK_FILE" : "/home/dimoj/Team06_DES_Instrument-Cluster/build_tidy/CMakeFiles/ClusterDisplay_autogen.dir/AutoRcc_qml_EWIEGA46WW_Lock.lock",
+	"MULTI_CONFIG" : false,
+	"OPTIONS" : [ "-name", "qml" ],
+	"OUTPUT_CHECKSUM" : "EWIEGA46WW",
+	"OUTPUT_NAME" : "qrc_qml.cpp",
+	"RCC_EXECUTABLE" : "/usr/lib/qt6/libexec/rcc",
+	"RCC_LIST_OPTIONS" : [ "--list" ],
+	"SETTINGS_FILE" : "/home/dimoj/Team06_DES_Instrument-Cluster/build_tidy/CMakeFiles/ClusterDisplay_autogen.dir/AutoRcc_qml_EWIEGA46WW_Used.txt",
+	"SOURCE" : "/home/dimoj/Team06_DES_Instrument-Cluster/ClusterDisplay/qml.qrc",
+	"VERBOSITY" : 0
+}

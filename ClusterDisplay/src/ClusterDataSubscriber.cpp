@@ -1,73 +1,82 @@
 #include "ClusterDataSubscriber.hpp"
-#include <QTimer>
+
 #include <QDateTime>
 #include <QRandomGenerator>
+#include <QTimer>
 
 // Connection string templates
 const QString CRITICAL_DATA_ADDRESS = "tcp://100.93.45.188:%1";
 const QString NON_CRITICAL_DATA_ADDRESS = "tcp://100.93.45.188:%1";
 
 ClusterDataSubscriber::ClusterDataSubscriber(ClusterModel* clusterModel, QObject* parent)
-    : QObject(parent)
-    , m_clusterModel(clusterModel)
-    , m_parser(this)
-    , m_mockingEnabled(false)
-    , m_currentSignType("")
-    , m_currentSignValue("")
+    : QObject(parent),
+      m_clusterModel(clusterModel),
+      m_parser(this),
+      m_mockingEnabled(false),
+      m_currentSignType(""),
+      m_currentSignValue("")
 {
     // Create critical data subscriber (for speed, lane, etc.)
-    m_criticalSub = std::make_unique<ZmqSubscriber>(
-        CRITICAL_DATA_ADDRESS.arg(CRITICAL_DATA_PORT), this);
-    connect(m_criticalSub.get(), &ZmqSubscriber::messageReceived,
-            this, &ClusterDataSubscriber::handleCriticalData);
+    m_criticalSub =
+        std::make_unique<ZmqSubscriber>(CRITICAL_DATA_ADDRESS.arg(CRITICAL_DATA_PORT), this);
+    connect(m_criticalSub.get(), &ZmqSubscriber::messageReceived, this,
+            &ClusterDataSubscriber::handleCriticalData);
 
     // Create non-critical data subscriber (for battery, charging, etc.)
     m_nonCriticalSub = std::make_unique<ZmqSubscriber>(
         NON_CRITICAL_DATA_ADDRESS.arg(NON_CRITICAL_DATA_PORT), this);
-    connect(m_nonCriticalSub.get(), &ZmqSubscriber::messageReceived,
-            this, &ClusterDataSubscriber::handleNonCriticalData);
+    connect(m_nonCriticalSub.get(), &ZmqSubscriber::messageReceived, this,
+            &ClusterDataSubscriber::handleNonCriticalData);
 
     // Create mock timer but don't start it yet
     m_mockTimer = new QTimer(this);
-    m_mockTimer->setInterval(500); // Update every 500ms
+    m_mockTimer->setInterval(500);  // Update every 500ms
     connect(m_mockTimer, &QTimer::timeout, this, &ClusterDataSubscriber::generateMockData);
 
     // Create sign hide timer but don't start it yet
     m_signHideTimer = new QTimer(this);
     m_signHideTimer->setSingleShot(true);
-    connect(m_signHideTimer, &QTimer::timeout, [this]() {
-        m_clusterModel->setSpeedLimitVisible(false);
-        m_clusterModel->setSignVisible(false);
-        m_currentSignType = "";
-        m_currentSignValue = "";
-    });
+    connect(m_signHideTimer, &QTimer::timeout,
+            [this]()
+            {
+                m_clusterModel->setSpeedLimitVisible(false);
+                m_clusterModel->setSignVisible(false);
+                m_currentSignType = "";
+                m_currentSignValue = "";
+            });
 }
 
 ClusterDataSubscriber::~ClusterDataSubscriber()
 {
     // Stop mock timer if running
-    if (m_mockTimer->isActive()) {
+    if (m_mockTimer->isActive())
+    {
         m_mockTimer->stop();
     }
 
     // Stop sign hide timer if running
-    if (m_signHideTimer && m_signHideTimer->isActive()) {
+    if (m_signHideTimer && m_signHideTimer->isActive())
+    {
         m_signHideTimer->stop();
     }
 }
 
 void ClusterDataSubscriber::enableMocking(bool enable)
 {
-    if (m_mockingEnabled == enable) {
-        return; // No change
+    if (m_mockingEnabled == enable)
+    {
+        return;  // No change
     }
 
     m_mockingEnabled = enable;
 
-    if (m_mockingEnabled) {
+    if (m_mockingEnabled)
+    {
         // Start mock timer
         m_mockTimer->start();
-    } else {
+    }
+    else
+    {
         // Stop mock timer
         m_mockTimer->stop();
     }
@@ -80,7 +89,8 @@ bool ClusterDataSubscriber::isMockingEnabled() const
 
 void ClusterDataSubscriber::handleCriticalData(const QString& message)
 {
-    if (!m_mockingEnabled) {
+    if (!m_mockingEnabled)
+    {
         // Parse and process message
         QMap<QString, QString> data = m_parser.parseMessage(message);
         processData(data);
@@ -89,7 +99,8 @@ void ClusterDataSubscriber::handleCriticalData(const QString& message)
 
 void ClusterDataSubscriber::handleNonCriticalData(const QString& message)
 {
-    if (!m_mockingEnabled) {
+    if (!m_mockingEnabled)
+    {
         // Parse and process message
         QMap<QString, QString> data = m_parser.parseMessage(message);
         processData(data);
@@ -98,7 +109,8 @@ void ClusterDataSubscriber::handleNonCriticalData(const QString& message)
 
 void ClusterDataSubscriber::generateMockData()
 {
-    if (!m_mockingEnabled) {
+    if (!m_mockingEnabled)
+    {
         return;
     }
 
@@ -106,7 +118,7 @@ void ClusterDataSubscriber::generateMockData()
 
     // Mock critical data (speed, lane, signal, etc.)
     static qreal angle = 0;
-    int speedKmH = qRound(100 + 100 * qSin(angle)); // Generate speed in km/h for display
+    int speedKmH = qRound(100 + 100 * qSin(angle));  // Generate speed in km/h for display
     // Convert to mm/s for transmission (km/h / 0.0036 = mm/s)
     int speedMmS = qRound(speedKmH / 0.0036);
     angle += 0.1;
@@ -114,20 +126,23 @@ void ClusterDataSubscriber::generateMockData()
 
     // Lane detection (1 for left, 2 for right, alternating)
     static int laneCounter = 0;
-    if (++laneCounter >= 20) { // Change lane every 10 seconds (2x faster)
+    if (++laneCounter >= 20)
+    {  // Change lane every 10 seconds (2x faster)
         laneCounter = 0;
         mockData["lane"] = QString::number(QRandomGenerator::global()->bounded(1, 3));
         // Add obstacle detection occasionally
-        if (QRandomGenerator::global()->bounded(3) == 0) {
+        if (QRandomGenerator::global()->bounded(3) == 0)
+        {
             // Generate either obs:1 or obs:2 for testing
-            int obsValue = QRandomGenerator::global()->bounded(1, 3); // 1 or 2
+            int obsValue = QRandomGenerator::global()->bounded(1, 3);  // 1 or 2
             mockData["obs"] = QString::number(obsValue);
         }
     }
 
     // Street signs (varying between speed limits, stop, crosswalk, and yield)
     static int signalCounter = 0;
-    if (++signalCounter >= 5) { // Change signal every 10 seconds (3x faster)
+    if (++signalCounter >= 5)
+    {  // Change signal every 10 seconds (3x faster)
         signalCounter = 0;
         static const QStringList signs = {"50", "80", "stop", "crosswalk", "yield"};
         int signalIndex = QRandomGenerator::global()->bounded(signs.size());
@@ -136,7 +151,8 @@ void ClusterDataSubscriber::generateMockData()
 
     // Driving mode (0 for manual, 1 for autonomous)
     static int modeCounter = 0;
-    if (++modeCounter >= 40) { // Toggle every 20 seconds (2x faster)
+    if (++modeCounter >= 40)
+    {  // Toggle every 20 seconds (2x faster)
         modeCounter = 0;
         static bool autoMode = false;
         autoMode = !autoMode;
@@ -151,7 +167,8 @@ void ClusterDataSubscriber::generateMockData()
 
     // Charging status (0 or 1)
     static int chargingCounter = 0;
-    if (++chargingCounter >= 20) { // Toggle every 10 seconds
+    if (++chargingCounter >= 20)
+    {  // Toggle every 10 seconds
         chargingCounter = 0;
         static bool charging = false;
         charging = !charging;
@@ -160,7 +177,7 @@ void ClusterDataSubscriber::generateMockData()
 
     // Odometer (constantly increasing)
     static int odo = 0;
-    odo += speedKmH / 10; // Faster increase at higher speeds
+    odo += speedKmH / 10;  // Faster increase at higher speeds
     mockData["odo"] = QString::number(odo);
 
     // Process the mock data
@@ -170,7 +187,8 @@ void ClusterDataSubscriber::generateMockData()
 void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
 {
     // Handle speed - convert from mm/s to km/h
-    if (data.contains("speed")) {
+    if (data.contains("speed"))
+    {
         int speedMmPerSec = data["speed"].toInt();
         // Convert mm/s to km/h: mm/s * 0.0036 = km/h
         // Then multiply by 10 for scaled display
@@ -179,31 +197,40 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
     }
 
     // Handle battery level
-    if (data.contains("battery")) {
+    if (data.contains("battery"))
+    {
         m_clusterModel->setBattery(data["battery"].toInt());
     }
 
     // Handle charging status
-    if (data.contains("charging")) {
+    if (data.contains("charging"))
+    {
         m_clusterModel->setCharging(data["charging"].toInt() == 1);
     }
 
     // Handle lane detection
-    if (data.contains("lane")) {
+    if (data.contains("lane"))
+    {
         int lane = data["lane"].toInt();
-        if (lane == 1) {
+        if (lane == 1)
+        {
             m_clusterModel->setLaneAlert(true);
             m_clusterModel->setLaneDeviationSide("left");
-        } else if (lane == 2) {
+        }
+        else if (lane == 2)
+        {
             m_clusterModel->setLaneAlert(true);
             m_clusterModel->setLaneDeviationSide("right");
-        } else {
+        }
+        else
+        {
             m_clusterModel->setLaneAlert(false);
         }
     }
 
     // Handle obstacle detection
-    if (data.contains("obs")) {
+    if (data.contains("obs"))
+    {
         int obsValue = data["obs"].toInt();
         bool hasObstacle = obsValue > 0;
         m_clusterModel->setObjectAlert(hasObstacle);
@@ -213,7 +240,8 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
     }
 
     // Handle speed limit signal
-    if (data.contains("sign")) {
+    if (data.contains("sign"))
+    {
         QString signValue = data["sign"];
         QString signType;
         QString displayValue;
@@ -222,23 +250,32 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
         bool isNumeric;
         int speedLimit = signValue.toInt(&isNumeric);
 
-        if (isNumeric) {
+        if (isNumeric)
+        {
             // Traditional speed limit sign
             signType = "SPEED_LIMIT";
             displayValue = QString::number(speedLimit);
-        } else if (signValue == "stop") {
+        }
+        else if (signValue == "stop")
+        {
             // Stop sign
             signType = "STOP";
             displayValue = "STOP";
-        } else if (signValue == "crosswalk") {
+        }
+        else if (signValue == "crosswalk")
+        {
             // Crosswalk sign
             signType = "CROSSWALK";
             displayValue = "CROSSWALK";
-        } else if (signValue == "yield") {
+        }
+        else if (signValue == "yield")
+        {
             // Yield sign
             signType = "YIELD";
             displayValue = "YIELD";
-        } else {
+        }
+        else
+        {
             // Unknown sign type, skip processing
             return;
         }
@@ -246,15 +283,19 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
         // Check if this is the same sign we're currently displaying
         bool isSameSign = (m_currentSignType == signType && m_currentSignValue == displayValue);
 
-        if (isSameSign) {
+        if (isSameSign)
+        {
             // Same sign detected - just prolong the display by restarting the timer
             m_signHideTimer->start(6000);
-        } else {
+        }
+        else
+        {
             // Different sign or no current sign - update display and start new timer
             m_currentSignType = signType;
             m_currentSignValue = displayValue;
 
-            if (isNumeric) {
+            if (isNumeric)
+            {
                 // Traditional speed limit sign
                 m_clusterModel->setSpeedLimitSignal(speedLimit);
                 m_clusterModel->setSpeedLimitVisible(true);
@@ -266,7 +307,9 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
                 m_clusterModel->setSignType(signType);
                 m_clusterModel->setSignValue(displayValue);
                 m_clusterModel->setSignVisible(true);
-            } else {
+            }
+            else
+            {
                 // Non-numeric sign (stop, crosswalk, etc.)
                 m_clusterModel->setSignType(signType);
                 m_clusterModel->setSignValue(displayValue);
@@ -282,12 +325,14 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
     }
 
     // Handle driving mode
-    if (data.contains("mode")) {
+    if (data.contains("mode"))
+    {
         m_clusterModel->setDrivingMode(data["mode"].toInt() == 1 ? "AUTO" : "MAN");
     }
 
     // Handle odometer
-    if (data.contains("odo")) {
+    if (data.contains("odo"))
+    {
         m_clusterModel->setOdometer(data["odo"].toInt());
     }
 }
