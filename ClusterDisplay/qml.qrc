@@ -13,8 +13,8 @@
         <file>ui/ObjectAlertDisplay.qml</file>
         <file>ui/JetracerAlertDisplay.qml</file>
         <file>ui/StreetSignDisplay.qml</file>
-        <file>assets/crosswalk_sign.svg</file>
-        <file>assets/crosswalk_simple.svg</file>
+
+
     </qresource>
 
 </RCC>

@@ -114,7 +114,7 @@ void ClusterDataSubscriber::generateMockData()
 
     // Lane detection (1 for left, 2 for right, alternating)
     static int laneCounter = 0;
-    if (++laneCounter >= 40) { // Change lane every 20 seconds
+    if (++laneCounter >= 20) { // Change lane every 10 seconds (2x faster)
         laneCounter = 0;
         mockData["lane"] = QString::number(QRandomGenerator::global()->bounded(1, 3));
         // Add obstacle detection occasionally
@@ -127,7 +127,7 @@ void ClusterDataSubscriber::generateMockData()
 
     // Street signs (varying between speed limits, stop, crosswalk, and yield)
     static int signalCounter = 0;
-    if (++signalCounter >= 60) { // Change signal every 30 seconds
+    if (++signalCounter >= 5) { // Change signal every 10 seconds (3x faster)
         signalCounter = 0;
         static const QStringList signs = {"50", "80", "stop", "crosswalk", "yield"};
         int signalIndex = QRandomGenerator::global()->bounded(signs.size());
@@ -136,7 +136,7 @@ void ClusterDataSubscriber::generateMockData()
 
     // Driving mode (0 for manual, 1 for autonomous)
     static int modeCounter = 0;
-    if (++modeCounter >= 80) { // Toggle every 40 seconds
+    if (++modeCounter >= 40) { // Toggle every 20 seconds (2x faster)
         modeCounter = 0;
         static bool autoMode = false;
         autoMode = !autoMode;

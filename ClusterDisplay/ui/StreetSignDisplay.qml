@@ -144,7 +144,7 @@ Item {
             }
         }
 
-                                // Crosswalk stripes and pedestrian inside the triangle - exact match to reference image
+        // Crosswalk stripes and pedestrian inside the triangle - exact match to reference image
         Canvas {
             id: crosswalkCanvas
             anchors.centerIn: parent
@@ -163,7 +163,7 @@ Item {
                 var leftX = 5;
                 var rightX = width - 5;
 
-                                // Draw exactly 5 crosswalk stripes - angled to match triangle perspective
+                // Draw exactly 5 crosswalk stripes - angled to match triangle perspective
                 var numStripes = 5;
                 var stripeWidth = 7; // Made wider
                 var stripeLength = 20; // Made slightly longer
@@ -193,7 +193,7 @@ Item {
                 }
 
                                                 // Draw pedestrian figure - simple geometric style matching reference image
-                var pedX = centerX; // Centered horizontally
+                var pedX = centerX - 3; // Move head to the left side for crossing from right to left
                 var pedY = height * 0.45; // Position in upper-middle of triangle
 
                 // Set up styling
@@ -201,39 +201,35 @@ Item {
                 ctx.strokeStyle = "white";
                 ctx.lineWidth = 1.5;
 
-                // Head - simple circle with white contour, positioned to the left
+                // Head - simple circle with white contour, positioned to the left (smaller)
                 ctx.beginPath();
-                ctx.arc(pedX - 3, pedY - 10, 5, 0, 2 * Math.PI);
+                ctx.arc(pedX - 3, pedY - 10, 4, 0, 2 * Math.PI); // Reduced radius from 5 to 4
                 ctx.fill();
                 ctx.stroke();
 
-                // Torso and arms as one single connected piece with angled down arms (wider/bolder)
+                // Torso and arms as one single connected piece with arms starting at top (slightly thicker)
                 ctx.beginPath();
 
-                // Start with torso outline
+                // Start with flat top of torso
                 ctx.moveTo(pedX - 4, pedY - 6); // Top left of torso
-                ctx.lineTo(pedX + 4, pedY - 6); // Top right of torso
-                ctx.lineTo(pedX + 4, pedY - 2); // Right side to arm connection
+                ctx.lineTo(pedX + 4, pedY - 6); // Top right of torso (flat top)
 
-                // Right arm angled downward (wider/bolder)
-                ctx.lineTo(pedX + 14, pedY + 4); // Right arm end (angled down, wider)
-                ctx.lineTo(pedX + 11, pedY + 10); // Right arm bottom edge (bolder)
-                ctx.lineTo(pedX + 4, pedY + 3); // Back to torso right side
+                // Right arm starts at top of torso and angles down
+                ctx.lineTo(pedX + 13, pedY + 4); // Right arm end (angled down from top)
+                ctx.lineTo(pedX + 11, pedY + 9); // Right arm bottom edge (slightly thicker)
+                ctx.lineTo(pedX + 4, pedY + 2); // Back to torso right side
 
                 // Continue torso right side
                 ctx.lineTo(pedX + 4, pedY + 10); // Bottom right of torso
                 ctx.lineTo(pedX - 4, pedY + 10); // Bottom left of torso
 
                 // Left side of torso up to arm connection
-                ctx.lineTo(pedX - 4, pedY + 3); // Left side to arm connection
+                ctx.lineTo(pedX - 4, pedY + 2); // Left side to arm connection
 
-                // Left arm angled downward (wider/bolder)
-                ctx.lineTo(pedX - 11, pedY + 10); // Left arm bottom edge (bolder)
-                ctx.lineTo(pedX - 14, pedY + 4); // Left arm end (angled down, wider)
-                ctx.lineTo(pedX - 4, pedY - 2); // Back to torso left side
-
-                // Complete torso outline
-                ctx.lineTo(pedX - 4, pedY - 6); // Back to start
+                // Left arm starts at top of torso and angles down
+                ctx.lineTo(pedX - 11, pedY + 9); // Left arm bottom edge (slightly thicker)
+                ctx.lineTo(pedX - 13, pedY + 4); // Left arm end (angled down from top)
+                ctx.lineTo(pedX - 4, pedY - 6); // Back to top left of torso
 
                 ctx.closePath();
                 ctx.fill();
@@ -284,51 +280,54 @@ Item {
                 var centerX = width / 2;
                 var centerY = height / 2;
                 var size = 60;
-                var cornerRadius = 15;  // Increased corner radius for more rounded corners
-                var borderWidth = 12;   // Consistent red border width
+                var cornerRadius = 8;  // Rounded corners
+                var borderWidth = 12;   // Base border width - will be thicker on oblique parts
 
-                // Calculate triangle points for inverted triangle
+                // Calculate triangle points for inverted triangle (proper triangle shape)
                 var topLeftX = centerX - size;
-                var topLeftY = centerY - size * 0.75;
+                var topLeftY = centerY - size * 0.6;
                 var topRightX = centerX + size;
-                var topRightY = centerY - size * 0.75;
+                var topRightY = centerY - size * 0.6;
                 var bottomX = centerX;
-                var bottomY = centerY + size * 0.75;
+                var bottomY = centerY + size * 0.8;
 
-                // Draw outer red triangle with rounded corners
+                // Draw outer red triangle with rounded corners and smooth outline
                 ctx.fillStyle = "#e30613";  // Red color
-                ctx.strokeStyle = "white";
-                ctx.lineWidth = 4;
+                ctx.strokeStyle = "#e30613";
+                ctx.lineWidth = 5; // Consistent line width for smooth appearance
 
+                // Create the complete triangle path
                 ctx.beginPath();
 
-                // Start from top-left, going clockwise
-                // Top edge with rounded corners
+                // Top edge (horizontal) with rounded corners
                 ctx.moveTo(topLeftX + cornerRadius, topLeftY);
                 ctx.lineTo(topRightX - cornerRadius, topRightY);
-                ctx.quadraticCurveTo(topRightX, topRightY, topRightX - cornerRadius/2, topRightY + cornerRadius/2);
+                ctx.quadraticCurveTo(topRightX, topRightY, topRightX - cornerRadius * 0.7, topRightY + cornerRadius * 0.7);
 
-                // Right edge to bottom point
-                ctx.lineTo(bottomX + cornerRadius/2, bottomY - cornerRadius);
-                ctx.quadraticCurveTo(bottomX, bottomY, bottomX - cornerRadius/2, bottomY - cornerRadius);
+                // Right oblique edge to bottom point
+                ctx.lineTo(bottomX + cornerRadius * 0.7, bottomY - cornerRadius * 0.7);
+                ctx.quadraticCurveTo(bottomX, bottomY, bottomX - cornerRadius * 0.7, bottomY - cornerRadius * 0.7);
 
-                // Left edge back to top
-                ctx.lineTo(topLeftX + cornerRadius/2, topLeftY + cornerRadius/2);
+                // Left oblique edge back to top
+                ctx.lineTo(topLeftX + cornerRadius * 0.7, topLeftY + cornerRadius * 0.7);
                 ctx.quadraticCurveTo(topLeftX, topLeftY, topLeftX + cornerRadius, topLeftY);
 
                 ctx.closePath();
+
+                // Fill and stroke in one operation for smooth appearance
                 ctx.fill();
                 ctx.stroke();
 
-                // Draw inner white triangle (smaller, maintaining proportions)
-                var innerSize = size - borderWidth;  // Use consistent border width
+                // Draw inner white triangle (smaller, maintaining triangle proportions)
+                var innerBorderWidth = 14; // Slightly larger inner border for better visibility
+                var innerSize = size - innerBorderWidth;
                 var innerTopLeftX = centerX - innerSize;
-                var innerTopLeftY = centerY - innerSize * 0.75;
+                var innerTopLeftY = centerY - innerSize * 0.6;
                 var innerTopRightX = centerX + innerSize;
-                var innerTopRightY = centerY - innerSize * 0.75;
+                var innerTopRightY = centerY - innerSize * 0.6;
                 var innerBottomX = centerX;
-                var innerBottomY = centerY + innerSize * 0.75;
-                var innerCornerRadius = cornerRadius - 4;  // Proportional inner corner radius
+                var innerBottomY = centerY + innerSize * 0.8;
+                var innerCornerRadius = cornerRadius - 2;
 
                 ctx.fillStyle = "white";
                 ctx.strokeStyle = "white";
@@ -336,15 +335,17 @@ Item {
 
                 ctx.beginPath();
 
-                // Inner triangle with rounded corners
+                // Inner white triangle with rounded corners
                 ctx.moveTo(innerTopLeftX + innerCornerRadius, innerTopLeftY);
                 ctx.lineTo(innerTopRightX - innerCornerRadius, innerTopRightY);
-                ctx.quadraticCurveTo(innerTopRightX, innerTopRightY, innerTopRightX - innerCornerRadius/2, innerTopRightY + innerCornerRadius/2);
+                ctx.quadraticCurveTo(innerTopRightX, innerTopRightY, innerTopRightX - innerCornerRadius * 0.7, innerTopRightY + innerCornerRadius * 0.7);
 
-                ctx.lineTo(innerBottomX + innerCornerRadius/2, innerBottomY - innerCornerRadius);
-                ctx.quadraticCurveTo(innerBottomX, innerBottomY, innerBottomX - innerCornerRadius/2, innerBottomY - innerCornerRadius);
+                // Right oblique edge to bottom point
+                ctx.lineTo(innerBottomX + innerCornerRadius * 0.7, innerBottomY - innerCornerRadius * 0.7);
+                ctx.quadraticCurveTo(innerBottomX, innerBottomY, innerBottomX - innerCornerRadius * 0.7, innerBottomY - innerCornerRadius * 0.7);
 
-                ctx.lineTo(innerTopLeftX + innerCornerRadius/2, innerTopLeftY + innerCornerRadius/2);
+                // Left oblique edge back to top
+                ctx.lineTo(innerTopLeftX + innerCornerRadius * 0.7, innerTopLeftY + innerCornerRadius * 0.7);
                 ctx.quadraticCurveTo(innerTopLeftX, innerTopLeftY, innerTopLeftX + innerCornerRadius, innerTopLeftY);
 
                 ctx.closePath();
