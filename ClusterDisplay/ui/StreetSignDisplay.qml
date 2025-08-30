@@ -52,7 +52,7 @@ Item {
             anchors.centerIn: parent
             text: signValue
             font.pixelSize: 60
-            font.bold: truegit
+            font.bold: true
             color: "black"
         }
     }
@@ -165,7 +165,7 @@ Item {
 
                                 // Draw exactly 5 crosswalk stripes - angled to match triangle perspective
                 var numStripes = 5;
-                var stripeWidth = 5; // Made bolder
+                var stripeWidth = 7; // Made wider
                 var stripeLength = 20; // Made slightly longer
 
                 // Position stripes in lower triangle area
@@ -192,77 +192,163 @@ Item {
                     ctx.restore();
                 }
 
-                // Draw pedestrian figure - improved proportions and walking pose
-                var pedX = centerX - 2; // Shifted slightly left for walking direction
+                                                // Draw pedestrian figure - simple geometric style matching reference image
+                var pedX = centerX; // Centered horizontally
                 var pedY = height * 0.45; // Position in upper-middle of triangle
 
-                // Set up white contour styling for all body parts
-                ctx.lineWidth = 1.5;
+                // Set up styling
+                ctx.fillStyle = "black";
                 ctx.strokeStyle = "white";
+                ctx.lineWidth = 1.5;
 
-                // Head - circular, positioned more to the left for walking direction
+                // Head - simple circle with white contour, positioned to the left
                 ctx.beginPath();
-                ctx.arc(pedX - 3, pedY - 12, 6, 0, 2 * Math.PI);
+                ctx.arc(pedX - 3, pedY - 10, 5, 0, 2 * Math.PI);
                 ctx.fill();
-                ctx.stroke(); // White contour
+                ctx.stroke();
 
-                                                // Body and arms as one single continuous shape - no internal lines
+                // Torso and arms as one single connected piece with angled down arms (wider/bolder)
                 ctx.beginPath();
 
-                // Draw complete outline of torso + arms as one shape
-                // Start from top-left of torso (longer torso)
-                ctx.moveTo(pedX - 4, pedY - 6);
-                // Top of torso
-                ctx.lineTo(pedX + 4, pedY - 6);
-                // Right side going down to where right arm starts
-                ctx.lineTo(pedX + 4, pedY - 2);
-                // Right arm outline - longer arm
-                ctx.lineTo(pedX + 15, pedY + 2);
-                ctx.lineTo(pedX + 17, pedY + 8);
-                ctx.lineTo(pedX + 13, pedY + 10);
-                ctx.lineTo(pedX + 10, pedY + 4);
-                // Back to torso right side
-                ctx.lineTo(pedX + 4, pedY + 1);
-                // Continue down right side of torso (longer torso)
-                ctx.lineTo(pedX + 4, pedY + 12);
-                // Bottom of torso (longer)
-                ctx.lineTo(pedX - 4, pedY + 12);
-                // Left side of torso going up
-                ctx.lineTo(pedX - 4, pedY + 3);
-                // Left arm outline - longer arm
-                ctx.lineTo(pedX - 10, pedY + 3);
-                ctx.lineTo(pedX - 15, pedY + 1);
-                ctx.lineTo(pedX - 13, pedY - 2);
-                // Back to left side of torso
-                ctx.lineTo(pedX - 4, pedY);
-                // Continue up left side to close the shape
-                ctx.lineTo(pedX - 4, pedY - 6);
+                // Start with torso outline
+                ctx.moveTo(pedX - 4, pedY - 6); // Top left of torso
+                ctx.lineTo(pedX + 4, pedY - 6); // Top right of torso
+                ctx.lineTo(pedX + 4, pedY - 2); // Right side to arm connection
+
+                // Right arm angled downward (wider/bolder)
+                ctx.lineTo(pedX + 14, pedY + 4); // Right arm end (angled down, wider)
+                ctx.lineTo(pedX + 11, pedY + 10); // Right arm bottom edge (bolder)
+                ctx.lineTo(pedX + 4, pedY + 3); // Back to torso right side
+
+                // Continue torso right side
+                ctx.lineTo(pedX + 4, pedY + 10); // Bottom right of torso
+                ctx.lineTo(pedX - 4, pedY + 10); // Bottom left of torso
+
+                // Left side of torso up to arm connection
+                ctx.lineTo(pedX - 4, pedY + 3); // Left side to arm connection
+
+                // Left arm angled downward (wider/bolder)
+                ctx.lineTo(pedX - 11, pedY + 10); // Left arm bottom edge (bolder)
+                ctx.lineTo(pedX - 14, pedY + 4); // Left arm end (angled down, wider)
+                ctx.lineTo(pedX - 4, pedY - 2); // Back to torso left side
+
+                // Complete torso outline
+                ctx.lineTo(pedX - 4, pedY - 6); // Back to start
 
                 ctx.closePath();
                 ctx.fill();
-                ctx.stroke(); // Single white outline around entire shape
+                ctx.stroke();
 
-                // Legs with flat tops parallel to torso bottom, reaching into stripes
-                ctx.lineWidth = 2;
+                // Legs and waist as one single connected piece - inverted V shape for walking
+                var waistY = pedY + 10;
+
+                ctx.beginPath();
+                // Start from waist width
+                ctx.moveTo(pedX - 4, waistY);
+                ctx.lineTo(pedX + 4, waistY);
+
+                // Right leg (supporting leg) - straight down
+                ctx.lineTo(pedX + 4, waistY + 22);
+                ctx.lineTo(pedX - 1, waistY + 22);
+                ctx.lineTo(pedX - 1, waistY + 8);
+
+                // Left leg (stepping leg) - angled for walking motion (longer)
+                ctx.lineTo(pedX - 10, waistY + 24); // Extended further down
+                ctx.lineTo(pedX - 14, waistY + 22); // Extended further out
+                ctx.lineTo(pedX - 7, waistY + 6);
+                ctx.lineTo(pedX - 4, waistY);
+
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+            }
+        }
+    }
+
+        // Yield Sign
+    Item {
+        id: yieldSign
+        anchors.centerIn: parent
+        width: 140
+        height: 140
+        visible: signType === "YIELD"
+
+        // Triangular yield sign with rounded corners
+        Canvas {
+            id: yieldCanvas
+            anchors.fill: parent
+            onPaint: {
+                var ctx = getContext("2d");
+                ctx.clearRect(0, 0, width, height);
+
+                var centerX = width / 2;
+                var centerY = height / 2;
+                var size = 60;
+                var cornerRadius = 15;  // Increased corner radius for more rounded corners
+                var borderWidth = 12;   // Consistent red border width
+
+                // Calculate triangle points for inverted triangle
+                var topLeftX = centerX - size;
+                var topLeftY = centerY - size * 0.75;
+                var topRightX = centerX + size;
+                var topRightY = centerY - size * 0.75;
+                var bottomX = centerX;
+                var bottomY = centerY + size * 0.75;
+
+                // Draw outer red triangle with rounded corners
+                ctx.fillStyle = "#e30613";  // Red color
                 ctx.strokeStyle = "white";
+                ctx.lineWidth = 4;
 
-                // Right leg stepping forward to the left - flat top connection to torso
-                ctx.save();
-                ctx.translate(pedX + 2, pedY + 12); // Start from torso bottom edge
-                ctx.rotate(0.5); // Strong forward stride to the left
-                // Draw black leg with white outline - flat top
-                ctx.fillRect(-3, 0, 6, 28); // Flat top, extends into stripes
-                ctx.strokeRect(-3, 0, 6, 28); // White outline
-                ctx.restore();
+                ctx.beginPath();
 
-                // Left leg pushing back/supporting - flat top connection to torso
-                ctx.save();
-                ctx.translate(pedX - 2, pedY + 12); // Start from torso bottom edge
-                ctx.rotate(-0.2); // Slight back angle
-                // Draw black leg with white outline - flat top
-                ctx.fillRect(-3, 0, 6, 28); // Flat top, extends into stripes
-                ctx.strokeRect(-3, 0, 6, 28); // White outline
-                ctx.restore();
+                // Start from top-left, going clockwise
+                // Top edge with rounded corners
+                ctx.moveTo(topLeftX + cornerRadius, topLeftY);
+                ctx.lineTo(topRightX - cornerRadius, topRightY);
+                ctx.quadraticCurveTo(topRightX, topRightY, topRightX - cornerRadius/2, topRightY + cornerRadius/2);
+
+                // Right edge to bottom point
+                ctx.lineTo(bottomX + cornerRadius/2, bottomY - cornerRadius);
+                ctx.quadraticCurveTo(bottomX, bottomY, bottomX - cornerRadius/2, bottomY - cornerRadius);
+
+                // Left edge back to top
+                ctx.lineTo(topLeftX + cornerRadius/2, topLeftY + cornerRadius/2);
+                ctx.quadraticCurveTo(topLeftX, topLeftY, topLeftX + cornerRadius, topLeftY);
+
+                ctx.closePath();
+                ctx.fill();
+                ctx.stroke();
+
+                // Draw inner white triangle (smaller, maintaining proportions)
+                var innerSize = size - borderWidth;  // Use consistent border width
+                var innerTopLeftX = centerX - innerSize;
+                var innerTopLeftY = centerY - innerSize * 0.75;
+                var innerTopRightX = centerX + innerSize;
+                var innerTopRightY = centerY - innerSize * 0.75;
+                var innerBottomX = centerX;
+                var innerBottomY = centerY + innerSize * 0.75;
+                var innerCornerRadius = cornerRadius - 4;  // Proportional inner corner radius
+
+                ctx.fillStyle = "white";
+                ctx.strokeStyle = "white";
+                ctx.lineWidth = 0;
+
+                ctx.beginPath();
+
+                // Inner triangle with rounded corners
+                ctx.moveTo(innerTopLeftX + innerCornerRadius, innerTopLeftY);
+                ctx.lineTo(innerTopRightX - innerCornerRadius, innerTopRightY);
+                ctx.quadraticCurveTo(innerTopRightX, innerTopRightY, innerTopRightX - innerCornerRadius/2, innerTopRightY + innerCornerRadius/2);
+
+                ctx.lineTo(innerBottomX + innerCornerRadius/2, innerBottomY - innerCornerRadius);
+                ctx.quadraticCurveTo(innerBottomX, innerBottomY, innerBottomX - innerCornerRadius/2, innerBottomY - innerCornerRadius);
+
+                ctx.lineTo(innerTopLeftX + innerCornerRadius/2, innerTopLeftY + innerCornerRadius/2);
+                ctx.quadraticCurveTo(innerTopLeftX, innerTopLeftY, innerTopLeftX + innerCornerRadius, innerTopLeftY);
+
+                ctx.closePath();
+                ctx.fill();
             }
         }
     }

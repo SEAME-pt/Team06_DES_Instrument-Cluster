@@ -114,6 +114,15 @@ TEST_F(ZmqMessageParserTest, NewSignTypes)
     EXPECT_EQ(parser->getIntValue("speed"), 45);
     EXPECT_EQ(parser->getIntValue("mode"), 1);
 
+    // Test yield sign message
+    QString yieldMessage = "speed:25;sign:yield;battery:75;";
+    QMap<QString, QString> yieldResult = parser->parseMessage(yieldMessage);
+
+    EXPECT_EQ(yieldResult.size(), 3);
+    EXPECT_EQ(parser->getValue("sign"), "yield");
+    EXPECT_EQ(parser->getIntValue("speed"), 25);
+    EXPECT_EQ(parser->getIntValue("battery"), 75);
+
     // Test numeric speed limit still works
     QString speedLimitMessage = "speed:60;sign:70;battery:90;";
     QMap<QString, QString> speedLimitResult = parser->parseMessage(speedLimitMessage);

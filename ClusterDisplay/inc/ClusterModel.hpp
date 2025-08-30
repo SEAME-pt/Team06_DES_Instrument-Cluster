@@ -17,6 +17,7 @@ class ClusterModel : public QObject
     Q_PROPERTY(QString currentTime READ currentTime NOTIFY currentTimeChanged)
     Q_PROPERTY(QString currentDate READ currentDate NOTIFY currentDateChanged)
     Q_PROPERTY(bool objectAlert READ objectAlert WRITE setObjectAlert NOTIFY objectAlertChanged)
+    Q_PROPERTY(bool emergencyBrakeActive READ emergencyBrakeActive WRITE setEmergencyBrakeActive NOTIFY emergencyBrakeActiveChanged)
     Q_PROPERTY(bool laneAlert READ laneAlert WRITE setLaneAlert NOTIFY laneAlertChanged)
     Q_PROPERTY(QString laneDeviationSide READ laneDeviationSide WRITE setLaneDeviationSide NOTIFY
                    laneDeviationSideChanged)
@@ -40,6 +41,7 @@ public:
     QString currentTime() const { return m_currentTime; }
     QString currentDate() const { return m_currentDate; }
     bool objectAlert() const { return m_objectAlert; }
+    bool emergencyBrakeActive() const { return m_emergencyBrakeActive; }
     bool laneAlert() const { return m_laneAlert; }
     QString laneDeviationSide() const { return m_laneDeviationSide; }
     int speedLimitSignal() const { return m_speedLimitSignal; }
@@ -56,6 +58,7 @@ public:
     void setOdometer(int value);
     void setDrivingMode(const QString &value);
     void setObjectAlert(bool value);
+    void setEmergencyBrakeActive(bool value);
     void setLaneAlert(bool value);
     void setLaneDeviationSide(const QString &value);
     void setSpeedLimitSignal(int value);
@@ -74,6 +77,7 @@ signals:
     void currentTimeChanged(const QString &value);
     void currentDateChanged(const QString &value);
     void objectAlertChanged(bool value);
+    void emergencyBrakeActiveChanged(bool value);
     void laneAlertChanged(bool value);
     void laneDeviationSideChanged(const QString &value);
     void speedLimitSignalChanged(int value);
@@ -95,6 +99,7 @@ private:
     QString m_currentTime;
     QString m_currentDate;
     bool m_objectAlert;
+    bool m_emergencyBrakeActive;
     bool m_laneAlert;
     QString m_laneDeviationSide;
     int m_speedLimitSignal;

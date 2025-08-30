@@ -14,6 +14,7 @@ ClusterModel::ClusterModel(QObject *parent)
       m_odometer(0),
       m_drivingMode("MAN"),
       m_objectAlert(false),
+      m_emergencyBrakeActive(false),
       m_laneAlert(false),
       m_laneDeviationSide("left"),
       m_speedLimitSignal(50),
@@ -89,6 +90,15 @@ void ClusterModel::setObjectAlert(bool value)
     {
         m_objectAlert = value;
         emit objectAlertChanged(value);
+    }
+}
+
+void ClusterModel::setEmergencyBrakeActive(bool value)
+{
+    if (m_emergencyBrakeActive != value)
+    {
+        m_emergencyBrakeActive = value;
+        emit emergencyBrakeActiveChanged(value);
     }
 }
 

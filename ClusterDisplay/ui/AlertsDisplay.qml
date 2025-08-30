@@ -8,6 +8,7 @@ Item {
     // Properties for alerts
     property bool laneAlertActive: false
     property bool objectAlertActive: false
+    property bool emergencyBrakeActive: clusterModel.emergencyBrakeActive
     property string laneDeviationSide: "left"
     property int lastSpeedLimit: 0
 
@@ -20,7 +21,7 @@ Item {
     // Synchronized blinking timer - only runs when alerts are active
     SequentialAnimation {
         id: blinkAnimation
-        running: laneAlertActive || objectAlertActive || speedLimitExceeded
+        running: laneAlertActive || objectAlertActive || speedLimitExceeded || emergencyBrakeActive
         loops: Animation.Infinite
         NumberAnimation {
             target: alertsDisplay
@@ -38,7 +39,7 @@ Item {
 
     // Reset opacity to 1.0 when no alerts are active
     onLaneAlertActiveChanged: {
-        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded) {
+        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded && !emergencyBrakeActive) {
             alertOpacity = 1.0;
         } else if (laneAlertActive) {
             // Immediately start blinking when lane alert becomes active
@@ -47,7 +48,7 @@ Item {
         }
     }
     onObjectAlertActiveChanged: {
-        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded) {
+        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded && !emergencyBrakeActive) {
             alertOpacity = 1.0;
         } else if (objectAlertActive) {
             // Immediately start blinking when object alert becomes active
@@ -56,10 +57,19 @@ Item {
         }
     }
     onSpeedLimitExceededChanged: {
-        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded) {
+        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded && !emergencyBrakeActive) {
             alertOpacity = 1.0;
         } else if (speedLimitExceeded) {
             // Immediately start blinking when speed limit is exceeded
+            blinkAnimation.restart();
+            alertOpacity = 1.0;  // Start with full opacity
+        }
+    }
+    onEmergencyBrakeActiveChanged: {
+        if (!laneAlertActive && !objectAlertActive && !speedLimitExceeded && !emergencyBrakeActive) {
+            alertOpacity = 1.0;
+        } else if (emergencyBrakeActive) {
+            // Immediately start blinking when emergency brake becomes active
             blinkAnimation.restart();
             alertOpacity = 1.0;  // Start with full opacity
         }
@@ -79,21 +89,22 @@ Item {
                 }
             } else if (wasExceeded) {
                 // Speed dropped below limit - stop blinking
-                if (!laneAlertActive && !objectAlertActive) {
+                if (!laneAlertActive && !objectAlertActive && !emergencyBrakeActive) {
                     alertOpacity = 1.0;
                 }
             }
         }
     }
 
-    // Lane departure alert - positioned below obstruction alert
+    // Lane departure alert - positioned at vertical center and to the right
     Item {
         id: laneAlertBox
         visible: laneAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
+            horizontalCenterOffset: 80  // Moved to the right
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: 70  // Positioned below obstruction alert
+            verticalCenterOffset: 0  // At vertical center
         }
         width: 60  // Reduced width since no text
         height: 60
@@ -203,15 +214,15 @@ Item {
         }
     }
 
-    // Object detection alert - positioned centered between speed and lane alerts
+    // Object detection alert - positioned at vertical center and to the left
     Item {
         id: objectAlertBox
         visible: objectAlertActive
         anchors {
             horizontalCenter: parent.horizontalCenter
-            horizontalCenterOffset: 0  // Center aligned
+            horizontalCenterOffset: -80  // Moved to the left
             verticalCenter: parent.verticalCenter
-            verticalCenterOffset: 6   // Slightly below center, closer to original position
+            verticalCenterOffset: 0   // At vertical center
         }
         width: 60  // Reduced width since no text
         height: 60
@@ -236,19 +247,7 @@ Item {
                 border.color: "#CC0000"  // Darker red for definition
                 radius: 3
 
-                // Inner detail lines
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: parent.width * 0.6
-                    height: 2
-                    color: "#CC0000"
-                }
-                Rectangle {
-                    anchors.centerIn: parent
-                    width: 2
-                    height: parent.height * 0.6
-                    color: "#CC0000"
-                }
+
             }
 
             // Top face (3D effect)
@@ -287,17 +286,80 @@ Item {
                 ]
             }
 
-            // Danger symbol overlay
+
+
+            // Use centralized blinking opacity
+            opacity: objectAlertActive ? alertOpacity : 1.0
+        }
+    }
+
+    // Emergency brake alert - positioned below other alerts and centered
+    Item {
+        id: emergencyBrakeBox
+        visible: emergencyBrakeActive
+        anchors {
+            horizontalCenter: parent.horizontalCenter
+            horizontalCenterOffset: 0  // Centered like speed alert
+            verticalCenter: parent.verticalCenter
+            verticalCenterOffset: 70  // Below other alerts
+        }
+        width: 60
+        height: 60
+
+        // Emergency brake icon
+        Item {
+            id: emergencyBrakeIcon
+            anchors {
+                centerIn: parent
+            }
+            width: 50
+            height: 50
+
+            // Brake disc background (circular)
+            Rectangle {
+                id: brakeDisc
+                anchors.centerIn: parent
+                width: 45
+                height: 45
+                radius: 22.5
+                color: "#FF4444"  // Bright red
+                border.width: 3
+                border.color: "#CC0000"  // Darker red border
+
+                // Inner brake disc details (concentric circles)
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: 30
+                    height: 30
+                    radius: 15
+                    color: "transparent"
+                    border.width: 2
+                    border.color: "#CC0000"
+                }
+                Rectangle {
+                    anchors.centerIn: parent
+                    width: 15
+                    height: 15
+                    radius: 7.5
+                    color: "transparent"
+                    border.width: 1
+                    border.color: "#CC0000"
+                }
+            }
+
+
+
+            // Emergency exclamation mark overlay
             Text {
-                anchors.centerIn: frontFace
+                anchors.centerIn: brakeDisc
                 text: "!"
                 color: "white"
-                font.pixelSize: 18
+                font.pixelSize: 20
                 font.bold: true
             }
 
             // Use centralized blinking opacity
-            opacity: objectAlertActive ? alertOpacity : 1.0
+            opacity: emergencyBrakeActive ? alertOpacity : 1.0
         }
     }
 

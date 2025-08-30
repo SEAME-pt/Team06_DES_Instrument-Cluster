@@ -125,11 +125,11 @@ void ClusterDataSubscriber::generateMockData()
         }
     }
 
-    // Street signs (varying between speed limits, stop, and crosswalk)
+    // Street signs (varying between speed limits, stop, crosswalk, and yield)
     static int signalCounter = 0;
     if (++signalCounter >= 60) { // Change signal every 30 seconds
         signalCounter = 0;
-        static const QStringList signs = {"50", "80", "stop", "crosswalk"};
+        static const QStringList signs = {"50", "80", "stop", "crosswalk", "yield"};
         int signalIndex = QRandomGenerator::global()->bounded(signs.size());
         mockData["sign"] = signs[signalIndex];
     }
@@ -204,7 +204,12 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
 
     // Handle obstacle detection
     if (data.contains("obs")) {
-        m_clusterModel->setObjectAlert(data["obs"].toInt() > 0);
+        int obsValue = data["obs"].toInt();
+        bool hasObstacle = obsValue > 0;
+        m_clusterModel->setObjectAlert(hasObstacle);
+
+        // Emergency brake alert is triggered specifically by obs:2
+        m_clusterModel->setEmergencyBrakeActive(obsValue == 2);
     }
 
     // Handle speed limit signal
@@ -229,6 +234,10 @@ void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
             // Crosswalk sign
             signType = "CROSSWALK";
             displayValue = "CROSSWALK";
+        } else if (signValue == "yield") {
+            // Yield sign
+            signType = "YIELD";
+            displayValue = "YIELD";
         } else {
             // Unknown sign type, skip processing
             return;
