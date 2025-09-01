@@ -124,8 +124,8 @@ ctest
 ```
 
 ### Test Coverage
-- **Line Coverage**: **95.7%** (266 of 278 lines)
-- **Function Coverage**: **92.2%** (47 of 51 functions)
+- **Line Coverage**: **99.3%** (273 of 275 lines)
+- **Function Coverage**: **94.1%** (48 of 51 functions)
 - **ClusterModel**: 16 tests covering all properties, signals, and new features
 - **ClusterDataSubscriber**: 24 tests covering data processing, message handling, and ADAS features
 - **ZmqSubscriber**: 2 tests for message reception
