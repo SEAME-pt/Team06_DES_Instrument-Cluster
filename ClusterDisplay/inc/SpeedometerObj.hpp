@@ -8,26 +8,25 @@
 
 #define SPEEDOMETER_ADDRESS "tcp://localhost:5555"
 
-class SpeedometerObj : public ZmqSubscriber
-{
-    Q_OBJECT
-    Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged FINAL)
+class SpeedometerObj : public ZmqSubscriber {
+  Q_OBJECT
+  Q_PROPERTY(double speed READ speed WRITE setSpeed NOTIFY speedChanged FINAL)
 
-public:
-    explicit SpeedometerObj(QObject* parent = nullptr);
-    ~SpeedometerObj();
+ public:
+  explicit SpeedometerObj(QObject* parent = nullptr);
+  ~SpeedometerObj();
 
-    double speed(void) const;
-    void setSpeed(int newSpeed);
+  double speed(void) const;
+  void setSpeed(int newSpeed);
 
-signals:
-    void speedChanged(double);
+ signals:
+  void speedChanged(double);
 
-protected:
-    void _handleMsg(QString& message);
+ protected:
+  void _handleMsg(QString& message);
 
-private:
-    double m_speed;
+ private:
+  double m_speed;
 };
 
-#endif  // SPEEDOMETEROBJ_HPP
+#endif // SPEEDOMETEROBJ_HPP

@@ -1,16 +1,18 @@
 codecov:
   require_ci_to_pass: yes
+  notify:
+    wait_for_ci: yes
 
 coverage:
   precision: 2
   round: down
-  range: "70...100"
+  range: "80...100"  # Increased minimum coverage requirement
   status:
     project:
       default:
         # basic
-        target: auto
-        threshold: 5%
+        target: 85%  # Set specific target instead of auto
+        threshold: 3%  # Reduced threshold for more sensitive reporting
         base: auto
         # advanced
         branches: null
@@ -23,8 +25,8 @@ coverage:
     patch:
       default:
         # basic
-        target: auto
-        threshold: 5%
+        target: 85%  # Consistent with project target
+        threshold: 3%
         base: auto
         # advanced
         branches: null
@@ -40,14 +42,53 @@ parsers:
     branch_detection:
       conditional: yes
       loop: yes
-      method: no
+      method: yes  # Enable method branch detection
       macro: no
 
 comment:
   layout: "reach,diff,flags,files,footer"
   behavior: default
   require_changes: no
+  show_carryforward_flags: yes  # Show coverage carryforward
 
+# Better ignore patterns
 ignore:
+  # Test files
   - "ClusterDisplay/tests/**/*"
+  - "**/*_test.cpp"
+  - "**/*_test.hpp"
+  - "**/test_*.cpp"
+  - "**/test_*.hpp"
+
+  # Main entry points
   - "ClusterDisplay/main.cpp"
+  - "**/main.cpp"
+  - "**/app.cpp"
+
+  # Generated files
+  - "**/build/**/*"
+  - "**/cmake-build-*/**/*"
+  - "**/.git/**/*"
+
+  # Third-party dependencies
+  - "**/vendor/**/*"
+  - "**/third_party/**/*"
+  - "**/external/**/*"
+
+  # Documentation and config files
+  - "**/*.md"
+  - "**/*.txt"
+  - "**/*.yml"
+  - "**/*.yaml"
+  - "**/*.json"
+  - "**/*.xml"
+  - "**/*.cmake"
+  - "**/CMakeLists.txt"
+
+# Coverage flags for different components
+flags:
+  ClusterDisplay:
+    paths:
+      - "ClusterDisplay/src/"
+      - "ClusterDisplay/inc/"
+    carryforward: true

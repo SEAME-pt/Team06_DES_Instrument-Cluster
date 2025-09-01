@@ -19,63 +19,62 @@
  * This class creates and manages subscribers for critical and non-critical
  * data, parses incoming messages, and updates the cluster model accordingly.
  */
-class ClusterDataSubscriber : public QObject
-{
-    Q_OBJECT
+class ClusterDataSubscriber : public QObject {
+  Q_OBJECT
 
-public:
-    explicit ClusterDataSubscriber(ClusterModel* clusterModel, QObject* parent = nullptr);
-    virtual ~ClusterDataSubscriber();
+ public:
+  explicit ClusterDataSubscriber(ClusterModel* clusterModel, QObject* parent = nullptr);
+  virtual ~ClusterDataSubscriber();
 
-    /**
-     * @brief Enable or disable mocking of data
-     * @param enable True to enable mocking, false to use real ZeroMQ data
-     */
-    void enableMocking(bool enable);
+  /**
+   * @brief Enable or disable mocking of data
+   * @param enable True to enable mocking, false to use real ZeroMQ data
+   */
+  void enableMocking(bool enable);
 
-    /**
-     * @brief Check if mocking is enabled
-     * @return True if mocking is enabled, false otherwise
-     */
-    bool isMockingEnabled() const;
+  /**
+   * @brief Check if mocking is enabled
+   * @return True if mocking is enabled, false otherwise
+   */
+  bool isMockingEnabled() const;
 
-public slots:
-    /**
-     * @brief Handle critical data messages
-     * @param message The received message
-     */
-    void handleCriticalData(const QString& message);
+ public slots:
+  /**
+   * @brief Handle critical data messages
+   * @param message The received message
+   */
+  void handleCriticalData(const QString& message);
 
-    /**
-     * @brief Handle non-critical data messages
-     * @param message The received message
-     */
-    void handleNonCriticalData(const QString& message);
+  /**
+   * @brief Handle non-critical data messages
+   * @param message The received message
+   */
+  void handleNonCriticalData(const QString& message);
 
-    /**
-     * @brief Generate mock data for testing
-     * Used when mocking is enabled
-     */
-    void generateMockData();
+  /**
+   * @brief Generate mock data for testing
+   * Used when mocking is enabled
+   */
+  void generateMockData();
 
-private:
-    /**
-     * @brief Process parsed message data and update the cluster model
-     * @param data The parsed key-value pairs from the message
-     */
-    void processData(const QMap<QString, QString>& data);
+ private:
+  /**
+   * @brief Process parsed message data and update the cluster model
+   * @param data The parsed key-value pairs from the message
+   */
+  void processData(const QMap<QString, QString>& data);
 
-    ClusterModel* m_clusterModel;                     ///< Pointer to cluster model
-    std::unique_ptr<ZmqSubscriber> m_criticalSub;     ///< Critical data subscriber
-    std::unique_ptr<ZmqSubscriber> m_nonCriticalSub;  ///< Non-critical data subscriber
-    ZmqMessageParser m_parser;                        ///< Message parser
-    QTimer* m_mockTimer;                              ///< Timer for mock data generation
-    bool m_mockingEnabled;                            ///< Mocking status
+  ClusterModel* m_clusterModel;                    ///< Pointer to cluster model
+  std::unique_ptr<ZmqSubscriber> m_criticalSub;    ///< Critical data subscriber
+  std::unique_ptr<ZmqSubscriber> m_nonCriticalSub; ///< Non-critical data subscriber
+  ZmqMessageParser m_parser;                       ///< Message parser
+  QTimer* m_mockTimer;                             ///< Timer for mock data generation
+  bool m_mockingEnabled;                           ///< Mocking status
 
-    // Sign tracking for prolonging display instead of resetting
-    QString m_currentSignType;   ///< Currently displayed sign type
-    QString m_currentSignValue;  ///< Currently displayed sign value
-    QTimer* m_signHideTimer;     ///< Timer for hiding the current sign
+  // Sign tracking for prolonging display instead of resetting
+  QString m_currentSignType;  ///< Currently displayed sign type
+  QString m_currentSignValue; ///< Currently displayed sign value
+  QTimer* m_signHideTimer;    ///< Timer for hiding the current sign
 };
 
-#endif  // CLUSTERDATASUBSCRIBER_HPP
+#endif // CLUSTERDATASUBSCRIBER_HPP
