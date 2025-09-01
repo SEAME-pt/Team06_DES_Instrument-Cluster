@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 
+#include <QCoreApplication>
 #include <QSignalSpy>
 
 #include "ClusterModel.hpp"
@@ -369,6 +370,24 @@ TEST_F(ClusterModelTest, LastSpeedLimitSetter)
     EXPECT_EQ(model->lastSpeedLimit(), 0);
     EXPECT_EQ(spy.count(), 3);
     EXPECT_EQ(spy.at(2).at(0).toInt(), 0);
+}
+
+TEST_F(ClusterModelTest, DateTimeInitialization)
+{
+    // Test that time and date are initialized properly
+    EXPECT_FALSE(model->currentTime().isEmpty());
+    EXPECT_FALSE(model->currentTime().isNull());
+    EXPECT_FALSE(model->currentDate().isEmpty());
+    EXPECT_FALSE(model->currentDate().isNull());
+
+    // Check time format (hh:mm)
+    EXPECT_EQ(model->currentTime().length(), 5);
+    EXPECT_EQ(model->currentTime().at(2), ':');
+
+    // Check date format (dd MMM yyyy)
+    EXPECT_EQ(model->currentDate().length(), 11);
+    EXPECT_EQ(model->currentDate().at(2), ' ');
+    EXPECT_EQ(model->currentDate().at(6), ' ');
 }
 
 int main(int argc, char** argv)

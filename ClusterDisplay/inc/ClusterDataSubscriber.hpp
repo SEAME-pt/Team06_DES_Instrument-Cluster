@@ -39,7 +39,7 @@ public:
      */
     bool isMockingEnabled() const;
 
-private slots:
+public slots:
     /**
      * @brief Handle critical data messages
      * @param message The received message

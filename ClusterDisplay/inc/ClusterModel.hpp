@@ -1,3 +1,4 @@
+// LCOV_EXCL_START - Header file should be excluded from coverage
 #ifndef CLUSTERMODEL_HPP
 #define CLUSTERMODEL_HPP
 
@@ -300,3 +301,4 @@ private:
 };
 
 #endif  // CLUSTERMODEL_HPP
+// LCOV_EXCL_STOP

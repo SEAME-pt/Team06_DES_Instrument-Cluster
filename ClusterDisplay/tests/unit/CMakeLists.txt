@@ -4,6 +4,7 @@ set(TEST_SOURCES
     test_BatteryIconObj.cpp
     test_SpeedometerObj.cpp
     test_ZmqMessageParser.cpp
+    test_ClusterDataSubscriber.cpp
 )
 
 # Create test executables
