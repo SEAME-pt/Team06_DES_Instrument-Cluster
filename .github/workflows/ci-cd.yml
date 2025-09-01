@@ -74,11 +74,27 @@ jobs:
     - name: Generate coverage report
       run: |
         cd ClusterDisplay/build
+        # Note: LCOV_EXCL_START/STOP comments in source code automatically exclude
+        # hard-to-test/mock code (network initialization, destructors, Qt framework code)
+        # Capture coverage data with exclusions already applied
         lcov --directory . --capture --output-file coverage.info --ignore-errors mismatch
+        # Remove system and test files
         lcov --remove coverage.info '/usr/*' --output-file coverage.info
         lcov --remove coverage.info '*/tests/unit/*' --output-file coverage.info
         lcov --remove coverage.info '*/ClusterDisplayLib_autogen/*' --output-file coverage.info
+        lcov --remove coverage.info '*/moc_*' --output-file coverage.info
+        lcov --remove coverage.info '*/qrc_*' --output-file coverage.info
+        # Remove header files (they're excluded with LCOV_EXCL_START/STOP)
+        lcov --remove coverage.info '*/inc/*.hpp' --output-file coverage.info
+        # Show coverage summary
+        echo "=== COVERAGE SUMMARY ==="
+        lcov --list coverage.info | grep -E "(ClusterDisplay/src/|Total:)"
+        echo "=== DETAILED COVERAGE ==="
         lcov --list coverage.info
+        # Calculate overall coverage percentage
+        echo "=== OVERALL COVERAGE CALCULATION ==="
+        COVERAGE_DATA=$(lcov --summary coverage.info | grep "lines" | head -1)
+        echo "Overall coverage: $COVERAGE_DATA"
         # Generate HTML report
         genhtml coverage.info --output-directory coverage_report
 
