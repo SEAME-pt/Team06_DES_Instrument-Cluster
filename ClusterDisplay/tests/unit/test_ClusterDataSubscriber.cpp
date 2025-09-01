@@ -284,7 +284,7 @@ TEST_F(ClusterDataSubscriberTest, ProcessStopSign)
     QSignalSpy signValueSpy(model, &ClusterModel::signValueChanged);
     QSignalSpy signVisibleSpy(model, &ClusterModel::signVisibleChanged);
 
-        // Test stop sign
+    // Test stop sign
     QString message = "sign:stop";
     subscriber->handleCriticalData(message);
 
@@ -410,7 +410,7 @@ TEST_F(ClusterDataSubscriberTest, ProcessEmptyMessage)
 
 TEST_F(ClusterDataSubscriberTest, ProcessInvalidData)
 {
-        // Test that invalid data doesn't cause issues
+    // Test that invalid data doesn't cause issues
     QString message = "invalid:data;speed:not_a_number;battery:also_invalid";
     EXPECT_NO_THROW(subscriber->handleCriticalData(message));
 
