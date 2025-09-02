@@ -115,9 +115,9 @@ void ClusterDataSubscriber::handleNonCriticalData(const QString& message)
     }
 }
 
+// LCOV_EXCL_START - Mock data generation code doesn't need coverage
 void ClusterDataSubscriber::generateMockData()
 {
-    // LCOV_EXCL_START - Mock data generation code doesn't need coverage
     if (!m_mockingEnabled)
     {
         return;
@@ -127,7 +127,7 @@ void ClusterDataSubscriber::generateMockData()
 
     // Mock critical data (speed, lane, signal, etc.)
     static qreal angle = 0;
-    int speedKmH = qRound(100 + 100 * qSin(angle));  // Generate speed in km/h for display
+    int speedKmH = qRound(5 + 5 * qSin(angle));  // Generate speed in km/h for display (0-10 range)
     // Convert to mm/s for transmission (km/h / 0.0036 = mm/s)
     int speedMmS = qRound(speedKmH / 0.0036);
     angle += 0.1;
@@ -191,8 +191,8 @@ void ClusterDataSubscriber::generateMockData()
 
     // Process the mock data
     processData(mockData);
-    // LCOV_EXCL_STOP
 }
+// LCOV_EXCL_STOP
 
 void ClusterDataSubscriber::processData(const QMap<QString, QString>& data)
 {
