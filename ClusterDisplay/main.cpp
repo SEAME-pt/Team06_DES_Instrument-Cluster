@@ -4,8 +4,10 @@
 #include <QQmlApplicationEngine>
 #include <QQmlContext>
 #include <QQuickStyle>
+#include <QCommandLineParser>
 
 #include "ClusterModel.hpp"
+#include "ClusterDataSubscriber.hpp"
 
 /**
  * @brief Main entry point for the Automotive Cluster Display application
@@ -21,11 +23,38 @@ int main(int argc, char *argv[])
     app.setApplicationVersion("2.0");
     app.setOrganizationName("Team06");
 
+    // Set up command line options
+    QCommandLineParser parser;
+    parser.setApplicationDescription("Automotive Cluster Display");
+    parser.addHelpOption();
+    parser.addVersionOption();
+
+    // Add option to enable mocking (default: disabled - use real ZMQ data)
+    QCommandLineOption mockOption(QStringList() << "m" << "mock", "Enable data mocking (no ZeroMQ needed)");
+    parser.addOption(mockOption);
+
+    // Process the command line
+    parser.process(app);
+    bool enableMocking = parser.isSet(mockOption);
+
     // Apply Material Design style for modern look
     QQuickStyle::setStyle("Material");
 
     // Create and initialize the cluster data model
     ClusterModel clusterModel;
+
+    // Create the cluster data subscriber
+    ClusterDataSubscriber dataSubscriber(&clusterModel);
+
+    // Enable mocking if specified on command line
+    dataSubscriber.enableMocking(enableMocking);
+
+    // Output mode to console
+    if (enableMocking) {
+        qDebug() << "Running in MOCK mode (no ZeroMQ connection needed)";
+    } else {
+        qDebug() << "Running in LIVE mode (expecting ZeroMQ data on ports 5555 and 5556)";
+    }
 
     // Set up QML engine and expose the model to QML
     QQmlApplicationEngine engine;

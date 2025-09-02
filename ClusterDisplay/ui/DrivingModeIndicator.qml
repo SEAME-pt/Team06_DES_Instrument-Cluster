@@ -7,25 +7,15 @@ Item {
 
     property string mode: clusterModel.drivingMode
 
-    // Display text mapping for different modes
-    property var modeTextMap: {
-        "ECO": "AUTONOMOUS",
-        "NORMAL": "AUTONOMOUS",
-        "SPORT": "MANUAL",
-        "OFF": "MANUAL"
-    }
-
     // Mode colors for different driving modes
     property var modeColors: {
-        "ECO": "#00c293",
-        "NORMAL": "#00d4ff",
-        "SPORT": "#ff527a",
-        "OFF": "#5a6580"
+        "AUTO": "#00d4ff",
+        "MAN": "#5a6580"
     }
 
     // Get current color based on mode
-    property color currentColor: modeColors[mode] || modeColors["OFF"]
-    property string displayMode: modeTextMap[mode] || "MANUAL"
+    property color currentColor: modeColors[mode] || modeColors["MAN"]
+    property string displayMode: mode || "MAN"
 
     Column {
         anchors.right: parent.right

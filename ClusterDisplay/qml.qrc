@@ -7,12 +7,13 @@
         <file>ui/NumberSpeedometer.qml</file>
         <file>ui/DrivingModeIndicator.qml</file>
         <file>ui/BatteryPercentDisplay.qml</file>
-        <file>ui/ModernBatteryBar.qml</file>
         <file>ui/AlertsDisplay.qml</file>
         <file>ui/LaneAlertDisplay.qml</file>
         <file>ui/ObjectAlertDisplay.qml</file>
         <file>ui/JetracerAlertDisplay.qml</file>
         <file>ui/StreetSignDisplay.qml</file>
+
+
     </qresource>
 
 </RCC>

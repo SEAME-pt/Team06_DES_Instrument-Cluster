@@ -5,52 +5,30 @@ Item {
     width: 150
     height: 60
 
-    // Properties
-    property real batteryPercent: 75.0  // Battery percentage (0-100)
-    property bool isCharging: false      // Charging status
+    // Properties connected to ClusterModel
+    property real batteryPercent: clusterModel.battery  // Battery percentage from ClusterModel
+    property bool isCharging: clusterModel.charging     // Charging status from ClusterModel
     property bool isLowBattery: false    // Low battery status (automatically set when < 20%)
 
     // Computed properties
-    property bool _isLowActual: batteryPercent < 10.0 // Internal calculation of low status (changed from 20 to 10)
-    property bool _displayLowWarning: _isLowActual || isLowBattery // Either actual or forced low
-
-    // Calculate battery color based on level with updated lighter color scheme
+    property bool _isLowActual: batteryPercent < 10.0
+    property bool _displayLowWarning: _isLowActual || isLowBattery
     property color batteryColor: {
-        if (batteryPercent > 80) return "#90EE90"; // Light Green for 80-100%
-        if (batteryPercent > 50) return "#C1FFC1"; // Lighter Green for 50-80%
-        if (batteryPercent > 25) return "#FFFACD"; // Light Lemon Chiffon Yellow for 25-50%
-        if (batteryPercent > 10) return "#FFDAB9"; // Light Orange for 10-25%
-        return "#FFC0CB"; // Light Red for 0-10%
+        if (batteryPercent > 80) return "#90EE90";
+        if (batteryPercent > 50) return "#C1FFC1";
+        if (batteryPercent > 25) return "#FFFACD";
+        if (batteryPercent > 10) return "#FFDAB9";
+        return "#FFC0CB";
     }
 
-    // Light blue color for charging animation
-    property color chargingColor: "#B3E5FC" // Stronger Light Blue
-
-    // Timer to cycle battery percentage
-    Timer {
-        id: batteryUpdateTimer
-        interval: 3000 // Update every 3 seconds
-        running: true
-        repeat: true
-        onTriggered: {
-            // Cycle through different battery percentages - 0 to 100
-            batteryPercent = (batteryPercent + 5) % 105
-            if (batteryPercent > 100) batteryPercent = 0 // Reset to 0
-
-            // Randomly toggle charging state for demo
-            if (Math.random() > 0.9) {
-                isCharging = !isCharging
-            }
-        }
-    }
+    property color chargingColor: "#B3E5FC"
 
     Column {
         anchors.fill: parent
         spacing: 5
 
-        // Title
         Text {
-            anchors.left: parent.left  // Align to left like time
+            anchors.left: parent.left
             text: "BATTERY"
             font.pixelSize: 18
             color: "#5a6580"
@@ -58,10 +36,9 @@ Item {
             font.family: window.secondaryFont
         }
 
-        // Battery percentage text
         Text {
             id: batteryText
-            anchors.left: parent.left  // Align to left like time
+            anchors.left: parent.left
             text: batteryPercent.toFixed(0) + "%"
             font.pixelSize: 32
             font.weight: window.fontBold
@@ -69,7 +46,7 @@ Item {
             font.family: window.monoFont
             font.letterSpacing: window.letterSpacingTight
 
-            // Charging indicator
+
             Text {
                 id: chargingIndicator
                 visible: isCharging

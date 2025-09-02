@@ -4,7 +4,6 @@
 #include <QRandomGenerator>
 #include <QTimer>
 #include <QtMath>
-#include <iostream>
 
 ClusterModel::ClusterModel(QObject *parent)
     : QObject(parent),
@@ -14,20 +13,21 @@ ClusterModel::ClusterModel(QObject *parent)
       m_odometer(0),
       m_drivingMode("MAN"),
       m_objectAlert(false),
+      m_emergencyBrakeActive(false),
       m_laneAlert(false),
-      m_laneDeviationSide("left")
+      m_laneDeviationSide("left"),
+      m_speedLimitSignal(50),
+      m_speedLimitVisible(false),
+      m_signType(""),
+      m_signValue(""),
+      m_signVisible(false),
+      m_lastSpeedLimit(0)
 {
     // Initialize time update timer
     m_timeUpdateTimer = new QTimer(this);
     m_timeUpdateTimer->setInterval(1000);  // Update every second
     connect(m_timeUpdateTimer, &QTimer::timeout, this, &ClusterModel::updateDateTime);
     m_timeUpdateTimer->start();
-
-    // Setup data simulation timer
-    m_dataSimulationTimer = new QTimer(this);
-    m_dataSimulationTimer->setInterval(500);  // Update every 500ms
-    connect(m_dataSimulationTimer, &QTimer::timeout, this, &ClusterModel::simulateDataUpdate);
-    m_dataSimulationTimer->start();
 
     // Initial update of date/time
     updateDateTime();
@@ -36,7 +36,6 @@ ClusterModel::ClusterModel(QObject *parent)
 ClusterModel::~ClusterModel()
 {
     m_timeUpdateTimer->stop();
-    m_dataSimulationTimer->stop();
 }
 
 void ClusterModel::setSpeed(int value)
@@ -93,6 +92,15 @@ void ClusterModel::setObjectAlert(bool value)
     }
 }
 
+void ClusterModel::setEmergencyBrakeActive(bool value)
+{
+    if (m_emergencyBrakeActive != value)
+    {
+        m_emergencyBrakeActive = value;
+        emit emergencyBrakeActiveChanged(value);
+    }
+}
+
 void ClusterModel::setLaneAlert(bool value)
 {
     if (m_laneAlert != value)
@@ -108,6 +116,60 @@ void ClusterModel::setLaneDeviationSide(const QString &value)
     {
         m_laneDeviationSide = value;
         emit laneDeviationSideChanged(value);
+    }
+}
+
+void ClusterModel::setSpeedLimitSignal(int value)
+{
+    if (m_speedLimitSignal != value)
+    {
+        m_speedLimitSignal = value;
+        emit speedLimitSignalChanged(value);
+    }
+}
+
+void ClusterModel::setSpeedLimitVisible(bool value)
+{
+    if (m_speedLimitVisible != value)
+    {
+        m_speedLimitVisible = value;
+        emit speedLimitVisibleChanged(value);
+    }
+}
+
+void ClusterModel::setSignType(const QString &value)
+{
+    if (m_signType != value)
+    {
+        m_signType = value;
+        emit signTypeChanged(value);
+    }
+}
+
+void ClusterModel::setSignValue(const QString &value)
+{
+    if (m_signValue != value)
+    {
+        m_signValue = value;
+        emit signValueChanged(value);
+    }
+}
+
+void ClusterModel::setSignVisible(bool value)
+{
+    if (m_signVisible != value)
+    {
+        m_signVisible = value;
+        emit signVisibleChanged(value);
+    }
+}
+
+void ClusterModel::setLastSpeedLimit(int value)
+{
+    if (m_lastSpeedLimit != value)
+    {
+        m_lastSpeedLimit = value;
+        emit lastSpeedLimitChanged(value);
     }
 }
 
@@ -127,64 +189,5 @@ void ClusterModel::updateDateTime()
     {
         m_currentDate = newDate;
         emit currentDateChanged(m_currentDate);
-    }
-}
-
-void ClusterModel::simulateDataUpdate()
-{
-    // Simulate speed changes (0-200)
-    static qreal angle = 0;
-    int newSpeed = qRound(100 + 100 * qSin(angle));
-    angle += 0.1;
-
-    // Set speed directly without modifying for object alerts
-    setSpeed(newSpeed);
-
-    // Simulate battery changes (0-100)
-    static qreal batteryAngle = 0;
-    int newBattery = qRound(50 + 50 * qSin(batteryAngle));
-    batteryAngle += 0.05;
-    setBattery(newBattery);
-
-    // Simulate charging status changes
-    static int chargingCounter = 0;
-    if (++chargingCounter >= 20)
-    {  // Toggle every 10 seconds
-        setCharging(!m_charging);
-        chargingCounter = 0;
-    }
-
-    // Increment odometer
-    setOdometer(m_odometer + 1);
-
-    // Toggle driving mode occasionally
-    static int modeCounter = 0;
-    if (++modeCounter >= 40)
-    {  // Toggle every 20 seconds
-        setDrivingMode(m_drivingMode == "MAN" ? "AUTO" : "MAN");
-        modeCounter = 0;
-    }
-
-    // Simulate alerts - cycle through different alert states
-    static int alertCounter = 0;
-    if (++alertCounter >= 30)
-    {  // Change alert state every 15 seconds
-        alertCounter = 0;
-
-        // Cycle through: no alerts -> lane alert -> object alert -> no alerts
-        if (!m_laneAlert && !m_objectAlert)
-        {
-            setLaneAlert(true);
-            setLaneDeviationSide(QRandomGenerator::global()->bounded(2) == 0 ? "left" : "right");
-        }
-        else if (m_laneAlert)
-        {
-            setLaneAlert(false);
-            setObjectAlert(true);
-        }
-        else
-        {
-            setObjectAlert(false);
-        }
     }
 }

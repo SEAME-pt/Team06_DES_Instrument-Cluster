@@ -49,6 +49,8 @@ set(SOURCES
     src/ZmqSubscriber.cpp
     src/BatteryIconObj.cpp
     src/SpeedometerObj.cpp
+    src/ZmqMessageParser.cpp
+    src/ClusterDataSubscriber.cpp
 )
 
 set(HEADERS
@@ -56,6 +58,8 @@ set(HEADERS
     inc/ZmqSubscriber.hpp
     inc/BatteryIconObj.hpp
     inc/SpeedometerObj.hpp
+    inc/ZmqMessageParser.hpp
+    inc/ClusterDataSubscriber.hpp
 )
 
 #------------------------------------------------------

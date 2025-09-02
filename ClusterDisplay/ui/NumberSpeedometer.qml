@@ -13,11 +13,10 @@ Item {
         width: parent.width * 0.8
         height: parent.height * 0.8
 
-        // Dynamic color based on speed
         property color speedColor: {
-            if (speed < 30) return "#00c293"  // Green for low speed
-            if (speed < 70) return "#00d4ff"  // Cyan for medium
-            return "#ff527a"                  // Pink-red for high speed
+            if (speed < 300) return "#00c293"
+            if (speed < 700) return "#00d4ff"
+            return "#ff527a"
         }
 
         // Digital speed display
@@ -31,7 +30,7 @@ Item {
                 anchors.horizontalCenter: parent.horizontalCenter
                 text: speed.toString()
                 color: "#ffffff"
-                font.pixelSize: 140
+                font.pixelSize: 105
                 font.family: window.primaryFont
                 font.weight: window.fontNormal
                 font.letterSpacing: window.letterSpacingTight
@@ -40,9 +39,9 @@ Item {
             // Units label
             Text {
                 anchors.horizontalCenter: parent.horizontalCenter
-                text: "km/h"
+                text: "km/h (×10)"
                 color: "#5a6580"
-                font.pixelSize: 20
+                font.pixelSize: 15
                 font.letterSpacing: window.letterSpacingWide
                 font.family: window.secondaryFont
             }

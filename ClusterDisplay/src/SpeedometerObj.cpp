@@ -1,7 +1,5 @@
 #include "SpeedometerObj.hpp"
 
-#include <iostream>
-
 SpeedometerObj::SpeedometerObj(QObject *parent)
     : ZmqSubscriber(SPEEDOMETER_ADDRESS, parent), m_speed{0}
 {
@@ -23,5 +21,9 @@ void SpeedometerObj::setSpeed(int newSpeed)
 
 void SpeedometerObj::_handleMsg(QString &message)
 {
-    setSpeed(message.toInt());
+    int speedMmPerSec = message.toInt();
+    // Convert mm/s to km/h: mm/s * 0.0036 = km/h
+    // Then multiply by 10 for scaled display
+    int speedKmPerHour = static_cast<int>(std::round(speedMmPerSec * 0.0036 * 10));
+    setSpeed(speedKmPerHour);
 }
