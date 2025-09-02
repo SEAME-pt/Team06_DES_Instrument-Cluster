@@ -14,7 +14,11 @@ This folder contains dedicated scripts for CI/CD pipeline operations. Each scrip
 **Usage**:
 ```bash
 cd ClusterDisplay
-../../scripts/ci-format.sh
+# Check formatting without making changes (for CI/CD)
+../scripts/ci-format.sh --check
+
+# Apply formatting changes (for local development)
+../scripts/ci-format.sh
 ```
 
 ### `ci-tidy.sh`
@@ -74,19 +78,22 @@ cd ClusterDisplay/build
 These scripts can also be used locally for development:
 
 ```bash
-# Run formatting check
+# Check formatting (no changes)
 cd ClusterDisplay
-../../scripts/ci-format.sh
+../scripts/ci-format.sh --check
+
+# Apply formatting changes
+../scripts/ci-format.sh
 
 # Run static analysis
-../../scripts/ci-tidy.sh
+../scripts/ci-tidy.sh
 
 # Run tests
-../../scripts/ci-test.sh
+../scripts/ci-test.sh
 
 # Generate coverage report
 cd build
-../../../scripts/ci-coverage.sh
+../../scripts/ci-coverage.sh
 ```
 
 ## Benefits

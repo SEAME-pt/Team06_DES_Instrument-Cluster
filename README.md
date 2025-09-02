@@ -154,17 +154,20 @@ The project uses comprehensive CI/CD scripts for code quality analysis. These sc
 
 ### Quick Usage
 ```bash
-# Run formatting check
-cd ClusterDisplay && ../../scripts/ci-format.sh
+# Check formatting (no changes)
+cd ClusterDisplay && ../scripts/ci-format.sh --check
+
+# Apply formatting changes
+../scripts/ci-format.sh
 
 # Run static analysis
-../../scripts/ci-tidy.sh
+../scripts/ci-tidy.sh
 
 # Build and test
-../../scripts/ci-test.sh
+../scripts/ci-test.sh
 
 # Generate coverage report
-cd build && ../../../scripts/ci-coverage.sh
+cd build && ../../scripts/ci-coverage.sh
 ```
 
 For detailed information about all available scripts and their usage, see [scripts/README.md](scripts/README.md).
