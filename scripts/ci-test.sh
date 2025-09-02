@@ -85,10 +85,16 @@ echo ""
 echo "=== TEST RESULTS ANALYSIS ==="
 
 # Extract test statistics
-TOTAL_TESTS=$(grep -c "Test #" "$TEST_OUTPUT" || echo "0")
-PASSED_TESTS=$(grep -c "Passed" "$TEST_OUTPUT" || echo "0")
-FAILED_TESTS=$(grep -c "Failed" "$TEST_OUTPUT" || echo "0")
-NOT_RUN_TESTS=$(grep -c "Not Run" "$TEST_OUTPUT" || echo "0")
+TOTAL_TESTS=$(grep -c "Test #" "$TEST_OUTPUT" 2>/dev/null || echo "0")
+PASSED_TESTS=$(grep -c "Passed" "$TEST_OUTPUT" 2>/dev/null || echo "0")
+FAILED_TESTS=$(grep -c "Failed" "$TEST_OUTPUT" 2>/dev/null || echo "0")
+NOT_RUN_TESTS=$(grep -c "Not Run" "$TEST_OUTPUT" 2>/dev/null || echo "0")
+
+# Ensure variables are numeric
+TOTAL_TESTS=${TOTAL_TESTS:-0}
+PASSED_TESTS=${PASSED_TESTS:-0}
+FAILED_TESTS=${FAILED_TESTS:-0}
+NOT_RUN_TESTS=${NOT_RUN_TESTS:-0}
 
 echo "Test Execution Summary:"
 echo "  - Total tests: $TOTAL_TESTS"
@@ -139,6 +145,7 @@ if [ "$FAILED_TESTS" -eq 0 ]; then
   echo "✓ All tests passed successfully"
   echo "✓ Test coverage: $PASSED_TESTS/$TOTAL_TESTS tests"
   echo "✓ Build and test pipeline: PASSED"
+  exit 0
 else
   echo "✗ $FAILED_TESTS test(s) failed"
   echo "✗ Test success rate: $(( (PASSED_TESTS * 100) / TOTAL_TESTS ))%"
