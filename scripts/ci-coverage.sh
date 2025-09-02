@@ -41,10 +41,16 @@ COVERAGE_SUMMARY=$(lcov --summary coverage.info)
 echo "$COVERAGE_SUMMARY"
 echo ""
 
-# Parse coverage percentages
-LINE_COVERAGE=$(echo "$COVERAGE_SUMMARY" | grep "lines" | head -1 | sed 's/.*: //' | sed 's/%.*//')
-FUNCTION_COVERAGE=$(echo "$COVERAGE_SUMMARY" | grep "functions" | head -1 | sed 's/.*: //' | sed 's/%.*//')
-BRANCH_COVERAGE=$(echo "$COVERAGE_SUMMARY" | grep "branches" | head -1 | sed 's/.*: //' | sed 's/%.*//' || echo "N/A")
+# Parse coverage percentages and ensure they're clean numbers
+LINE_COVERAGE=$(echo "$COVERAGE_SUMMARY" | grep "lines" | head -1 | sed 's/.*: //' | sed 's/%.*//' | tr -d ' \t\n\r' || echo "0")
+FUNCTION_COVERAGE=$(echo "$COVERAGE_SUMMARY" | grep "functions" | head -1 | sed 's/.*: //' | sed 's/%.*//' | tr -d ' \t\n\r' || echo "0")
+BRANCH_COVERAGE=$(echo "$COVERAGE_SUMMARY" | grep "branches" | head -1 | sed 's/.*: //' | sed 's/%.*//' | tr -d ' \t\n\r' || echo "N/A")
+
+# Ensure LINE_COVERAGE is a valid number
+if ! [[ "$LINE_COVERAGE" =~ ^[0-9]+(\.[0-9]+)?$ ]]; then
+  echo "Warning: Invalid line coverage value '$LINE_COVERAGE', defaulting to 0"
+  LINE_COVERAGE="0"
+fi
 
 echo "Coverage Summary:"
 echo "  - Line coverage: ${LINE_COVERAGE}%"
@@ -52,6 +58,13 @@ echo "  - Function coverage: ${FUNCTION_COVERAGE}%"
 if [ "$BRANCH_COVERAGE" != "N/A" ]; then
   echo "  - Branch coverage: ${BRANCH_COVERAGE}%"
 fi
+echo ""
+
+# Debug: Show parsed values
+echo "Debug - Parsed coverage values:"
+echo "  - LINE_COVERAGE='$LINE_COVERAGE'"
+echo "  - FUNCTION_COVERAGE='$FUNCTION_COVERAGE'"
+echo "  - BRANCH_COVERAGE='$BRANCH_COVERAGE'"
 echo ""
 
 # Show detailed coverage by file
