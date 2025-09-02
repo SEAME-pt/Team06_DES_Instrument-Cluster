@@ -2,7 +2,7 @@ name: CI/CD Pipeline
 
 on:
   push:
-    branches: [ dev ]
+    branches: [ dev, cicd ]
   pull_request:
     branches: [ main, dev ]
   workflow_dispatch:
@@ -48,62 +48,35 @@ jobs:
     - name: Run Clang Format
       run: |
         cd ClusterDisplay
-        find . -path "./build*" -prune -o -name "*.cpp" -o -name "*.h" -o -name "*.hpp" -print | xargs clang-format -style=file -i
-        git diff --exit-code || (echo "Clang format check failed. Run clang-format locally and commit changes." && exit 1)
+        ../../scripts/ci-format.sh
 
     - name: Run Clang Tidy
       continue-on-error: true
       run: |
         cd ClusterDisplay
-        mkdir -p build_tidy
-        cd build_tidy
-        cmake .. -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-        cd ..
-        find . -path "./build*" -prune -o -name "*.cpp" -print | xargs clang-tidy -p build_tidy/compile_commands.json
+        ../../scripts/ci-tidy.sh
 
     - name: Build and Test
       run: |
         cd ClusterDisplay
-        mkdir -p build
-        cd build
-        # Remove any existing CMake cache
-        rm -rf CMakeCache.txt CMakeFiles/
-        cmake .. -DCODE_COVERAGE=ON
-        make
-        ctest --output-on-failure
+        ../../scripts/ci-test.sh
 
     - name: Generate coverage report
       run: |
         cd ClusterDisplay/build
-        # Note: LCOV_EXCL_START/STOP comments in source code automatically exclude
-        # hard-to-test/mock code (network initialization, destructors, Qt framework code)
-        # Capture coverage data with exclusions already applied
-        lcov --directory . --capture --output-file coverage.info --ignore-errors mismatch
-        # Remove system and test files
-        lcov --remove coverage.info '/usr/*' --output-file coverage.info --ignore-errors unused
-        lcov --remove coverage.info '*/tests/unit/*' --output-file coverage.info --ignore-errors unused
-        lcov --remove coverage.info '*/ClusterDisplayLib_autogen/*' --output-file coverage.info --ignore-errors unused
-        lcov --remove coverage.info '*/moc_*' --output-file coverage.info --ignore-errors unused
-        lcov --remove coverage.info '*/qrc_*' --output-file coverage.info --ignore-errors unused
-        # Remove header files (they're excluded with LCOV_EXCL_START/STOP)
-        lcov --remove coverage.info '*/inc/*.hpp' --output-file coverage.info --ignore-errors unused
-        # Show coverage summary
-        echo "=== COVERAGE SUMMARY ==="
-        lcov --list coverage.info | grep -E "(ClusterDisplay/src/|Total:)"
-        echo "=== DETAILED COVERAGE ==="
-        lcov --list coverage.info
-        # Calculate overall coverage percentage
-        echo "=== OVERALL COVERAGE CALCULATION ==="
-        COVERAGE_DATA=$(lcov --summary coverage.info | grep "lines" | head -1)
-        echo "Overall coverage: $COVERAGE_DATA"
-        # Generate HTML report
-        genhtml coverage.info --output-directory coverage_report
+        ../../../scripts/ci-coverage.sh
 
     - name: Upload coverage report
       uses: actions/upload-artifact@v4
       with:
         name: coverage-report
         path: ClusterDisplay/build/coverage_report
+
+    - name: CI/CD Pipeline Summary
+      if: always()
+      run: |
+        cd ClusterDisplay/build
+        ../../../scripts/ci-summary.sh
 
   build:
     needs: test
