@@ -84,17 +84,17 @@ TEST_TIME=$((TEST_END - TEST_START))
 echo ""
 echo "=== TEST RESULTS ANALYSIS ==="
 
-# Extract test statistics
-TOTAL_TESTS=$(grep -c "Test #" "$TEST_OUTPUT" 2>/dev/null || echo "0")
-PASSED_TESTS=$(grep -c "Passed" "$TEST_OUTPUT" 2>/dev/null || echo "0")
-FAILED_TESTS=$(grep -c "Failed" "$TEST_OUTPUT" 2>/dev/null || echo "0")
-NOT_RUN_TESTS=$(grep -c "Not Run" "$TEST_OUTPUT" 2>/dev/null || echo "0")
+# Extract test statistics and ensure they're clean integers
+TOTAL_TESTS=$(grep -c "Test #" "$TEST_OUTPUT" 2>/dev/null | tr -d '\n\r' || echo "0")
+PASSED_TESTS=$(grep -c "Passed" "$TEST_OUTPUT" 2>/dev/null | tr -d '\n\r' || echo "0")
+FAILED_TESTS=$(grep -c "Failed" "$TEST_OUTPUT" 2>/dev/null | tr -d '\n\r' || echo "0")
+NOT_RUN_TESTS=$(grep -c "Not Run" "$TEST_OUTPUT" 2>/dev/null | tr -d '\n\r' || echo "0")
 
-# Ensure variables are numeric
-TOTAL_TESTS=${TOTAL_TESTS:-0}
-PASSED_TESTS=${PASSED_TESTS:-0}
-FAILED_TESTS=${FAILED_TESTS:-0}
-NOT_RUN_TESTS=${NOT_RUN_TESTS:-0}
+# Ensure variables are numeric and clean
+TOTAL_TESTS=$(echo "${TOTAL_TESTS:-0}" | tr -d ' \t\n\r')
+PASSED_TESTS=$(echo "${PASSED_TESTS:-0}" | tr -d ' \t\n\r')
+FAILED_TESTS=$(echo "${FAILED_TESTS:-0}" | tr -d ' \t\n\r')
+NOT_RUN_TESTS=$(echo "${NOT_RUN_TESTS:-0}" | tr -d ' \t\n\r')
 
 echo "Test Execution Summary:"
 echo "  - Total tests: $TOTAL_TESTS"
@@ -102,6 +102,14 @@ echo "  - Passed: $PASSED_TESTS"
 echo "  - Failed: $FAILED_TESTS"
 echo "  - Not run: $NOT_RUN_TESTS"
 echo "  - Execution time: ${TEST_TIME}s"
+echo ""
+
+# Debug: Show variable values for troubleshooting
+echo "Debug - Variable values:"
+echo "  - TOTAL_TESTS='$TOTAL_TESTS'"
+echo "  - PASSED_TESTS='$PASSED_TESTS'"
+echo "  - FAILED_TESTS='$FAILED_TESTS'"
+echo "  - NOT_RUN_TESTS='$NOT_RUN_TESTS'"
 echo ""
 
 # Show test details
