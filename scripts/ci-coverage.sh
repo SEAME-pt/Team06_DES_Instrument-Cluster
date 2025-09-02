@@ -97,13 +97,25 @@ fi
 # Coverage quality assessment
 echo ""
 echo "=== COVERAGE QUALITY ASSESSMENT ==="
-if [ "$LINE_COVERAGE" -ge 90 ]; then
+# Use bc for decimal comparisons since LINE_COVERAGE might be 100.0
+if (( $(echo "$LINE_COVERAGE >= 90" | bc -l) )); then
   echo "✓ Excellent coverage: ${LINE_COVERAGE}% (≥90%)"
-elif [ "$LINE_COVERAGE" -ge 80 ]; then
+elif (( $(echo "$LINE_COVERAGE >= 80" | bc -l) )); then
   echo "✓ Good coverage: ${LINE_COVERAGE}% (≥80%)"
-elif [ "$LINE_COVERAGE" -ge 70 ]; then
+elif (( $(echo "$LINE_COVERAGE >= 70" | bc -l) )); then
   echo "⚠ Acceptable coverage: ${LINE_COVERAGE}% (≥70%)"
+  echo "::warning::Code coverage is below recommended threshold (80%)"
 else
   echo "✗ Low coverage: ${LINE_COVERAGE}% (<70%)"
-  echo "::warning::Code coverage is below recommended threshold"
+  echo "::error::Code coverage is below minimum threshold (70%)"
+  echo "::error::Pipeline failed due to insufficient code coverage"
+  exit 1
+fi
+
+# Fail the pipeline if coverage is below 80%
+if (( $(echo "$LINE_COVERAGE < 80" | bc -l) )); then
+  echo ""
+  echo "::error::Code coverage ${LINE_COVERAGE}% is below required threshold of 80%"
+  echo "::error::Please improve test coverage before merging"
+  exit 1
 fi
