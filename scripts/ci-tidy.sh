@@ -63,10 +63,12 @@ fi
 echo ""
 echo "=== CLANG TIDY RESULTS ==="
 
-# Count issues by severity
-WARNING_COUNT=$(grep -c "warning:" "$TIDY_OUTPUT" || echo "0")
-ERROR_COUNT=$(grep -c "error:" "$TIDY_OUTPUT" || echo "0")
-NOTE_COUNT=$(grep -c "note:" "$TIDY_OUTPUT" || echo "0")
+# Count issues by severity (avoid duplicate output when no matches)
+# grep -c prints 0 but exits with status 1 when there are no matches,
+# so we neutralize the non-zero exit without appending another "0".
+WARNING_COUNT=$(grep -c "warning:" "$TIDY_OUTPUT" || true)
+ERROR_COUNT=$(grep -c "error:" "$TIDY_OUTPUT" || true)
+NOTE_COUNT=$(grep -c "note:" "$TIDY_OUTPUT" || true)
 
 echo "Analysis Summary:"
 echo "  - Files analyzed: $FILE_COUNT"
