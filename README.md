@@ -143,26 +143,34 @@ See `ClusterDisplay/tests/README.md` for detailed testing information.
 
 ## Code Quality Tools
 
-### Clang Format
-The project uses clang-format to maintain consistent code style:
+The project uses comprehensive CI/CD scripts for code quality analysis. These scripts provide detailed output and can be used both locally and in the CI/CD pipeline.
 
+### Available Scripts
+- **`scripts/ci-format.sh`** - Clang format analysis with detailed reporting
+- **`scripts/ci-tidy.sh`** - Clang tidy static analysis with issue categorization
+- **`scripts/ci-test.sh`** - Build and unit test execution with comprehensive reporting
+- **`scripts/ci-coverage.sh`** - Code coverage analysis and HTML report generation
+- **`scripts/ci-summary.sh`** - Pipeline execution summary
+
+### Quick Usage
 ```bash
-# Format all source files
-find ClusterDisplay/src ClusterDisplay/inc ClusterDisplay/tests -name "*.cpp" -o -name "*.hpp" | xargs clang-format -style=file -i
+# Check formatting (no changes)
+cd ClusterDisplay && ../scripts/ci-format.sh --check
+
+# Apply formatting changes
+../scripts/ci-format.sh
+
+# Run static analysis
+../scripts/ci-tidy.sh
+
+# Build and test
+../scripts/ci-test.sh
+
+# Generate coverage report
+cd build && ../../scripts/ci-coverage.sh
 ```
 
-### Clang Tidy
-Static analysis is performed using clang-tidy with zero issues:
-
-```bash
-# Generate compile commands
-mkdir -p build_tidy && cd build_tidy
-cmake ../ClusterDisplay -DCMAKE_EXPORT_COMPILE_COMMANDS=ON
-cd ..
-
-# Run clang-tidy on source files
-find ClusterDisplay/src ClusterDisplay/inc -name "*.cpp" | xargs clang-tidy -p build_tidy/compile_commands.json
-```
+For detailed information about all available scripts and their usage, see [scripts/README.md](scripts/README.md).
 
 ### Documentation
 - **Comprehensive Doxygen documentation** for all classes and methods
