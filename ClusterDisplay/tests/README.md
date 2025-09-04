@@ -59,7 +59,7 @@ make coverage
 
 ## Test Coverage
 
-The test suite achieves **95.7% line coverage** and **92.2% function coverage** with comprehensive testing of:
+The test suite achieves **100% line coverage** and **96% function coverage** with comprehensive testing of:
 
 ### ClusterModel
 - Initial property values

@@ -19,7 +19,7 @@ A modern automotive cluster display designed for high-end vehicle dashboards. Th
 
 ### UI Layer (QML)
 - Built with **QtQuick 6.4** and Material Design
-- Modern circular gauges and dynamic visual elements
+- Dynamic visual elements
 - Responsive animations and transitions
 - Dark theme with automotive-grade styling
 - High DPI display support (1280x400 resolution)
@@ -31,7 +31,7 @@ A modern automotive cluster display designed for high-end vehicle dashboards. Th
 - **ZmqMessageParser**: Parses incoming data messages
 - Signal-based updates for efficient rendering
 - C++17 standard compliance
-- Comprehensive Doxygen documentation
+- Comprehensive documentation
 
 ### Communication Layer (ZeroMQ)
 - **Dual-channel architecture**:
@@ -65,7 +65,7 @@ A modern automotive cluster display designed for high-end vehicle dashboards. Th
 
 ### User Interface Components
 - **Digital Speedometer**: Large, clearly readable speed display
-- **Battery Indicator**: Modern progress bar with percentage and charging status
+- **Battery Indicator**: Percentage and charging status with border animations
 - **Clock Display**: Real-time updates with automotive-grade fonts
 - **Odometer**: Total distance tracking
 - **Driving Mode Indicator**: Current driving mode display (MAN/AUTO)
